@@ -17,6 +17,7 @@
             display: flex;
             flex-direction: column;
             gap: 24px;
+            flex-shrink: 0;
         }
         .logo-box {
             display: flex;
@@ -36,6 +37,7 @@
             justify-content: center;
             font-weight: 800;
             font-size: 20px;
+            flex-shrink: 0;
         }
         .logo-text h2 { font-size: 16px; font-weight: 800; color: #0369a1; line-height: 1.1; }
         .logo-text span { font-size: 10px; color: #64748b; display: block; }
@@ -58,7 +60,7 @@
             font-weight: 600;
         }
 
-        .main-wrapper { flex: 1; display: flex; flex-direction: column; }
+        .main-wrapper { flex: 1; display: flex; flex-direction: column; min-width: 0; }
         .topbar {
             height: 60px;
             background: white;
@@ -113,8 +115,9 @@
             box-shadow: 0 2px 4px rgba(0,0,0,0.02);
             margin-bottom: 24px;
             overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
         }
-        table { width: 100%; border-collapse: collapse; font-size: 13px; }
+        table { width: 100%; border-collapse: collapse; font-size: 13px; min-width: 650px; }
         th { text-align: left; padding: 12px 10px; color: #334155; font-weight: 700; border-bottom: 2px solid #f1f5f9; white-space: nowrap; }
         td { padding: 12px 10px; border-bottom: 1px solid #f8fafc; color: #334155; vertical-align: middle; }
         
@@ -240,7 +243,7 @@
         }
         .widget-box h4 { font-size: 14px; font-weight: 700; margin-bottom: 12px; }
         
-        .calendar-table { width: 100%; text-align: center; font-size: 11px; }
+        .calendar-table { width: 100%; text-align: center; font-size: 11px; min-width: 0; }
         .calendar-table th { padding: 4px; color: #94a3b8; font-weight: 500; border: none; }
         .calendar-table td { padding: 4px; border: none; }
         
@@ -320,12 +323,16 @@
             background: rgba(15, 23, 42, 0.6);
             align-items: center; justify-content: center;
             z-index: 100;
+            padding: 16px;
         }
         .modal-content {
             background: white;
             border-radius: 12px;
             padding: 24px;
-            width: 520px;
+            width: 100%;
+            max-width: 520px;
+            max-height: 90vh;
+            overflow-y: auto;
             display: flex;
             flex-direction: column;
             gap: 12px;
@@ -340,6 +347,30 @@
         .input-group-responsable { display: flex; gap: 6px; }
         .input-group-responsable select { width: 95px; flex-shrink: 0; background-color: #f8fafc; font-weight: 600; }
         .input-group-responsable input { flex: 1; }
+
+        /* ================= REGLAS RESPONSIVE (MÓVIL Y TABLET) ================= */
+        @media (max-width: 1024px) {
+            .content { grid-template-columns: 1fr; }
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+
+        @media (max-width: 768px) {
+            body { flex-direction: column; }
+            .sidebar {
+                width: 100%;
+                border-right: none;
+                border-bottom: 1px solid #e2e8f0;
+                padding: 16px;
+                gap: 14px;
+            }
+            .nav-list { flex-direction: row; flex-wrap: wrap; }
+            .nav-item a { padding: 6px 10px; font-size: 12px; }
+            .topbar { padding: 0 16px; height: 50px; }
+            .content { padding: 16px; }
+            .stats-grid { grid-template-columns: 1fr; gap: 10px; }
+            .form-row { grid-template-columns: 1fr; }
+            .alert-detail-card { flex-direction: column; align-items: flex-start; gap: 10px; }
+        }
     </style>
 </head>
 <body>
@@ -370,7 +401,6 @@
                     📅 Calendario
                 </a>
             </li>
-            <!-- Enlaces dedicados a Alertas e Historial -->
             <li class="nav-item {% if vista == 'alertas' %}active{% endif %}">
                 <a href="{{ url_for('dashboard', vista='alertas') }}" title="Ver Centro de Alertas y Plazos Críticos">
                     🔔 Alertas
@@ -395,7 +425,7 @@
             <main>
                 {% if vista == 'calendario' %}
                     <!-- VISTA: MÓDULO 3 AGENDA PROCESAL -->
-                    <div class="dashboard-header" style="display:flex; justify-content:space-between; align-items:center;">
+                    <div class="dashboard-header" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
                         <div>
                             <h1>Módulo 3: Agenda Procesal y Plazos Cautelares</h1>
                             <p style="font-size:13px; color:#64748b; margin-top:2px;">Programación detallada de actuaciones y límites procesales de Octubre 2026</p>
@@ -413,7 +443,7 @@
                                 </div>
                                 {% for item in agenda_dias[d] %}
                                 <div class="agenda-event-box {% if 'Límite' in item.tipo %}limite{% endif %}">
-                                    <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
+                                    <div style="display:flex; justify-content:space-between; margin-bottom:4px; flex-wrap:wrap; gap:4px;">
                                         <strong>{{ item.tipo }}: {{ item.expediente }}</strong>
                                         <span class="badge {{ item.estado.replace(' ', '-') }}">{{ item.estado }}</span>
                                     </div>
@@ -435,7 +465,7 @@
 
                 {% elif vista == 'alertas' %}
                     <!-- VISTA: MÓDULO 4 CENTRO DE ALERTAS DINÁMICAS -->
-                    <div class="dashboard-header" style="display:flex; justify-content:space-between; align-items:center;">
+                    <div class="dashboard-header" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
                         <div>
                             <h1>Módulo 4: Centro de Control de Alertas Procesales</h1>
                             <p style="font-size:13px; color:#64748b; margin-top:2px;">Monitoreo preventivo de vencimiento de medidas y plazos legales</p>
@@ -448,7 +478,7 @@
                             {% for al in alertas_completas %}
                             <div class="alert-detail-card {% if al.nivel == 'Crítica' %}critica{% elif al.nivel == 'Urgente' %}urgente{% else %}preventiva{% endif %}">
                                 <div>
-                                    <div style="display:flex; align-items:center; gap:8px; margin-bottom:4px;">
+                                    <div style="display:flex; align-items:center; gap:8px; margin-bottom:4px; flex-wrap:wrap;">
                                         <strong style="font-size:14px; color:#0f172a;">{{ al.expediente }}</strong>
                                         <span style="font-size:10px; font-weight:700; padding:2px 8px; border-radius:12px; {% if al.nivel == 'Crítica' %}background:#fee2e2; color:#ef4444;{% elif al.nivel == 'Urgente' %}background:#fef3c7; color:#d97706;{% else %}background:#e0f2fe; color:#0284c7;{% endif %}">
                                             Severidad: {{ al.nivel }}
@@ -478,7 +508,7 @@
 
                 {% elif vista == 'historial' %}
                     <!-- VISTA: MÓDULO 5 BITÁCORA HISTÓRICA COMPLETA -->
-                    <div class="dashboard-header" style="display:flex; justify-content:space-between; align-items:center;">
+                    <div class="dashboard-header" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
                         <div>
                             <h1>Módulo 5: Bitácora Procesal y Auditoría de Actuaciones</h1>
                             <p style="font-size:13px; color:#64748b; margin-top:2px;">Trazabilidad completa de cada alta, cambio de estado y actualización procesal</p>
@@ -597,7 +627,7 @@
 
                                                 <form action="{{ url_for('eliminar', id=exp.id) }}" method="POST" style="margin:0;" onsubmit="return confirm('¿Seguro que deseas eliminar este expediente?');">
                                                     <button type="submit" class="btn-action-icon btn-delete-icon" title="Eliminar">
-                                                        <svg width="14" height="24" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
                                                     </button>
                                                 </form>
                                             </div>
