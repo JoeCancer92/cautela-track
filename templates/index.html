@@ -1,0 +1,932 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CAUTELA TRACK - Panel de Seguimiento</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
+        body { background-color: #f0f4f8; display: flex; min-height: 100vh; color: #1e293b; }
+
+        .sidebar {
+            width: 250px;
+            background: white;
+            border-right: 1px solid #e2e8f0;
+            padding: 24px 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+        .logo-box {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid #f1f5f9;
+        }
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: #0284c7;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 20px;
+        }
+        .logo-text h2 { font-size: 16px; font-weight: 800; color: #0369a1; line-height: 1.1; }
+        .logo-text span { font-size: 10px; color: #64748b; display: block; }
+        .nav-list { list-style: none; display: flex; flex-direction: column; gap: 6px; }
+        .nav-item a {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 14px;
+            border-radius: 8px;
+            color: #475569;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+        }
+        .nav-item.active a, .nav-item a:hover {
+            background-color: #e0f2fe;
+            color: #0284c7;
+            font-weight: 600;
+        }
+
+        .main-wrapper { flex: 1; display: flex; flex-direction: column; }
+        .topbar {
+            height: 60px;
+            background: white;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            padding: 0 32px;
+            gap: 16px;
+            color: #64748b;
+        }
+        .content { display: grid; grid-template-columns: 1fr 310px; gap: 24px; padding: 24px 32px; }
+
+        .dashboard-header { margin-bottom: 20px; }
+        .dashboard-header h1 { font-size: 20px; font-weight: 800; color: #0f172a; text-transform: uppercase; }
+
+        .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 24px; }
+        .stat-card {
+            padding: 16px 18px;
+            border-radius: 12px;
+            color: white;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+        }
+        .stat-card.blue { background: #1d72b8; }
+        .stat-card.orange { background: #f28b44; }
+        .stat-card.teal { background: #00a4b4; }
+        .stat-card.green { background: #00a65a; }
+        .stat-card p { font-size: 13px; font-weight: 500; margin-bottom: 4px; opacity: 0.95; }
+        .stat-card h3 { font-size: 28px; font-weight: 700; }
+
+        .filter-section { margin-bottom: 16px; }
+        .filter-title { font-size: 14px; font-weight: 700; color: #0f172a; margin-bottom: 8px; }
+        .filter-buttons { display: flex; gap: 8px; flex-wrap: wrap; }
+        .filter-btn {
+            background: white;
+            border: 1px solid #cbd5e1;
+            padding: 7px 14px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 600;
+            color: #475569;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+        .filter-btn.active { background: #0f172a; color: white; border-color: #0f172a; }
+
+        .table-card {
+            background: white;
+            border-radius: 12px;
+            padding: 16px;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+            margin-bottom: 24px;
+            overflow-x: auto;
+        }
+        table { width: 100%; border-collapse: collapse; font-size: 13px; }
+        th { text-align: left; padding: 12px 10px; color: #334155; font-weight: 700; border-bottom: 2px solid #f1f5f9; white-space: nowrap; }
+        td { padding: 12px 10px; border-bottom: 1px solid #f8fafc; color: #334155; vertical-align: middle; }
+        
+        .badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+        .badge.Pendiente { background: #ffedd5; color: #c2410c; }
+        .badge.En-seguimiento { background: #e0f2fe; color: #0284c7; }
+        .badge.Ejecutada { background: #dcfce7; color: #15803d; }
+        .badge.Concedida { background: #fef08a; color: #854d0e; }
+        .badge.En-revisión { background: #f3e8ff; color: #7e22ce; }
+        .badge.Levantada { background: #f1f5f9; color: #475569; }
+
+        .doc-badge-empty { color: #94a3b8; font-size: 11px; font-style: italic; display: inline-flex; align-items: center; gap: 4px; }
+        .doc-badge-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            background: #e0f2fe;
+            color: #0284c7;
+            padding: 4px 8px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-size: 11px;
+            font-weight: 600;
+            border: 1px solid #bae6fd;
+            transition: all 0.15s;
+        }
+        .doc-badge-link:hover { background: #0284c7; color: white; }
+
+        .action-btns { display: flex; gap: 6px; }
+        .btn-action-icon {
+            background: #f8fafc;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            padding: 6px 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.15s;
+        }
+        .btn-action-icon:hover { background: #e2e8f0; }
+        .btn-delete-icon:hover { background: #fee2e2; border-color: #fca5a5; }
+
+        /* Estilos de las vistas dedicadas (Agenda, Alertas, Historial) */
+        .agenda-container {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            max-height: 600px;
+            overflow-y: auto;
+            padding-right: 6px;
+        }
+        .agenda-day-card {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 14px 18px;
+        }
+        .agenda-day-header {
+            font-size: 13px;
+            font-weight: 700;
+            color: #0f172a;
+            border-bottom: 1px solid #f1f5f9;
+            padding-bottom: 8px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+        }
+        .agenda-event-box {
+            background: #f8fafc;
+            border-left: 4px solid #0284c7;
+            border-radius: 6px;
+            padding: 8px 12px;
+            margin-bottom: 8px;
+            font-size: 12px;
+        }
+        .agenda-event-box:last-child { margin-bottom: 0; }
+        .agenda-event-box.limite { border-left-color: #e11d48; background: #fff1f2; }
+
+        /* Tarjeta de Alerta Didáctica */
+        .alert-detail-card {
+            background: white;
+            border-radius: 10px;
+            border: 1px solid #e2e8f0;
+            padding: 16px 20px;
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+        }
+        .alert-detail-card.critica { border-left: 5px solid #ef4444; }
+        .alert-detail-card.urgente { border-left: 5px solid #f59e0b; }
+        .alert-detail-card.preventiva { border-left: 5px solid #0284c7; }
+
+        .history-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid #e2e8f0;
+        }
+        .history-card h3 { font-size: 15px; font-weight: 700; margin-bottom: 14px; }
+        .timeline { display: flex; flex-direction: column; gap: 14px; }
+        .timeline-item { display: flex; gap: 14px; font-size: 12px; }
+        .timeline-date { color: #64748b; font-weight: 600; width: 65px; flex-shrink: 0; }
+        .timeline-dot { width: 8px; height: 8px; background: #0284c7; border-radius: 50%; margin-top: 4px; flex-shrink: 0; }
+        .timeline-info strong { display: block; color: #0f172a; margin-bottom: 2px; }
+        .timeline-info span { color: #64748b; }
+
+        .right-sidebar { display: flex; flex-direction: column; gap: 20px; }
+        .widget-box {
+            background: white;
+            border-radius: 12px;
+            padding: 18px;
+            border: 1px solid #e2e8f0;
+        }
+        .widget-box h4 { font-size: 14px; font-weight: 700; margin-bottom: 12px; }
+        
+        .calendar-table { width: 100%; text-align: center; font-size: 11px; }
+        .calendar-table th { padding: 4px; color: #94a3b8; font-weight: 500; border: none; }
+        .calendar-table td { padding: 4px; border: none; }
+        
+        .cal-day {
+            display: inline-flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            text-decoration: none;
+            color: #334155;
+            position: relative;
+            font-weight: 500;
+            transition: all 0.15s;
+        }
+        .cal-day:hover { background: #e0f2fe; color: #0284c7; }
+        .cal-day.active { background: #0f172a !important; color: white !important; font-weight: 700; }
+        .cal-day.has-event { font-weight: 700; color: #0284c7; }
+        .cal-day.has-event::after {
+            content: '';
+            width: 4px;
+            height: 4px;
+            background: #0284c7;
+            border-radius: 50%;
+            position: absolute;
+            bottom: 2px;
+        }
+        .cal-day.active.has-event::after { background: #38bdf8; }
+
+        .reminders-list {
+            margin-top: 14px;
+            padding-top: 12px;
+            border-top: 1px solid #f1f5f9;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .reminder-item {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 8px 10px;
+            font-size: 11px;
+        }
+        .reminder-item strong { color: #0f172a; display: block; }
+        .reminder-item span { color: #64748b; }
+        .reminder-due {
+            display: inline-block;
+            margin-top: 4px;
+            font-size: 10px;
+            font-weight: 700;
+            color: #d97706;
+        }
+
+        .alert-card {
+            background: #fee2e2;
+            border-left: 4px solid #ef4444;
+            padding: 10px 12px;
+            border-radius: 6px;
+            margin-bottom: 10px;
+            font-size: 12px;
+            color: #991b1b;
+            font-weight: 500;
+        }
+        .alert-card.warning {
+            background: #fef3c7;
+            border-left-color: #f59e0b;
+            color: #92400e;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(15, 23, 42, 0.6);
+            align-items: center; justify-content: center;
+            z-index: 100;
+        }
+        .modal-content {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            width: 520px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+        }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .form-item label { display: block; font-size: 12px; font-weight: 600; color: #334155; margin-bottom: 4px; }
+        .modal-content input, .modal-content select {
+            width: 100%; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px;
+        }
+
+        .input-group-responsable { display: flex; gap: 6px; }
+        .input-group-responsable select { width: 95px; flex-shrink: 0; background-color: #f8fafc; font-weight: 600; }
+        .input-group-responsable input { flex: 1; }
+    </style>
+</head>
+<body>
+
+    <!-- Menú Lateral -->
+    <aside class="sidebar">
+        <div class="logo-box">
+            <div class="logo-icon">C</div>
+            <div class="logo-text">
+                <h2>CAUTELA<br>TRACK</h2>
+                <span>Plataforma digital de medidas cautelares</span>
+            </div>
+        </div>
+        <ul class="nav-list">
+            <li class="nav-item {% if vista == 'dashboard' and estado_filtro != 'Seguimiento_Procesal' and not dia_calendario %}active{% endif %}">
+                <a href="{{ url_for('dashboard', vista='dashboard') }}">📊 Dashboard</a>
+            </li>
+            <li class="nav-item">
+                <a onclick="abrirModal()">📄 Registro de expedientes</a>
+            </li>
+            <li class="nav-item {% if estado_filtro == 'Seguimiento_Procesal' %}active{% endif %}">
+                <a href="{{ url_for('dashboard', vista='dashboard', estado='Seguimiento_Procesal') }}" title="Filtrar medidas activas">
+                    📋 Seguimiento
+                </a>
+            </li>
+            <li class="nav-item {% if vista == 'calendario' %}active{% endif %}">
+                <a href="{{ url_for('dashboard', vista='calendario') }}" title="Abrir agenda procesal del mes">
+                    📅 Calendario
+                </a>
+            </li>
+            <!-- Enlaces dedicados a Alertas e Historial -->
+            <li class="nav-item {% if vista == 'alertas' %}active{% endif %}">
+                <a href="{{ url_for('dashboard', vista='alertas') }}" title="Ver Centro de Alertas y Plazos Críticos">
+                    🔔 Alertas
+                </a>
+            </li>
+            <li class="nav-item {% if vista == 'historial' %}active{% endif %}">
+                <a href="{{ url_for('dashboard', vista='historial') }}" title="Ver Bitácora de Trazabilidad Completa">
+                    🕒 Historial
+                </a>
+            </li>
+        </ul>
+    </aside>
+
+    <div class="main-wrapper">
+        <header class="topbar">
+            <span>❓ Ayuda</span>
+            <span>🔔</span>
+            <span>👤 Usuario</span>
+        </header>
+
+        <div class="content">
+            <main>
+                {% if vista == 'calendario' %}
+                    <!-- VISTA: MÓDULO 3 AGENDA PROCESAL -->
+                    <div class="dashboard-header" style="display:flex; justify-content:space-between; align-items:center;">
+                        <div>
+                            <h1>Módulo 3: Agenda Procesal y Plazos Cautelares</h1>
+                            <p style="font-size:13px; color:#64748b; margin-top:2px;">Programación detallada de actuaciones y límites procesales de Octubre 2026</p>
+                        </div>
+                        <a href="{{ url_for('dashboard', vista='dashboard') }}" class="filter-btn" style="background:#0f172a; color:white;">⬅ Volver al Dashboard</a>
+                    </div>
+
+                    <div class="agenda-container">
+                        {% for d in range(1, 32) %}
+                            {% if agenda_dias[d] %}
+                            <div class="agenda-day-card" style="border-left: 4px solid #0284c7;">
+                                <div class="agenda-day-header">
+                                    <span>🗓️ Día {{ d }} de Octubre de 2026</span>
+                                    <span style="color:#0284c7; font-weight:600;">{{ agenda_dias[d]|length }} actuación(es) registrada(s)</span>
+                                </div>
+                                {% for item in agenda_dias[d] %}
+                                <div class="agenda-event-box {% if 'Límite' in item.tipo %}limite{% endif %}">
+                                    <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
+                                        <strong>{{ item.tipo }}: {{ item.expediente }}</strong>
+                                        <span class="badge {{ item.estado.replace(' ', '-') }}">{{ item.estado }}</span>
+                                    </div>
+                                    <div style="color:#475569; font-size:11px;">
+                                        <span>🏛️ <strong>Órgano:</strong> {{ item.organo }}</span> | 
+                                        <span>⚖️ <strong>Medida:</strong> {{ item.medida }}</span> | 
+                                        <span>👤 <strong>Responsable:</strong> {{ item.responsable }}</span>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                        {% endfor %}
+
+                        <div class="agenda-day-card" style="background:#f8fafc; border: 1px dashed #cbd5e1; text-align:center; padding: 18px;">
+                            <span style="font-size:12px; color:#64748b;">Los días no listados corresponden a días judiciales sin actuaciones fijadas.</span>
+                        </div>
+                    </div>
+
+                {% elif vista == 'alertas' %}
+                    <!-- VISTA: MÓDULO 4 CENTRO DE ALERTAS DINÁMICAS -->
+                    <div class="dashboard-header" style="display:flex; justify-content:space-between; align-items:center;">
+                        <div>
+                            <h1>Módulo 4: Centro de Control de Alertas Procesales</h1>
+                            <p style="font-size:13px; color:#64748b; margin-top:2px;">Monitoreo preventivo de vencimiento de medidas y plazos legales</p>
+                        </div>
+                        <a href="{{ url_for('dashboard', vista='dashboard') }}" class="filter-btn" style="background:#0f172a; color:white;">⬅ Volver al Dashboard</a>
+                    </div>
+
+                    <div style="display: flex; flex-direction: column; gap: 12px;">
+                        {% if alertas_completas %}
+                            {% for al in alertas_completas %}
+                            <div class="alert-detail-card {% if al.nivel == 'Crítica' %}critica{% elif al.nivel == 'Urgente' %}urgente{% else %}preventiva{% endif %}">
+                                <div>
+                                    <div style="display:flex; align-items:center; gap:8px; margin-bottom:4px;">
+                                        <strong style="font-size:14px; color:#0f172a;">{{ al.expediente }}</strong>
+                                        <span style="font-size:10px; font-weight:700; padding:2px 8px; border-radius:12px; {% if al.nivel == 'Crítica' %}background:#fee2e2; color:#ef4444;{% elif al.nivel == 'Urgente' %}background:#fef3c7; color:#d97706;{% else %}background:#e0f2fe; color:#0284c7;{% endif %}">
+                                            Severidad: {{ al.nivel }}
+                                        </span>
+                                        <span class="badge {{ al.estado.replace(' ', '-') }}">{{ al.estado }}</span>
+                                    </div>
+                                    <p style="font-size:12px; color:#475569; margin-bottom:4px;">{{ al.detalle }}</p>
+                                    <div style="font-size:11px; color:#64748b;">
+                                        <span>🏛️ {{ al.organo }}</span> | <span>⚖️ Medida: {{ al.medida }}</span> | <span>📅 Fecha límite legal: <strong>{{ al.fecha_limite }}</strong></span>
+                                    </div>
+                                </div>
+                                <div>
+                                    <button type="button" class="btn-action-icon" style="padding:6px 12px; font-size:11px; font-weight:600; gap:4px;"
+                                            onclick="abrirModalEditar('{{ al.id }}', '{{ al.expediente }}', '{{ al.estado }}', '{{ al.responsable }}')">
+                                        ✏️ Gestionar caso
+                                    </button>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        {% else %}
+                            <div class="table-card" style="text-align:center; padding: 30px; color:#16a34a;">
+                                <h3>✅ ¡No existen contingencias ni alertas críticas pendientes!</h3>
+                                <p style="font-size:12px; color:#64748b; margin-top:6px;">Todas las medidas cautelares se encuentran dentro de sus plazos procesales legales.</p>
+                            </div>
+                        {% endif %}
+                    </div>
+
+                {% elif vista == 'historial' %}
+                    <!-- VISTA: MÓDULO 5 BITÁCORA HISTÓRICA COMPLETA -->
+                    <div class="dashboard-header" style="display:flex; justify-content:space-between; align-items:center;">
+                        <div>
+                            <h1>Módulo 5: Bitácora Procesal y Auditoría de Actuaciones</h1>
+                            <p style="font-size:13px; color:#64748b; margin-top:2px;">Trazabilidad completa de cada alta, cambio de estado y actualización procesal</p>
+                        </div>
+                        <a href="{{ url_for('dashboard', vista='dashboard') }}" class="filter-btn" style="background:#0f172a; color:white;">⬅ Volver al Dashboard</a>
+                    </div>
+
+                    <div class="table-card">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Fecha</th>
+                                    <th>Actuación Procesal Realizada</th>
+                                    <th>Responsable y Expediente Vinculado</th>
+                                    <th>Estado de Registro</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for act in historial_completo %}
+                                <tr>
+                                    <td style="font-weight:600; color:#0284c7; white-space:nowrap;">📅 {{ act.fecha }}</td>
+                                    <td><strong>{{ act.descripcion }}</strong></td>
+                                    <td style="font-size:12px; color:#475569;">{{ act.responsable }}</td>
+                                    <td><span style="font-size:10px; font-weight:700; background:#dcfce7; color:#15803d; padding:2px 8px; border-radius:10px;">Auditado</span></td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+
+                {% else %}
+                    <!-- VISTA ESTÁNDAR: DASHBOARD -->
+                    <div class="dashboard-header">
+                        <h1>Panel de Seguimiento · Demostración</h1>
+                    </div>
+
+                    <div class="stats-grid">
+                        <div class="stat-card blue">
+                            <p>Expedientes</p>
+                            <h3>{{ total_exp }})</h3>
+                        </div>
+                        <div class="stat-card orange">
+                            <p>Pendientes de ejecución</p>
+                            <h3>{{ pendientes }})</h3>
+                        </div>
+                        <div class="stat-card teal">
+                            <p>En seguimiento</p>
+                            <h3>{{ en_seguimiento }})</h3>
+                        </div>
+                        <div class="stat-card green">
+                            <p>Ejecutadas</p>
+                            <h3>{{ ejecutadas }})</h3>
+                        </div>
+                    </div>
+
+                    <div class="filter-section">
+                        <div class="filter-title">
+                            Filtros rápidos
+                            {% if dia_calendario %}
+                                <span style="font-size:12px; font-weight:normal; color:#0284c7; margin-left:8px;">
+                                    (Filtrando por actuaciones del día {{ dia_calendario }} de Octubre)
+                                </span>
+                            {% endif %}
+                        </div>
+                        <div class="filter-buttons">
+                            <a href="{{ url_for('dashboard', estado='Todos') }}" class="filter-btn {% if estado_filtro == 'Todos' and not dia_calendario %}active{% endif %}">Todos los expedientes</a>
+                            <a href="{{ url_for('dashboard', estado='Pendiente') }}" class="filter-btn {% if estado_filtro == 'Pendiente' %}active{% endif %}">Pendientes de ejecución</a>
+                            <a href="{{ url_for('dashboard', estado='En seguimiento') }}" class="filter-btn {% if estado_filtro == 'En seguimiento' %}active{% endif %}">En seguimiento</a>
+                            <a href="{{ url_for('dashboard', estado='Ejecutada') }}" class="filter-btn {% if estado_filtro == 'Ejecutada' %}active{% endif %}">Ejecutadas</a>
+                        </div>
+                    </div>
+
+                    <div class="table-card">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>N° Expediente</th>
+                                    <th>Órgano Jurisdiccional</th>
+                                    <th>Tipo de Medida</th>
+                                    <th>Responsable</th>
+                                    <th>Fecha Res.</th>
+                                    <th>Estado</th>
+                                    <th>Documento</th>
+                                    <th>Última Act.</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% if expedientes %}
+                                    {% for exp in expedientes %}
+                                    <tr>
+                                        <td><strong>{{ exp.numero_expediente }}</strong></td>
+                                        <td>{{ exp.organo_jurisdiccional }}</td>
+                                        <td>{{ exp.tipo_medida }}</td>
+                                        <td style="font-size: 12px; color: #475569;">{{ exp.responsable }}</td>
+                                        <td style="font-size: 12px; color: #64748b;">{{ exp.fecha_resolucion }}</td>
+                                        <td>
+                                            <span class="badge {{ exp.estado.replace(' ', '-') }}">{{ exp.estado }}</span>
+                                        </td>
+                                        <td>
+                                            {% if exp.documento %}
+                                                <a href="{{ url_for('ver_documento', filename=exp.documento) }}" target="_blank" class="doc-badge-link" title="Ver resolución">
+                                                    📄 Ver resolución
+                                                </a>
+                                            {% else %}
+                                                <span class="doc-badge-empty">🚫 Sin doc.</span>
+                                            {% endif %}
+                                        </td>
+                                        <td style="font-size: 12px; color: #64748b;">{{ exp.ultima_actualizacion }}</td>
+                                        <td>
+                                            <div class="action-btns">
+                                                <button type="button" class="btn-action-icon" title="Editar y Seguimiento" 
+                                                        onclick="abrirModalEditar('{{ exp.id }}', '{{ exp.numero_expediente }}', '{{ exp.estado }}', '{{ exp.responsable }}')">
+                                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#475569" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                                                </button>
+
+                                                <form action="{{ url_for('eliminar', id=exp.id) }}" method="POST" style="margin:0;" onsubmit="return confirm('¿Seguro que deseas eliminar este expediente?');">
+                                                    <button type="submit" class="btn-action-icon btn-delete-icon" title="Eliminar">
+                                                        <svg width="14" height="24" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                {% else %}
+                                    <tr>
+                                        <td colspan="9" style="text-align:center; padding: 20px; color:#64748b;">
+                                            No se encontraron expedientes para los criterios seleccionados. 
+                                            <a href="{{ url_for('dashboard') }}" style="color:#0284c7; text-decoration:none; font-weight:600;">Ver todos</a>
+                                        </td>
+                                    </tr>
+                                {% endif %}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Módulo 5: Historial Resumido al pie del Dashboard -->
+                    <div class="history-card" id="historial">
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
+                            <h3 style="margin:0;">Historial de Actuaciones Recientes</h3>
+                            <a href="{{ url_for('dashboard', vista='historial') }}" style="color:#0284c7; font-size:12px; text-decoration:none; font-weight:600;">Ver bitácora completa ➔</a>
+                        </div>
+                        <div class="timeline">
+                            {% for act in historial %}
+                            <div class="timeline-item">
+                                <span class="timeline-date">{{ act.fecha }}</span>
+                                <div class="timeline-dot"></div>
+                                <div class="timeline-info">
+                                    <strong>{{ act.descripcion }}</strong>
+                                    <span>Responsable: {{ act.responsable }}</span>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                {% endif %}
+            </main>
+
+            <!-- Sidebar Derecho -->
+            <aside class="right-sidebar">
+                <div class="widget-box" id="calendario-box">
+                    <h4>Calendario Inteligente</h4>
+                    <p style="font-size:12px; font-weight:600; text-align:center; margin-bottom:8px;">Octubre 2026</p>
+                    <table class="calendar-table">
+                        <thead>
+                            <tr><th>Lu</th><th>Ma</th><th>Mi</th><th>Ju</th><th>Vi</th><th>Sa</th><th>Do</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><span style="color:#cbd5e1;">28</span></td>
+                                <td><span style="color:#cbd5e1;">29</span></td>
+                                <td><span style="color:#cbd5e1;">30</span></td>
+                                <td><a href="{{ url_for('dashboard', dia='1') }}" class="cal-day {% if dia_calendario == '1' %}active{% endif %} {% if 1 in dias_con_actividad %}has-event{% endif %}">1</a></td>
+                                <td><a href="{{ url_for('dashboard', dia='2') }}" class="cal-day {% if dia_calendario == '2' %}active{% endif %} {% if 2 in dias_con_actividad %}has-event{% endif %}">2</a></td>
+                                <td><a href="{{ url_for('dashboard', dia='3') }}" class="cal-day {% if dia_calendario == '3' %}active{% endif %} {% if 3 in dias_con_actividad %}has-event{% endif %}">3</a></td>
+                                <td><a href="{{ url_for('dashboard', dia='4') }}" class="cal-day {% if dia_calendario == '4' %}active{% endif %} {% if 4 in dias_con_actividad %}has-event{% endif %}">4</a></td>
+                            </tr>
+                            <tr>
+                                <td><a href="{{ url_for('dashboard', dia='5') }}" class="cal-day {% if dia_calendario == '5' %}active{% endif %} {% if 5 in dias_con_actividad %}has-event{% endif %}">5</a></td>
+                                <td><a href="{{ url_for('dashboard', dia='6') }}" class="cal-day {% if dia_calendario == '6' %}active{% endif %} {% if 6 in dias_con_actividad %}has-event{% endif %}">6</a></td>
+                                <td><a href="{{ url_for('dashboard', dia='7') }}" class="cal-day {% if dia_calendario == '7' %}active{% endif %} {% if 7 in dias_con_actividad %}has-event{% endif %}">7</a></td>
+                                <td><a href="{{ url_for('dashboard', dia='8') }}" class="cal-day {% if dia_calendario == '8' %}active{% endif %} {% if 8 in dias_con_actividad %}has-event{% endif %}">8</a></td>
+                                <td><a href="{{ url_for('dashboard', dia='9') }}" class="cal-day {% if dia_calendario == '9' or not dia_calendario %}active{% endif %} {% if 9 in dias_con_actividad %}has-event{% endif %}">9</a></td>
+                                <td><a href="{{ url_for('dashboard', dia='10') }}" class="cal-day {% if dia_calendario == '10' %}active{% endif %} {% if 10 in dias_con_actividad %}has-event{% endif %}">10</a></td>
+                                <td><a href="{{ url_for('dashboard', dia='11') }}" class="cal-day {% if dia_calendario == '11' %}active{% endif %} {% if 11 in dias_con_actividad %}has-event{% endif %}">11</a></td>
+                            </tr>
+                            <tr>
+                                <td><a href="{{ url_for('dashboard', dia='12') }}" class="cal-day {% if dia_calendario == '12' %}active{% endif %} {% if 12 in dias_con_actividad %}has-event{% endif %}">12</a></td>
+                                <td><a href="{{ url_for('dashboard', dia='13') }}" class="cal-day {% if dia_calendario == '13' %}active{% endif %} {% if 13 in dias_con_actividad %}has-event{% endif %}">13</a></td>
+                                <td><a href="{{ url_for('dashboard', dia='14') }}" class="cal-day {% if dia_calendario == '14' %}active{% endif %} {% if 14 in dias_con_actividad %}has-event{% endif %}">14</a></td>
+                                <td><a href="{{ url_for('dashboard', dia='15') }}" class="cal-day {% if dia_calendario == '15' %}active{% endif %} {% if 15 in dias_con_actividad %}has-event{% endif %}">15</a></td>
+                                <td><a href="{{ url_for('dashboard', dia='16') }}" class="cal-day {% if dia_calendario == '16' %}active{% endif %} {% if 16 in dias_con_actividad %}has-event{% endif %}">16</a></td>
+                                <td><a href="{{ url_for('dashboard', dia='17') }}" class="cal-day {% if dia_calendario == '17' %}active{% endif %} {% if 17 in dias_con_actividad %}has-event{% endif %}">17</a></td>
+                                <td><a href="{{ url_for('dashboard', dia='18') }}" class="cal-day {% if dia_calendario == '18' %}active{% endif %} {% if 18 in dias_con_actividad %}has-event{% endif %}">18</a></td>
+                            </tr>
+                            <tr>
+                                <td><a href="{{ url_for('dashboard', dia='19') }}" class="cal-day {% if dia_calendario == '19' %}active{% endif %} {% if 19 in dias_con_actividad %}has-event{% endif %}">19</a></td>
+                                <td><a href="{{ url_for('dashboard', dia='20') }}" class="cal-day {% if dia_calendario == '20' %}active{% endif %} {% if 20 in dias_con_actividad %}has-event{% endif %}">20</a></td>
+                                <td><a href="{{ url_for('dashboard', dia='21') }}" class="cal-day {% if dia_calendario == '21' %}active{% endif %} {% if 21 in dias_con_actividad %}has-event{% endif %}">21</a></td>
+                                <td><a href="{{ url_for('dashboard', dia='22') }}" class="cal-day {% if dia_calendario == '22' %}active{% endif %} {% if 22 in dias_con_actividad %}has-event{% endif %}">22</a></td>
+                                <td><a href="{{ url_for('dashboard', dia='23') }}" class="cal-day {% if dia_calendario == '23' %}active{% endif %} {% if 23 in dias_con_actividad %}has-event{% endif %}">23</a></td>
+                                <td><a href="{{ url_for('dashboard', dia='24') }}" class="cal-day {% if dia_calendario == '24' %}active{% endif %} {% if 24 in dias_con_actividad %}has-event{% endif %}">24</a></td>
+                                <td><a href="{{ url_for('dashboard', dia='25') }}" class="cal-day {% if dia_calendario == '25' %}active{% endif %} {% if 25 in dias_con_actividad %}has-event{% endif %}">25</a></td>
+                            </tr>
+                            <tr>
+                                <td><a href="{{ url_for('dashboard', dia='26') }}" class="cal-day {% if dia_calendario == '26' %}active{% endif %} {% if 26 in dias_con_actividad %}has-event{% endif %}">26</a></td>
+                                <td><a href="{{ url_for('dashboard', dia='27') }}" class="cal-day {% if dia_calendario == '27' %}active{% endif %} {% if 27 in dias_con_actividad %}has-event{% endif %}">27</a></td>
+                                <td><a href="{{ url_for('dashboard', dia='28') }}" class="cal-day {% if dia_calendario == '28' %}active{% endif %} {% if 28 in dias_con_actividad %}has-event{% endif %}">28</a></td>
+                                <td><a href="{{ url_for('dashboard', dia='29') }}" class="cal-day {% if dia_calendario == '29' %}active{% endif %} {% if 29 in dias_con_actividad %}has-event{% endif %}">29</a></td>
+                                <td><a href="{{ url_for('dashboard', dia='30') }}" class="cal-day {% if dia_calendario == '30' %}active{% endif %} {% if 30 in dias_con_actividad %}has-event{% endif %}">30</a></td>
+                                <td><a href="{{ url_for('dashboard', dia='31') }}" class="cal-day {% if dia_calendario == '31' %}active{% endif %} {% if 31 in dias_con_actividad %}has-event{% endif %}">31</a></td>
+                                <td><span style="color:#cbd5e1;">1</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div class="reminders-list">
+                        <div style="display:flex; justify-content:space-between; align-items:center; font-size:11px; font-weight:700; color:#0f172a;">
+                            <span>🔔 RECORDADOR DE RECORDATORIOS</span>
+                            <a href="{{ url_for('dashboard', vista='calendario') }}" style="color:#0284c7; text-decoration:none; font-size:10px;">Ver agenda</a>
+                        </div>
+                        
+                        {% if recordatorios %}
+                            {% for rec in recordatorios[:2] %}
+                            <div class="reminder-item">
+                                <strong>{{ rec.expediente }} ({{ rec.medida }})</strong>
+                                <span>Límite de ejecución: {{ rec.fecha_vencimiento }}</span>
+                                <div class="reminder-due">
+                                    {% if rec.dias_restantes < 0 %}
+                                        ⚠️ Venció hace {{ rec.dias_restantes | abs }} días
+                                    {% elif rec.dias_restantes == 0 %}
+                                        ⏳ Vence hoy
+                                    {% else %}
+                                        ⏱️ Quedan {{ rec.dias_restantes }} días
+                                    {% endif %}
+                                </div>
+                            </div>
+                            {% endfor %}
+                        {% else %}
+                            <p style="font-size:11px; color:#64748b; font-style:italic;">No hay plazos pendientes por vencer.</p>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="widget-box" id="alertas">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+                        <h4 style="margin:0;">ALERTAS ACTIVAS</h4>
+                        <a href="{{ url_for('dashboard', vista='alertas') }}" style="font-size:10px; color:#0284c7; text-decoration:none; font-weight:600;">Ver centro</a>
+                    </div>
+                    {% if alertas_vencimiento %}
+                        {% for alerta in alertas_vencimiento %}
+                        <div class="alert-card">
+                            ⚠️ {{ alerta }}
+                        </div>
+                        {% endfor %}
+                    {% endif %}
+
+                    {% if alertas_inactivas %}
+                        {% for inactiva in alertas_inactivas %}
+                        <div class="alert-card warning">
+                            ⚠️ Falta de actualización o trámite en {{ inactiva.numero_expediente }}
+                        </div>
+                        {% endfor %}
+                    {% endif %}
+
+                    {% if not alertas_vencimiento and not alertas_inactivas %}
+                        <p style="font-size: 12px; color: #16a34a; font-weight: 500;">✅ Todas las medidas al día.</p>
+                    {% endif %}
+                </div>
+            </aside>
+        </div>
+    </div>
+
+    <!-- Modal Módulo 1 -->
+    <div id="modalExp" class="modal">
+        <div class="modal-content">
+            <h3 style="font-size:16px; font-weight:700; color:#0f172a;">Módulo 1: Registrar Expediente Cautelar</h3>
+            <form method="POST" enctype="multipart/form-data">
+                <div class="form-row">
+                    <div class="form-item">
+                        <label>Código del Expediente</label>
+                        <input type="text" name="numero_expediente" value="{{ siguiente_exp }}" required>
+                    </div>
+                    <div class="form-item">
+                        <label>Órgano Jurisdiccional</label>
+                        <select id="selectOrgano" name="organo_jurisdiccional" onchange="verificarOrgano(this.value)" required>
+                            <option value="1º Juzgado Civil">1º Juzgado Civil</option>
+                            <option value="2º Juzgado Civil">2º Juzgado Civil</option>
+                            <option value="1º Juzgado Comercial">1º Juzgado Comercial</option>
+                            <option value="2º Juzgado Comercial">2º Juzgado Comercial</option>
+                            <option value="3º Juzgado Comercial">3º Juzgado Comercial</option>
+                            <option value="1º Juzgado Mixto">1º Juzgado Mixto</option>
+                            <option value="Sala Civil Permanente">Sala Civil Permanente</option>
+                            <option value="Sala Comercial">Sala Comercial</option>
+                            <option value="Otro">Otro (Ingresar manualmente)...</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-item" id="cajaOrganoManual" style="display: none; margin-top: 4px;">
+                    <label>Escriba el Órgano Jurisdiccional:</label>
+                    <input type="text" id="inputOrganoManual" name="organo_manual" placeholder="Ej: Juzgado de Paz Letrado de Lima">
+                </div>
+
+                <div class="form-row">
+                    <div class="form-item">
+                        <label>Tipo de Medida Cautelar</label>
+                        <select name="tipo_medida">
+                            <option value="Embargo">Embargo</option>
+                            <option value="Secuestro">Secuestro</option>
+                            <option value="Inscripción">Inscripción</option>
+                            <option value="Innovativa">Medida Innovativa</option>
+                            <option value="No Innovar">Prohibición de Innovar</option>
+                        </select>
+                    </div>
+                    <div class="form-item">
+                        <label>Estado de la Medida</label>
+                        <select name="estado">
+                            <option value="Pendiente">Pendiente de ejecución</option>
+                            <option value="En seguimiento">En seguimiento</option>
+                            <option value="Concedida">Concedida</option>
+                            <option value="En revisión">En revisión</option>
+                            <option value="Ejecutada">Ejecutada</option>
+                            <option value="Levantada">Levantada</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-item">
+                        <label>Fecha de la Resolución</label>
+                        <input type="date" name="fecha_resolucion" required>
+                    </div>
+                    <div class="form-item">
+                        <label>Responsable del Seguimiento</label>
+                        <div class="input-group-responsable">
+                            <select name="titulo_responsable">
+                                <option value="Dr.">Dr.</option>
+                                <option value="Dra.">Dra.</option>
+                                <option value="Abg.">Abg.</option>
+                                <option value="Lic.">Lic.</option>
+                                <option value="Bach.">Bach.</option>
+                                <option value="Ninguno">--</option>
+                            </select>
+                            <input type="text" name="responsable" required placeholder="Apellidos y Nombres">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-item">
+                    <label>Adjuntar Resolución / Documento (Opcional):</label>
+                    <input type="file" name="archivo_documento" accept=".pdf,.doc,.docx,.png,.jpg,.jpeg">
+                </div>
+
+                <div style="display:flex; justify-content:flex-end; gap:8px; margin-top:12px;">
+                    <button type="button" onclick="cerrarModal()" style="padding:8px 14px; border:1px solid #cbd5e1; background:white; border-radius:6px; cursor:pointer;">Cancelar</button>
+                    <button type="submit" style="padding:8px 14px; background:#0f172a; color:white; border:none; border-radius:6px; cursor:pointer; font-weight:600;">Guardar Expediente</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal Módulo 2 -->
+    <div id="modalEditar" class="modal">
+        <div class="modal-content">
+            <h3 style="font-size:16px; font-weight:700; color:#0f172a;">Módulo 2: Seguimiento y Cambio de Estado</h3>
+            <p id="editExpTitulo" style="font-size:13px; font-weight:600; color:#0284c7; margin-bottom:4px;"></p>
+            <form id="formEditar" method="POST" enctype="multipart/form-data">
+                <div class="form-item">
+                    <label>Nuevo Estado de la Medida</label>
+                    <select id="editEstado" name="estado" required>
+                        <option value="Pendiente">Pendiente de ejecución</option>
+                        <option value="En seguimiento">En seguimiento</option>
+                        <option value="Concedida">Concedida</option>
+                        <option value="En revisión">En revisión</option>
+                        <option value="Ejecutada">Ejecutada</option>
+                        <option value="Levantada">Levantada</option>
+                    </select>
+                </div>
+
+                <div class="form-item">
+                    <label>Responsable a Cargo</label>
+                    <div class="input-group-responsable">
+                        <select id="editTituloResponsable" name="titulo_responsable">
+                            <option value="Dr.">Dr.</option>
+                            <option value="Dra.">Dra.</option>
+                            <option value="Abg.">Abg.</option>
+                            <option value="Lic.">Lic.</option>
+                            <option value="Bach.">Bach.</option>
+                            <option value="Ninguno">--</option>
+                        </select>
+                        <input type="text" id="editResponsable" name="responsable" required placeholder="Apellidos y Nombres">
+                    </div>
+                </div>
+
+                <div class="form-item">
+                    <label>Adjuntar / Actualizar Documento (Opcional):</label>
+                    <input type="file" name="archivo_documento" accept=".pdf,.doc,.docx,.png,.jpg,.jpeg">
+                </div>
+
+                <div style="display:flex; justify-content:flex-end; gap:8px; margin-top:12px;">
+                    <button type="button" onclick="cerrarModalEditar()" style="padding:8px 14px; border:1px solid #cbd5e1; background:white; border-radius:6px; cursor:pointer;">Cancelar</button>
+                    <button type="submit" style="padding:8px 14px; background:#0284c7; color:white; border:none; border-radius:6px; cursor:pointer; font-weight:600;">Actualizar Estado</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function abrirModal() { document.getElementById('modalExp').style.display = 'flex'; }
+        function cerrarModal() { document.getElementById('modalExp').style.display = 'none'; }
+
+        function abrirModalEditar(id, num, estado, responsableCompleto) {
+            document.getElementById('editExpTitulo').innerText = 'Expediente: ' + num;
+            document.getElementById('editEstado').value = estado;
+            document.getElementById('formEditar').action = '/editar/' + id;
+
+            const prefijos = ['Dr.', 'Dra.', 'Abg.', 'Lic.', 'Bach.'];
+            let partes = responsableCompleto.trim().split(' ');
+            let prefijoEncontrado = 'Ninguno';
+            let nombreLimpio = responsableCompleto;
+
+            if (partes.length > 1 && prefijos.includes(partes[0])) {
+                prefijoEncontrado = partes[0];
+                nombreLimpio = partes.slice(1).join(' ');
+            }
+
+            document.getElementById('editTituloResponsable').value = prefijoEncontrado;
+            document.getElementById('editResponsable').value = nombreLimpio;
+
+            document.getElementById('modalEditar').style.display = 'flex';
+        }
+
+        function cerrarModalEditar() { document.getElementById('modalEditar').style.display = 'none'; }
+
+        function verificarOrgano(valor) {
+            const cajaManual = document.getElementById('cajaOrganoManual');
+            const inputManual = document.getElementById('inputOrganoManual');
+            if (valor === 'Otro') {
+                cajaManual.style.display = 'block';
+                inputManual.required = true;
+                inputManual.focus();
+            } else {
+                cajaManual.style.display = 'none';
+                inputManual.required = false;
+            }
+        }
+    </script>
+</body>
+</html>
