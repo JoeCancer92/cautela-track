@@ -1,962 +1,694 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CAUTELA TRACK - Panel de Seguimiento</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
-        body { background-color: #f0f4f8; display: flex; min-height: 100vh; color: #1e293b; }
-
-        .sidebar {
-            width: 250px;
-            background: white;
-            border-right: 1px solid #e2e8f0;
-            padding: 24px 16px;
-            display: flex;
-            flex-direction: column;
-            gap: 24px;
-            flex-shrink: 0;
-        }
-        .logo-box {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding-bottom: 12px;
-            border-bottom: 1px solid #f1f5f9;
-        }
-        .logo-icon {
-            width: 40px;
-            height: 40px;
-            background: #0284c7;
-            color: white;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 800;
-            font-size: 20px;
-            flex-shrink: 0;
-        }
-        .logo-text h2 { font-size: 16px; font-weight: 800; color: #0369a1; line-height: 1.1; }
-        .logo-text span { font-size: 10px; color: #64748b; display: block; }
-        .nav-list { list-style: none; display: flex; flex-direction: column; gap: 6px; }
-        .nav-item a {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 10px 14px;
-            border-radius: 8px;
-            color: #475569;
-            text-decoration: none;
-            font-size: 14px;
-            font-weight: 500;
-            cursor: pointer;
-        }
-        .nav-item.active a, .nav-item a:hover {
-            background-color: #e0f2fe;
-            color: #0284c7;
-            font-weight: 600;
-        }
-
-        .main-wrapper { flex: 1; display: flex; flex-direction: column; min-width: 0; }
-        .topbar {
-            height: 60px;
-            background: white;
-            border-bottom: 1px solid #e2e8f0;
-            display: flex;
-            justify-content: flex-end;
-            align-items: center;
-            padding: 0 32px;
-            gap: 16px;
-            color: #64748b;
-        }
-        .content { display: grid; grid-template-columns: 1fr 310px; gap: 24px; padding: 24px 32px; }
-
-        .dashboard-header { margin-bottom: 20px; }
-        .dashboard-header h1 { font-size: 20px; font-weight: 800; color: #0f172a; text-transform: uppercase; }
-
-        .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 24px; }
-        .stat-card {
-            padding: 16px 18px;
-            border-radius: 12px;
-            color: white;
-            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
-        }
-        .stat-card.blue { background: #1d72b8; }
-        .stat-card.orange { background: #f28b44; }
-        .stat-card.teal { background: #00a4b4; }
-        .stat-card.green { background: #00a65a; }
-        .stat-card p { font-size: 13px; font-weight: 500; margin-bottom: 4px; opacity: 0.95; }
-        .stat-card h3 { font-size: 28px; font-weight: 700; }
-
-        .filter-section { margin-bottom: 16px; }
-        .filter-title { font-size: 14px; font-weight: 700; color: #0f172a; margin-bottom: 8px; }
-        .filter-buttons { display: flex; gap: 8px; flex-wrap: wrap; }
-        .filter-btn {
-            background: white;
-            border: 1px solid #cbd5e1;
-            padding: 7px 14px;
-            border-radius: 8px;
-            font-size: 12px;
-            font-weight: 600;
-            color: #475569;
-            text-decoration: none;
-            transition: all 0.2s;
-        }
-        .filter-btn.active { background: #0f172a; color: white; border-color: #0f172a; }
-
-        .table-card {
-            background: white;
-            border-radius: 12px;
-            padding: 16px;
-            border: 1px solid #e2e8f0;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
-            margin-bottom: 24px;
-            overflow-x: auto;
-            -webkit-overflow-scrolling: touch;
-        }
-        table { width: 100%; border-collapse: collapse; font-size: 13px; min-width: 650px; }
-        th { text-align: left; padding: 12px 10px; color: #334155; font-weight: 700; border-bottom: 2px solid #f1f5f9; white-space: nowrap; }
-        td { padding: 12px 10px; border-bottom: 1px solid #f8fafc; color: #334155; vertical-align: middle; }
-        
-        .badge {
-            display: inline-block;
-            padding: 4px 10px;
-            border-radius: 20px;
-            font-size: 11px;
-            font-weight: 600;
-            white-space: nowrap;
-        }
-        .badge.Pendiente { background: #ffedd5; color: #c2410c; }
-        .badge.En-seguimiento { background: #e0f2fe; color: #0284c7; }
-        .badge.Ejecutada { background: #dcfce7; color: #15803d; }
-        .badge.Concedida { background: #fef08a; color: #854d0e; }
-        .badge.En-revisión { background: #f3e8ff; color: #7e22ce; }
-        .badge.Levantada { background: #f1f5f9; color: #475569; }
-
-        .doc-badge-empty { color: #94a3b8; font-size: 11px; font-style: italic; display: inline-flex; align-items: center; gap: 4px; }
-        .doc-badge-link {
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-            background: #e0f2fe;
-            color: #0284c7;
-            padding: 4px 8px;
-            border-radius: 6px;
-            text-decoration: none;
-            font-size: 11px;
-            font-weight: 600;
-            border: 1px solid #bae6fd;
-            transition: all 0.15s;
-        }
-        .doc-badge-link:hover { background: #0284c7; color: white; }
-
-        .action-btns { display: flex; gap: 6px; }
-        .btn-action-icon {
-            background: #f8fafc;
-            border: 1px solid #cbd5e1;
-            border-radius: 6px;
-            padding: 6px 8px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: background 0.15s;
-        }
-        .btn-action-icon:hover { background: #e2e8f0; }
-        .btn-delete-icon:hover { background: #fee2e2; border-color: #fca5a5; }
-
-        /* Estilos de las vistas dedicadas (Agenda, Alertas, Historial) */
-        .agenda-container {
-            display: flex;
-            flex-direction: column;
-            gap: 14px;
-            max-height: 600px;
-            overflow-y: auto;
-            padding-right: 6px;
-        }
-        .agenda-day-card {
-            background: white;
-            border: 1px solid #e2e8f0;
-            border-radius: 10px;
-            padding: 14px 18px;
-        }
-        .agenda-day-header {
-            font-size: 13px;
-            font-weight: 700;
-            color: #0f172a;
-            border-bottom: 1px solid #f1f5f9;
-            padding-bottom: 8px;
-            margin-bottom: 10px;
-            display: flex;
-            justify-content: space-between;
-        }
-        .agenda-event-box {
-            background: #f8fafc;
-            border-left: 4px solid #0284c7;
-            border-radius: 6px;
-            padding: 8px 12px;
-            margin-bottom: 8px;
-            font-size: 12px;
-        }
-        .agenda-event-box:last-child { margin-bottom: 0; }
-        .agenda-event-box.limite { border-left-color: #e11d48; background: #fff1f2; }
-
-        /* Tarjeta de Alerta Didáctica */
-        .alert-detail-card {
-            background: white;
-            border-radius: 10px;
-            border: 1px solid #e2e8f0;
-            padding: 16px 20px;
-            margin-bottom: 12px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.02);
-        }
-        .alert-detail-card.critica { border-left: 5px solid #ef4444; }
-        .alert-detail-card.urgente { border-left: 5px solid #f59e0b; }
-        .alert-detail-card.preventiva { border-left: 5px solid #0284c7; }
-
-        .history-card {
-            background: white;
-            border-radius: 12px;
-            padding: 20px;
-            border: 1px solid #e2e8f0;
-        }
-        .history-card h3 { font-size: 15px; font-weight: 700; margin-bottom: 14px; }
-        .timeline { display: flex; flex-direction: column; gap: 14px; }
-        .timeline-item { display: flex; gap: 14px; font-size: 12px; }
-        .timeline-date { color: #64748b; font-weight: 600; width: 65px; flex-shrink: 0; }
-        .timeline-dot { width: 8px; height: 8px; background: #0284c7; border-radius: 50%; margin-top: 4px; flex-shrink: 0; }
-        .timeline-info strong { display: block; color: #0f172a; margin-bottom: 2px; }
-        .timeline-info span { color: #64748b; }
-
-        .right-sidebar { display: flex; flex-direction: column; gap: 20px; }
-        .widget-box {
-            background: white;
-            border-radius: 12px;
-            padding: 18px;
-            border: 1px solid #e2e8f0;
-        }
-        .widget-box h4 { font-size: 14px; font-weight: 700; margin-bottom: 12px; }
-        
-        .calendar-table { width: 100%; text-align: center; font-size: 11px; min-width: 0; }
-        .calendar-table th { padding: 4px; color: #94a3b8; font-weight: 500; border: none; }
-        .calendar-table td { padding: 4px; border: none; }
-        
-        .cal-day {
-            display: inline-flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            width: 28px;
-            height: 28px;
-            border-radius: 50%;
-            text-decoration: none;
-            color: #334155;
-            position: relative;
-            font-weight: 500;
-            transition: all 0.15s;
-        }
-        .cal-day:hover { background: #e0f2fe; color: #0284c7; }
-        .cal-day.active { background: #0f172a !important; color: white !important; font-weight: 700; }
-        .cal-day.has-event { font-weight: 700; color: #0284c7; }
-        .cal-day.has-event::after {
-            content: '';
-            width: 4px;
-            height: 4px;
-            background: #0284c7;
-            border-radius: 50%;
-            position: absolute;
-            bottom: 2px;
-        }
-        .cal-day.active.has-event::after { background: #38bdf8; }
-
-        .reminders-list {
-            margin-top: 14px;
-            padding-top: 12px;
-            border-top: 1px solid #f1f5f9;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-        .reminder-item {
-            background: #f8fafc;
-            border: 1px solid #e2e8f0;
-            border-radius: 8px;
-            padding: 8px 10px;
-            font-size: 11px;
-        }
-        .reminder-item strong { color: #0f172a; display: block; }
-        .reminder-item span { color: #64748b; }
-        .reminder-due {
-            display: inline-block;
-            margin-top: 4px;
-            font-size: 10px;
-            font-weight: 700;
-            color: #d97706;
-        }
-
-        .alert-card {
-            background: #fee2e2;
-            border-left: 4px solid #ef4444;
-            padding: 10px 12px;
-            border-radius: 6px;
-            margin-bottom: 10px;
-            font-size: 12px;
-            color: #991b1b;
-            font-weight: 500;
-        }
-        .alert-card.warning {
-            background: #fef3c7;
-            border-left-color: #f59e0b;
-            color: #92400e;
-        }
-
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(15, 23, 42, 0.6);
-            align-items: center; justify-content: center;
-            z-index: 100;
-            padding: 16px;
-        }
-        .modal-content {
-            background: white;
-            border-radius: 12px;
-            padding: 24px;
-            width: 100%;
-            max-width: 520px;
-            max-height: 90vh;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
-        }
-        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-        .form-item label { display: block; font-size: 12px; font-weight: 600; color: #334155; margin-bottom: 4px; }
-        .modal-content input, .modal-content select {
-            width: 100%; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px;
-        }
-
-        .input-group-responsable { display: flex; gap: 6px; }
-        .input-group-responsable select { width: 95px; flex-shrink: 0; background-color: #f8fafc; font-weight: 600; }
-        .input-group-responsable input { flex: 1; }
-
-        /* ================= REGLAS RESPONSIVE (MÓVIL Y TABLET) ================= */
-        @media (max-width: 1024px) {
-            .content { grid-template-columns: 1fr; }
-            .stats-grid { grid-template-columns: repeat(2, 1fr); }
-        }
-
-        @media (max-width: 768px) {
-            body { flex-direction: column; }
-            .sidebar {
-                width: 100%;
-                border-right: none;
-                border-bottom: 1px solid #e2e8f0;
-                padding: 16px;
-                gap: 14px;
-            }
-            .nav-list { flex-direction: row; flex-wrap: wrap; }
-            .nav-item a { padding: 6px 10px; font-size: 12px; }
-            .topbar { padding: 0 16px; height: 50px; }
-            .content { padding: 16px; }
-            .stats-grid { grid-template-columns: 1fr; gap: 10px; }
-            .form-row { grid-template-columns: 1fr; }
-            .alert-detail-card { flex-direction: column; align-items: flex-start; gap: 10px; }
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Títulos en Acción · Verificador CPC-Check</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Lucide Icons CDN -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    @media print {
+      body * { visibility: hidden; }
+      #printableReport, #printableReport * { visibility: visible; }
+      #printableReport { position: absolute; left: 0; top: 0; width: 100%; }
+    }
+  </style>
 </head>
-<body>
+<body class="bg-slate-100 text-slate-800 font-sans min-h-screen flex flex-col">
 
-    <!-- Menú Lateral -->
-    <aside class="sidebar">
-        <div class="logo-box">
-            <div class="logo-icon">C</div>
-            <div class="logo-text">
-                <h2>CAUTELA<br>TRACK</h2>
-                <span>Plataforma digital de medidas cautelares</span>
+  <!-- NAVBAR -->
+  <header class="bg-slate-900 text-white shadow sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-3">
+      <div class="flex items-center space-x-3 cursor-pointer" onclick="navegar('inicio')">
+        <div class="bg-amber-600 p-2 rounded-lg text-white">
+          <i data-lucide="scale" class="w-6 h-6"></i>
+        </div>
+        <div>
+          <span class="text-xl font-bold tracking-tight block">TÍTULOS EN ACCIÓN</span>
+          <span class="text-xs text-slate-400 block -mt-1">Motor de Reglas & Proceso Único de Ejecución</span>
+        </div>
+      </div>
+
+      <nav class="flex items-center flex-wrap gap-1 text-sm font-medium">
+        <button onclick="navegar('inicio')" id="nav-inicio" class="nav-btn px-3 py-1.5 rounded-md hover:bg-slate-800 transition text-amber-400">Inicio</button>
+        <button onclick="navegar('titulos')" id="nav-titulos" class="nav-btn px-3 py-1.5 rounded-md hover:bg-slate-800 transition text-slate-300">Títulos Valores</button>
+        <button onclick="navegar('verificador')" id="nav-verificador" class="nav-btn px-3 py-1.5 rounded-md hover:bg-slate-800 transition text-slate-300">Verificador Jurídico (OCR)</button>
+        <button onclick="navegar('simulador')" id="nav-simulador" class="nav-btn px-3 py-1.5 rounded-md hover:bg-slate-800 transition text-slate-300">Simulador</button>
+        <button onclick="navegar('calculadora')" id="nav-calculadora" class="nav-btn px-3 py-1.5 rounded-md hover:bg-slate-800 transition text-slate-300">Calculadora</button>
+        <button onclick="navegar('ejecucion')" id="nav-ejecucion" class="nav-btn px-3 py-1.5 rounded-md hover:bg-slate-800 transition text-slate-300">Proceso Judicial</button>
+      </nav>
+    </div>
+  </header>
+
+  <!-- CONTENIDO PRINCIPAL -->
+  <main class="max-w-7xl mx-auto px-4 py-8 flex-1 w-full">
+
+    <!-- SECCIÓN 1: INICIO -->
+    <section id="sec-inicio" class="space-y-8">
+      <div class="bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 rounded-2xl p-8 md:p-12 text-white shadow-xl flex flex-col md:flex-row items-center justify-between gap-8">
+        <div class="space-y-4 max-w-2xl">
+          <span class="inline-block bg-amber-500/20 text-amber-400 border border-amber-500/30 text-xs px-3 py-1 rounded-full uppercase tracking-wider font-semibold">
+            Innovación Jurídica & LegalTech
+          </span>
+          <h1 class="text-4xl md:text-5xl font-extrabold tracking-tight">TÍTULOS EN ACCIÓN</h1>
+          <p class="text-slate-300 text-base md:text-lg">
+            Plataforma interactiva para el control de títulos valores y calificación de demandas en el <strong>Proceso Único de Ejecución</strong> (Arts. 688 y 689 del CPC).
+          </p>
+          <div class="pt-2 flex flex-wrap gap-3">
+            <button onclick="navegar('verificador')" class="bg-amber-600 hover:bg-amber-700 text-white font-semibold px-6 py-2.5 rounded-lg shadow transition flex items-center gap-2">
+              <i data-lucide="file-check-2" class="w-5 h-5"></i> Probar Verificador Jurídico
+            </button>
+            <button onclick="navegar('titulos')" class="bg-slate-800 hover:bg-slate-700 text-slate-200 px-6 py-2.5 rounded-lg border border-slate-700 transition">
+              Guía de Títulos Valores
+            </button>
+          </div>
+        </div>
+        <div class="bg-slate-800/60 p-6 rounded-xl border border-slate-700 max-w-sm w-full backdrop-blur-sm text-sm space-y-3">
+          <div class="flex items-center gap-2 font-bold text-amber-400">
+            <i data-lucide="shield-check" class="w-5 h-5"></i> Reglas de Negocio Automatizadas
+          </div>
+          <p class="text-slate-300">Valida en segundos los 3 pilares del Art. 689 CPC:</p>
+          <ul class="space-y-1.5 text-xs text-slate-300">
+            <li class="flex items-center gap-2"><span class="text-emerald-400 font-bold">✔</span> <strong>Certeza:</strong> Sujetos plenamente identificados.</li>
+            <li class="flex items-center gap-2"><span class="text-emerald-400 font-bold">✔</span> <strong>Exigibilidad:</strong> Plazo vencido y sin prescripción (Art. 18 LTV).</li>
+            <li class="flex items-center gap-2"><span class="text-emerald-400 font-bold">✔</span> <strong>Liquidez:</strong> Monto determinado o determinable.</li>
+          </ul>
+        </div>
+      </div>
+
+      <h2 class="text-xl font-bold text-slate-900 border-b pb-2">Módulos del Sistema</h2>
+      <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
+        <div onclick="navegar('titulos')" class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm hover:shadow-md cursor-pointer transition text-center space-y-2">
+          <div class="w-12 h-12 bg-blue-50 text-blue-600 mx-auto rounded-lg flex items-center justify-center">
+            <i data-lucide="book-open" class="w-6 h-6"></i>
+          </div>
+          <h3 class="font-bold text-slate-900">Títulos Valores</h3>
+          <p class="text-xs text-slate-500">Pagaré, Letra de cambio, Cheque y requisitos formales.</p>
+        </div>
+
+        <div onclick="navegar('verificador')" class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm hover:shadow-md cursor-pointer transition text-center space-y-2">
+          <div class="w-12 h-12 bg-emerald-50 text-emerald-600 mx-auto rounded-lg flex items-center justify-center">
+            <i data-lucide="shield-alert" class="w-6 h-6"></i>
+          </div>
+          <h3 class="font-bold text-slate-900">Verificador CPC</h3>
+          <p class="text-xs text-slate-500">Simulación OCR, prescripción y reporte de ejecutabilidad.</p>
+        </div>
+
+        <div onclick="navegar('calculadora')" class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm hover:shadow-md cursor-pointer transition text-center space-y-2">
+          <div class="w-12 h-12 bg-amber-50 text-amber-600 mx-auto rounded-lg flex items-center justify-center">
+            <i data-lucide="calculator" class="w-6 h-6"></i>
+          </div>
+          <h3 class="font-bold text-slate-900">Calculadora</h3>
+          <p class="text-xs text-slate-500">Intereses legales y compensatorios (Art. 689 CPC).</p>
+        </div>
+
+        <div onclick="navegar('ejecucion')" class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm hover:shadow-md cursor-pointer transition text-center space-y-2">
+          <div class="w-12 h-12 bg-purple-50 text-purple-600 mx-auto rounded-lg flex items-center justify-center">
+            <i data-lucide="gavel" class="w-6 h-6"></i>
+          </div>
+          <h3 class="font-bold text-slate-900">Flujo Judicial</h3>
+          <p class="text-xs text-slate-500">Demanda, mandato ejecutivo y contradicción judicial.</p>
+        </div>
+
+        <div onclick="navegar('simulador')" class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm hover:shadow-md cursor-pointer transition text-center space-y-2">
+          <div class="w-12 h-12 bg-rose-50 text-rose-600 mx-auto rounded-lg flex items-center justify-center">
+            <i data-lucide="puzzle" class="w-6 h-6"></i>
+          </div>
+          <h3 class="font-bold text-slate-900">Casos Prácticos</h3>
+          <p class="text-xs text-slate-500">Aprende resolviendo contingencias cambiarias reales.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECCIÓN 2: TÍTULOS VALORES (MARCO TEÓRICO ART. 688 CPC) -->
+    <section id="sec-titulos" class="hidden space-y-6">
+      <div class="border-b pb-4">
+        <h2 class="text-2xl font-bold text-slate-900">Títulos Valores y Títulos Ejecutivos</h2>
+        <p class="text-slate-600 text-sm">Sustento normativo en base al Art. 688 del Código Procesal Civil y la Ley N° 27287.</p>
+      </div>
+
+      <div class="flex gap-2 border-b pb-2">
+        <button onclick="tabTitulo('pagare')" id="tab-pagare" class="tab-title-btn px-4 py-2 font-semibold text-sm rounded-lg bg-slate-900 text-white">Pagaré</button>
+        <button onclick="tabTitulo('letra')" id="tab-letra" class="tab-title-btn px-4 py-2 font-semibold text-sm rounded-lg bg-slate-200 text-slate-700">Letra de Cambio</button>
+        <button onclick="tabTitulo('cheque')" id="tab-cheque" class="tab-title-btn px-4 py-2 font-semibold text-sm rounded-lg bg-slate-200 text-slate-700">Cheque</button>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="md:col-span-2 bg-white p-6 rounded-xl border shadow-sm space-y-4">
+          <div id="content-titulo-detalle">
+            <!-- Dinámico -->
+          </div>
+        </div>
+
+        <div class="bg-white p-6 rounded-xl border shadow-sm space-y-4">
+          <h3 class="font-bold text-slate-900 text-sm uppercase tracking-wider text-slate-500">Principios Cambiarios</h3>
+          <ul class="space-y-3 text-sm">
+            <li class="flex items-start gap-2">
+              <i data-lucide="check-circle-2" class="w-5 h-5 text-emerald-600 shrink-0 mt-0.5"></i>
+              <div><strong>Literalidad:</strong> El derecho se limita estrictamente a lo consignado en el texto del documento.</div>
+            </li>
+            <li class="flex items-start gap-2">
+              <i data-lucide="check-circle-2" class="w-5 h-5 text-emerald-600 shrink-0 mt-0.5"></i>
+              <div><strong>Autonomía:</strong> Cada tenedor adquiere un derecho propio, desvinculado de relaciones anteriores.</div>
+            </li>
+            <li class="flex items-start gap-2">
+              <i data-lucide="check-circle-2" class="w-5 h-5 text-emerald-600 shrink-0 mt-0.5"></i>
+              <div><strong>Incorporación:</strong> El derecho patrimonial está indisolublemente unido al soporte material.</div>
+            </li>
+            <li class="flex items-start gap-2">
+              <i data-lucide="check-circle-2" class="w-5 h-5 text-emerald-600 shrink-0 mt-0.5"></i>
+              <div><strong>Destino Circulatorio:</strong> Creados por ley para transmitirse mediante endoso o cesión.</div>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECCIÓN 3: VERIFICADOR JURÍDICO (CPC-CHECK & MOTOR DE REGLAS) -->
+    <section id="sec-verificador" class="hidden space-y-6">
+      <div class="border-b pb-4 flex flex-wrap items-center justify-between gap-4">
+        <div>
+          <h2 class="text-2xl font-bold text-slate-900">Verificador Jurídico de Ejecutabilidad</h2>
+          <p class="text-slate-600 text-sm">Validación inteligente según Arts. 688, 689 del CPC y Ley N° 27287.</p>
+        </div>
+        <button onclick="cargarMockOCR()" class="bg-indigo-50 border border-indigo-200 text-indigo-700 hover:bg-indigo-100 text-xs font-semibold px-3 py-2 rounded-lg flex items-center gap-1.5 transition">
+          <i data-lucide="scan-line" class="w-4 h-4"></i> Simular Lectura OCR de Título Valor
+        </button>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <!-- FORMULARIO DE INGRESO / OCR -->
+        <div class="lg:col-span-5 bg-white p-6 rounded-xl border shadow-sm space-y-4">
+          <h3 class="font-bold text-slate-900 flex items-center gap-2">
+            <i data-lucide="file-input" class="w-5 h-5 text-amber-600"></i> Datos del Título Ejecutivo
+          </h3>
+
+          <div class="space-y-3 text-sm">
+            <div>
+              <label class="block font-medium text-slate-700 mb-1">Tipo de Título</label>
+              <select id="v_tipo" class="w-full border rounded-lg p-2 bg-slate-50 focus:ring-2 focus:ring-amber-500 outline-none">
+                <option value="pagare">Pagaré</option>
+                <option value="letra">Letra de Cambio</option>
+                <option value="acta">Acta de Conciliación con Acuerdo Total</option>
+              </select>
             </div>
+
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label class="block font-medium text-slate-700 mb-1">Monto de la Deuda</label>
+                <input id="v_monto" type="number" placeholder="Ej. 15000" class="w-full border rounded-lg p-2 bg-slate-50 focus:ring-2 focus:ring-amber-500 outline-none">
+              </div>
+              <div>
+                <label class="block font-medium text-slate-700 mb-1">Moneda</label>
+                <select id="v_moneda" class="w-full border rounded-lg p-2 bg-slate-50">
+                  <option value="PEN">Soles (S/)</option>
+                  <option value="USD">Dólares (US$)</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label class="block font-medium text-slate-700 mb-1">Fecha Emisión</label>
+                <input id="v_femision" type="date" class="w-full border rounded-lg p-2 bg-slate-50">
+              </div>
+              <div>
+                <label class="block font-medium text-slate-700 mb-1">Fecha Vencimiento</label>
+                <input id="v_fvencimiento" type="date" class="w-full border rounded-lg p-2 bg-slate-50">
+              </div>
+            </div>
+
+            <div>
+              <label class="block font-medium text-slate-700 mb-1">Acreedor / Demandante</label>
+              <input id="v_acreedor" type="text" placeholder="Ej. Banco Continental o Juan Pérez" class="w-full border rounded-lg p-2 bg-slate-50">
+            </div>
+
+            <div>
+              <label class="block font-medium text-slate-700 mb-1">Deudor / Obligado Principal</label>
+              <input id="v_deudor" type="text" placeholder="Ej. Carlos Mendoza Sánchez" class="w-full border rounded-lg p-2 bg-slate-50">
+            </div>
+
+            <div class="pt-2 border-t space-y-2">
+              <label class="flex items-center gap-2 cursor-pointer">
+                <input id="v_protesto" type="checkbox" class="w-4 h-4 rounded text-amber-600 focus:ring-amber-500" checked>
+                <span class="text-xs text-slate-700">Contiene cláusula <strong>"Sin Protesto"</strong> o cuenta con protesto notarial</span>
+              </label>
+
+              <label class="flex items-center gap-2 cursor-pointer">
+                <input id="v_firma" type="checkbox" class="w-4 h-4 rounded text-amber-600 focus:ring-amber-500" checked>
+                <span class="text-xs text-slate-700">Firma manuscrita / digital válida del obligado principal</span>
+              </label>
+            </div>
+
+            <button onclick="analizarTitulo()" class="w-full mt-4 bg-slate-900 hover:bg-slate-800 text-white font-semibold py-2.5 rounded-lg shadow transition flex items-center justify-center gap-2">
+              <i data-lucide="play" class="w-4 h-4 text-amber-400"></i> Ejecutar Análisis Jurídico
+            </button>
+          </div>
         </div>
-        <ul class="nav-list">
-            <li class="nav-item {% if vista == 'dashboard' and estado_filtro != 'Seguimiento_Procesal' and not dia_calendario %}active{% endif %}">
-                <a href="{{ url_for('dashboard', vista='dashboard') }}">📊 Dashboard</a>
-            </li>
-            <li class="nav-item">
-                <a onclick="abrirModal()">📄 Registro de expedientes</a>
-            </li>
-            <li class="nav-item {% if estado_filtro == 'Seguimiento_Procesal' %}active{% endif %}">
-                <a href="{{ url_for('dashboard', vista='dashboard', estado='Seguimiento_Procesal') }}" title="Filtrar medidas activas">
-                    📋 Seguimiento
-                </a>
-            </li>
-            <li class="nav-item {% if vista == 'calendario' %}active{% endif %}">
-                <a href="{{ url_for('dashboard', vista='calendario') }}" title="Abrir agenda procesal del mes">
-                    📅 Calendario
-                </a>
-            </li>
-            <li class="nav-item {% if vista == 'alertas' %}active{% endif %}">
-                <a href="{{ url_for('dashboard', vista='alertas') }}" title="Ver Centro de Alertas y Plazos Críticos">
-                    🔔 Alertas
-                </a>
-            </li>
-            <li class="nav-item {% if vista == 'historial' %}active{% endif %}">
-                <a href="{{ url_for('dashboard', vista='historial') }}" title="Ver Bitácora de Trazabilidad Completa">
-                    🕒 Historial
-                </a>
-            </li>
-        </ul>
-    </aside>
 
-    <div class="main-wrapper">
-        <header class="topbar">
-            <span>❓ Ayuda</span>
-            <span>🔔</span>
-            <span>👤 Usuario</span>
-        </header>
+        <!-- REPORTE DE RESULTADOS (FASE 4: ENTREGABLE) -->
+        <div class="lg:col-span-7 bg-white p-6 rounded-xl border shadow-sm flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between border-b pb-3 mb-4">
+              <div>
+                <h3 class="font-bold text-slate-900">Dictamen de Calificación Cambiaria</h3>
+                <span class="text-xs text-slate-500">Evaluación de procedibilidad del mandato ejecutivo</span>
+              </div>
+              <div id="badge-score" class="text-right">
+                <span class="text-xs font-semibold text-slate-400 block">SCORE EJECUTABILIDAD</span>
+                <span class="text-2xl font-extrabold text-slate-400">--%</span>
+              </div>
+            </div>
 
-        <div class="content">
-            <main>
-                {% if vista == 'calendario' %}
-                    <!-- VISTA: MÓDULO 3 AGENDA PROCESAL -->
-                    <div class="dashboard-header" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
-                        <div>
-                            <h1>Módulo 3: Agenda Procesal y Plazos Cautelares</h1>
-                            <p style="font-size:13px; color:#64748b; margin-top:2px;">Programación detallada de actuaciones y límites procesales de Octubre 2026</p>
-                        </div>
-                        <a href="{{ url_for('dashboard', vista='dashboard') }}" class="filter-btn" style="background:#0f172a; color:white;">⬅ Volver al Dashboard</a>
-                    </div>
+            <div id="resultado-vacio" class="py-12 text-center text-slate-400 space-y-2">
+              <i data-lucide="clipboard-check" class="w-12 h-12 mx-auto stroke-1"></i>
+              <p class="text-sm">Ingresa los datos del título valor o pulsa "Simular Lectura OCR" para contrastar contra el motor de reglas.</p>
+            </div>
 
-                    <div class="agenda-container">
-                        {% for d in range(1, 32) %}
-                            {% if agenda_dias[d] %}
-                            <div class="agenda-day-card" style="border-left: 4px solid #0284c7;">
-                                <div class="agenda-day-header">
-                                    <span>🗓️ Día {{ d }} de Octubre de 2026</span>
-                                    <span style="color:#0284c7; font-weight:600;">{{ agenda_dias[d]|length }} actuación(es) registrada(s)</span>
-                                </div>
-                                {% for item in agenda_dias[d] %}
-                                <div class="agenda-event-box {% if 'Límite' in item.tipo %}limite{% endif %}">
-                                    <div style="display:flex; justify-content:space-between; margin-bottom:4px; flex-wrap:wrap; gap:4px;">
-                                        <strong>{{ item.tipo }}: {{ item.expediente }}</strong>
-                                        <span class="badge {{ item.estado.replace(' ', '-') }}">{{ item.estado }}</span>
-                                    </div>
-                                    <div style="color:#475569; font-size:11px;">
-                                        <span>🏛️ <strong>Órgano:</strong> {{ item.organo }}</span> | 
-                                        <span>⚖️ <strong>Medida:</strong> {{ item.medida }}</span> | 
-                                        <span>👤 <strong>Responsable:</strong> {{ item.responsable }}</span>
-                                    </div>
-                                </div>
-                                {% endfor %}
-                            </div>
-                            {% endif %}
-                        {% endfor %}
+            <div id="resultado-analisis" class="hidden space-y-4">
+              <!-- Checklist de Requisitos -->
+              <div class="space-y-2 text-sm" id="checklist-container">
+                <!-- Se inyecta por JS -->
+              </div>
 
-                        <div class="agenda-day-card" style="background:#f8fafc; border: 1px dashed #cbd5e1; text-align:center; padding: 18px;">
-                            <span style="font-size:12px; color:#64748b;">Los días no listados corresponden a días judiciales sin actuaciones fijadas.</span>
-                        </div>
-                    </div>
+              <!-- Alertas del Motor de Reglas -->
+              <div id="alertas-reglas" class="space-y-2 pt-2">
+                <!-- Alertas dinámicas -->
+              </div>
+            </div>
+          </div>
 
-                {% elif vista == 'alertas' %}
-                    <!-- VISTA: MÓDULO 4 CENTRO DE ALERTAS DINÁMICAS -->
-                    <div class="dashboard-header" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
-                        <div>
-                            <h1>Módulo 4: Centro de Control de Alertas Procesales</h1>
-                            <p style="font-size:13px; color:#64748b; margin-top:2px;">Monitoreo preventivo de vencimiento de medidas y plazos legales</p>
-                        </div>
-                        <a href="{{ url_for('dashboard', vista='dashboard') }}" class="filter-btn" style="background:#0f172a; color:white;">⬅ Volver al Dashboard</a>
-                    </div>
-
-                    <div style="display: flex; flex-direction: column; gap: 12px;">
-                        {% if alertas_completas %}
-                            {% for al in alertas_completas %}
-                            <div class="alert-detail-card {% if al.nivel == 'Crítica' %}critica{% elif al.nivel == 'Urgente' %}urgente{% else %}preventiva{% endif %}">
-                                <div>
-                                    <div style="display:flex; align-items:center; gap:8px; margin-bottom:4px; flex-wrap:wrap;">
-                                        <strong style="font-size:14px; color:#0f172a;">{{ al.expediente }}</strong>
-                                        <span style="font-size:10px; font-weight:700; padding:2px 8px; border-radius:12px; {% if al.nivel == 'Crítica' %}background:#fee2e2; color:#ef4444;{% elif al.nivel == 'Urgente' %}background:#fef3c7; color:#d97706;{% else %}background:#e0f2fe; color:#0284c7;{% endif %}">
-                                            Severidad: {{ al.nivel }}
-                                        </span>
-                                        <span class="badge {{ al.estado.replace(' ', '-') }}">{{ al.estado }}</span>
-                                    </div>
-                                    <p style="font-size:12px; color:#475569; margin-bottom:4px;">{{ al.detalle }}</p>
-                                    <div style="font-size:11px; color:#64748b;">
-                                        <span>🏛️ {{ al.organo }}</span> | <span>⚖️ Medida: {{ al.medida }}</span> | <span>📅 Fecha límite legal: <strong>{{ al.fecha_limite }}</strong></span>
-                                    </div>
-                                </div>
-                                <div>
-                                    <button type="button" class="btn-action-icon" style="padding:6px 12px; font-size:11px; font-weight:600; gap:4px;"
-                                            onclick="abrirModalEditar('{{ al.id }}', '{{ al.expediente }}', '{{ al.estado }}', '{{ al.responsable }}')">
-                                        ✏️ Gestionar caso
-                                    </button>
-                                </div>
-                            </div>
-                            {% endfor %}
-                        {% else %}
-                            <div class="table-card" style="text-align:center; padding: 30px; color:#16a34a;">
-                                <h3>✅ ¡No existen contingencias ni alertas críticas pendientes!</h3>
-                                <p style="font-size:12px; color:#64748b; margin-top:6px;">Todas las medidas cautelares se encuentran dentro de sus plazos procesales legales.</p>
-                            </div>
-                        {% endif %}
-                    </div>
-
-                {% elif vista == 'historial' %}
-                    <!-- VISTA: MÓDULO 5 BITÁCORA HISTÓRICA COMPLETA -->
-                    <div class="dashboard-header" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
-                        <div>
-                            <h1>Módulo 5: Bitácora Procesal y Auditoría de Actuaciones</h1>
-                            <p style="font-size:13px; color:#64748b; margin-top:2px;">Trazabilidad completa de cada alta, cambio de estado y actualización procesal</p>
-                        </div>
-                        <a href="{{ url_for('dashboard', vista='dashboard') }}" class="filter-btn" style="background:#0f172a; color:white;">⬅ Volver al Dashboard</a>
-                    </div>
-
-                    <div class="table-card">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Fecha</th>
-                                    <th>Actuación Procesal Realizada</th>
-                                    <th>Responsable y Expediente Vinculado</th>
-                                    <th>Estado de Registro</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for act in historial_completo %}
-                                <tr>
-                                    <td style="font-weight:600; color:#0284c7; white-space:nowrap;">📅 {{ act.fecha }}</td>
-                                    <td><strong>{{ act.descripcion }}</strong></td>
-                                    <td style="font-size:12px; color:#475569;">{{ act.responsable }}</td>
-                                    <td><span style="font-size:10px; font-weight:700; background:#dcfce7; color:#15803d; padding:2px 8px; border-radius:10px;">Auditado</span></td>
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
-
-                {% else %}
-                    <!-- VISTA ESTÁNDAR: DASHBOARD -->
-                    <div class="dashboard-header">
-                        <h1>Panel de Seguimiento · Demostración</h1>
-                    </div>
-
-                    <div class="stats-grid">
-                        <div class="stat-card blue">
-                            <p>Expedientes</p>
-                            <h3>{{ total_exp }})</h3>
-                        </div>
-                        <div class="stat-card orange">
-                            <p>Pendientes de ejecución</p>
-                            <h3>{{ pendientes }})</h3>
-                        </div>
-                        <div class="stat-card teal">
-                            <p>En seguimiento</p>
-                            <h3>{{ en_seguimiento }})</h3>
-                        </div>
-                        <div class="stat-card green">
-                            <p>Ejecutadas</p>
-                            <h3>{{ ejecutadas }})</h3>
-                        </div>
-                    </div>
-
-                    <div class="filter-section">
-                        <div class="filter-title">
-                            Filtros rápidos
-                            {% if dia_calendario %}
-                                <span style="font-size:12px; font-weight:normal; color:#0284c7; margin-left:8px;">
-                                    (Filtrando por actuaciones del día {{ dia_calendario }} de Octubre)
-                                </span>
-                            {% endif %}
-                        </div>
-                        <div class="filter-buttons">
-                            <a href="{{ url_for('dashboard', estado='Todos') }}" class="filter-btn {% if estado_filtro == 'Todos' and not dia_calendario %}active{% endif %}">Todos los expedientes</a>
-                            <a href="{{ url_for('dashboard', estado='Pendiente') }}" class="filter-btn {% if estado_filtro == 'Pendiente' %}active{% endif %}">Pendientes de ejecución</a>
-                            <a href="{{ url_for('dashboard', estado='En seguimiento') }}" class="filter-btn {% if estado_filtro == 'En seguimiento' %}active{% endif %}">En seguimiento</a>
-                            <a href="{{ url_for('dashboard', estado='Ejecutada') }}" class="filter-btn {% if estado_filtro == 'Ejecutada' %}active{% endif %}">Ejecutadas</a>
-                        </div>
-                    </div>
-
-                    <div class="table-card">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>N° Expediente</th>
-                                    <th>Órgano Jurisdiccional</th>
-                                    <th>Tipo de Medida</th>
-                                    <th>Responsable</th>
-                                    <th>Fecha Res.</th>
-                                    <th>Estado</th>
-                                    <th>Documento</th>
-                                    <th>Última Act.</th>
-                                    <th>Acciones</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% if expedientes %}
-                                    {% for exp in expedientes %}
-                                    <tr>
-                                        <td><strong>{{ exp.numero_expediente }}</strong></td>
-                                        <td>{{ exp.organo_jurisdiccional }}</td>
-                                        <td>{{ exp.tipo_medida }}</td>
-                                        <td style="font-size: 12px; color: #475569;">{{ exp.responsable }}</td>
-                                        <td style="font-size: 12px; color: #64748b;">{{ exp.fecha_resolucion }}</td>
-                                        <td>
-                                            <span class="badge {{ exp.estado.replace(' ', '-') }}">{{ exp.estado }}</span>
-                                        </td>
-                                        <td>
-                                            {% if exp.documento %}
-                                                <a href="{{ url_for('ver_documento', filename=exp.documento) }}" target="_blank" class="doc-badge-link" title="Ver resolución">
-                                                    📄 Ver resolución
-                                                </a>
-                                            {% else %}
-                                                <span class="doc-badge-empty">🚫 Sin doc.</span>
-                                            {% endif %}
-                                        </td>
-                                        <td style="font-size: 12px; color: #64748b;">{{ exp.ultima_actualizacion }}</td>
-                                        <td>
-                                            <div class="action-btns">
-                                                <button type="button" class="btn-action-icon" title="Editar y Seguimiento" 
-                                                        onclick="abrirModalEditar('{{ exp.id }}', '{{ exp.numero_expediente }}', '{{ exp.estado }}', '{{ exp.responsable }}')">
-                                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#475569" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
-                                                </button>
-
-                                                <form action="{{ url_for('eliminar', id=exp.id) }}" method="POST" style="margin:0;" onsubmit="return confirm('¿Seguro que deseas eliminar este expediente?');">
-                                                    <button type="submit" class="btn-action-icon btn-delete-icon" title="Eliminar">
-                                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
-                                                    </button>
-                                                </form>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    {% endfor %}
-                                {% else %}
-                                    <tr>
-                                        <td colspan="9" style="text-align:center; padding: 20px; color:#64748b;">
-                                            No se encontraron expedientes para los criterios seleccionados. 
-                                            <a href="{{ url_for('dashboard') }}" style="color:#0284c7; text-decoration:none; font-weight:600;">Ver todos</a>
-                                        </td>
-                                    </tr>
-                                {% endif %}
-                            </tbody>
-                        </table>
-                    </div>
-
-                    <!-- Módulo 5: Historial Resumido al pie del Dashboard -->
-                    <div class="history-card" id="historial">
-                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
-                            <h3 style="margin:0;">Historial de Actuaciones Recientes</h3>
-                            <a href="{{ url_for('dashboard', vista='historial') }}" style="color:#0284c7; font-size:12px; text-decoration:none; font-weight:600;">Ver bitácora completa ➔</a>
-                        </div>
-                        <div class="timeline">
-                            {% for act in historial %}
-                            <div class="timeline-item">
-                                <span class="timeline-date">{{ act.fecha }}</span>
-                                <div class="timeline-dot"></div>
-                                <div class="timeline-info">
-                                    <strong>{{ act.descripcion }}</strong>
-                                    <span>Responsable: {{ act.responsable }}</span>
-                                </div>
-                            </div>
-                            {% endfor %}
-                        </div>
-                    </div>
-                {% endif %}
-            </main>
-
-            <!-- Sidebar Derecho -->
-            <aside class="right-sidebar">
-                <div class="widget-box" id="calendario-box">
-                    <h4>Calendario Inteligente</h4>
-                    <p style="font-size:12px; font-weight:600; text-align:center; margin-bottom:8px;">Octubre 2026</p>
-                    <table class="calendar-table">
-                        <thead>
-                            <tr><th>Lu</th><th>Ma</th><th>Mi</th><th>Ju</th><th>Vi</th><th>Sa</th><th>Do</th></tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td><span style="color:#cbd5e1;">28</span></td>
-                                <td><span style="color:#cbd5e1;">29</span></td>
-                                <td><span style="color:#cbd5e1;">30</span></td>
-                                <td><a href="{{ url_for('dashboard', dia='1') }}" class="cal-day {% if dia_calendario == '1' %}active{% endif %} {% if 1 in dias_con_actividad %}has-event{% endif %}">1</a></td>
-                                <td><a href="{{ url_for('dashboard', dia='2') }}" class="cal-day {% if dia_calendario == '2' %}active{% endif %} {% if 2 in dias_con_actividad %}has-event{% endif %}">2</a></td>
-                                <td><a href="{{ url_for('dashboard', dia='3') }}" class="cal-day {% if dia_calendario == '3' %}active{% endif %} {% if 3 in dias_con_actividad %}has-event{% endif %}">3</a></td>
-                                <td><a href="{{ url_for('dashboard', dia='4') }}" class="cal-day {% if dia_calendario == '4' %}active{% endif %} {% if 4 in dias_con_actividad %}has-event{% endif %}">4</a></td>
-                            </tr>
-                            <tr>
-                                <td><a href="{{ url_for('dashboard', dia='5') }}" class="cal-day {% if dia_calendario == '5' %}active{% endif %} {% if 5 in dias_con_actividad %}has-event{% endif %}">5</a></td>
-                                <td><a href="{{ url_for('dashboard', dia='6') }}" class="cal-day {% if dia_calendario == '6' %}active{% endif %} {% if 6 in dias_con_actividad %}has-event{% endif %}">6</a></td>
-                                <td><a href="{{ url_for('dashboard', dia='7') }}" class="cal-day {% if dia_calendario == '7' %}active{% endif %} {% if 7 in dias_con_actividad %}has-event{% endif %}">7</a></td>
-                                <td><a href="{{ url_for('dashboard', dia='8') }}" class="cal-day {% if dia_calendario == '8' %}active{% endif %} {% if 8 in dias_con_actividad %}has-event{% endif %}">8</a></td>
-                                <td><a href="{{ url_for('dashboard', dia='9') }}" class="cal-day {% if dia_calendario == '9' or not dia_calendario %}active{% endif %} {% if 9 in dias_con_actividad %}has-event{% endif %}">9</a></td>
-                                <td><a href="{{ url_for('dashboard', dia='10') }}" class="cal-day {% if dia_calendario == '10' %}active{% endif %} {% if 10 in dias_con_actividad %}has-event{% endif %}">10</a></td>
-                                <td><a href="{{ url_for('dashboard', dia='11') }}" class="cal-day {% if dia_calendario == '11' %}active{% endif %} {% if 11 in dias_con_actividad %}has-event{% endif %}">11</a></td>
-                            </tr>
-                            <tr>
-                                <td><a href="{{ url_for('dashboard', dia='12') }}" class="cal-day {% if dia_calendario == '12' %}active{% endif %} {% if 12 in dias_con_actividad %}has-event{% endif %}">12</a></td>
-                                <td><a href="{{ url_for('dashboard', dia='13') }}" class="cal-day {% if dia_calendario == '13' %}active{% endif %} {% if 13 in dias_con_actividad %}has-event{% endif %}">13</a></td>
-                                <td><a href="{{ url_for('dashboard', dia='14') }}" class="cal-day {% if dia_calendario == '14' %}active{% endif %} {% if 14 in dias_con_actividad %}has-event{% endif %}">14</a></td>
-                                <td><a href="{{ url_for('dashboard', dia='15') }}" class="cal-day {% if dia_calendario == '15' %}active{% endif %} {% if 15 in dias_con_actividad %}has-event{% endif %}">15</a></td>
-                                <td><a href="{{ url_for('dashboard', dia='16') }}" class="cal-day {% if dia_calendario == '16' %}active{% endif %} {% if 16 in dias_con_actividad %}has-event{% endif %}">16</a></td>
-                                <td><a href="{{ url_for('dashboard', dia='17') }}" class="cal-day {% if dia_calendario == '17' %}active{% endif %} {% if 17 in dias_con_actividad %}has-event{% endif %}">17</a></td>
-                                <td><a href="{{ url_for('dashboard', dia='18') }}" class="cal-day {% if dia_calendario == '18' %}active{% endif %} {% if 18 in dias_con_actividad %}has-event{% endif %}">18</a></td>
-                            </tr>
-                            <tr>
-                                <td><a href="{{ url_for('dashboard', dia='19') }}" class="cal-day {% if dia_calendario == '19' %}active{% endif %} {% if 19 in dias_con_actividad %}has-event{% endif %}">19</a></td>
-                                <td><a href="{{ url_for('dashboard', dia='20') }}" class="cal-day {% if dia_calendario == '20' %}active{% endif %} {% if 20 in dias_con_actividad %}has-event{% endif %}">20</a></td>
-                                <td><a href="{{ url_for('dashboard', dia='21') }}" class="cal-day {% if dia_calendario == '21' %}active{% endif %} {% if 21 in dias_con_actividad %}has-event{% endif %}">21</a></td>
-                                <td><a href="{{ url_for('dashboard', dia='22') }}" class="cal-day {% if dia_calendario == '22' %}active{% endif %} {% if 22 in dias_con_actividad %}has-event{% endif %}">22</a></td>
-                                <td><a href="{{ url_for('dashboard', dia='23') }}" class="cal-day {% if dia_calendario == '23' %}active{% endif %} {% if 23 in dias_con_actividad %}has-event{% endif %}">23</a></td>
-                                <td><a href="{{ url_for('dashboard', dia='24') }}" class="cal-day {% if dia_calendario == '24' %}active{% endif %} {% if 24 in dias_con_actividad %}has-event{% endif %}">24</a></td>
-                                <td><a href="{{ url_for('dashboard', dia='25') }}" class="cal-day {% if dia_calendario == '25' %}active{% endif %} {% if 25 in dias_con_actividad %}has-event{% endif %}">25</a></td>
-                            </tr>
-                            <tr>
-                                <td><a href="{{ url_for('dashboard', dia='26') }}" class="cal-day {% if dia_calendario == '26' %}active{% endif %} {% if 26 in dias_con_actividad %}has-event{% endif %}">26</a></td>
-                                <td><a href="{{ url_for('dashboard', dia='27') }}" class="cal-day {% if dia_calendario == '27' %}active{% endif %} {% if 27 in dias_con_actividad %}has-event{% endif %}">27</a></td>
-                                <td><a href="{{ url_for('dashboard', dia='28') }}" class="cal-day {% if dia_calendario == '28' %}active{% endif %} {% if 28 in dias_con_actividad %}has-event{% endif %}">28</a></td>
-                                <td><a href="{{ url_for('dashboard', dia='29') }}" class="cal-day {% if dia_calendario == '29' %}active{% endif %} {% if 29 in dias_con_actividad %}has-event{% endif %}">29</a></td>
-                                <td><a href="{{ url_for('dashboard', dia='30') }}" class="cal-day {% if dia_calendario == '30' %}active{% endif %} {% if 30 in dias_con_actividad %}has-event{% endif %}">30</a></td>
-                                <td><a href="{{ url_for('dashboard', dia='31') }}" class="cal-day {% if dia_calendario == '31' %}active{% endif %} {% if 31 in dias_con_actividad %}has-event{% endif %}">31</a></td>
-                                <td><span style="color:#cbd5e1;">1</span></td>
-                            </tr>
-                        </tbody>
-                    </table>
-
-                    <div class="reminders-list">
-                        <div style="display:flex; justify-content:space-between; align-items:center; font-size:11px; font-weight:700; color:#0f172a;">
-                            <span>🔔 RECORDADOR DE RECORDATORIOS</span>
-                            <a href="{{ url_for('dashboard', vista='calendario') }}" style="color:#0284c7; text-decoration:none; font-size:10px;">Ver agenda</a>
-                        </div>
-                        
-                        {% if recordatorios %}
-                            {% for rec in recordatorios[:2] %}
-                            <div class="reminder-item">
-                                <strong>{{ rec.expediente }} ({{ rec.medida }})</strong>
-                                <span>Límite de ejecución: {{ rec.fecha_vencimiento }}</span>
-                                <div class="reminder-due">
-                                    {% if rec.dias_restantes < 0 %}
-                                        ⚠️ Venció hace {{ rec.dias_restantes | abs }} días
-                                    {% elif rec.dias_restantes == 0 %}
-                                        ⏳ Vence hoy
-                                    {% else %}
-                                        ⏱️ Quedan {{ rec.dias_restantes }} días
-                                    {% endif %}
-                                </div>
-                            </div>
-                            {% endfor %}
-                        {% else %}
-                            <p style="font-size:11px; color:#64748b; font-style:italic;">No hay plazos pendientes por vencer.</p>
-                        {% endif %}
-                    </div>
-                </div>
-
-                <div class="widget-box" id="alertas">
-                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
-                        <h4 style="margin:0;">ALERTAS ACTIVAS</h4>
-                        <a href="{{ url_for('dashboard', vista='alertas') }}" style="font-size:10px; color:#0284c7; text-decoration:none; font-weight:600;">Ver centro</a>
-                    </div>
-                    {% if alertas_vencimiento %}
-                        {% for alerta in alertas_vencimiento %}
-                        <div class="alert-card">
-                            ⚠️ {{ alerta }}
-                        </div>
-                        {% endfor %}
-                    {% endif %}
-
-                    {% if alertas_inactivas %}
-                        {% for inactiva in alertas_inactivas %}
-                        <div class="alert-card warning">
-                            ⚠️ Falta de actualización o trámite en {{ inactiva.numero_expediente }}
-                        </div>
-                        {% endfor %}
-                    {% endif %}
-
-                    {% if not alertas_vencimiento and not alertas_inactivas %}
-                        <p style="font-size: 12px; color: #16a34a; font-weight: 500;">✅ Todas las medidas al día.</p>
-                    {% endif %}
-                </div>
-            </aside>
+          <div id="btn-export-box" class="hidden pt-6 border-t mt-4">
+            <button onclick="window.print()" class="w-full bg-emerald-700 hover:bg-emerald-800 text-white font-semibold py-2.5 rounded-lg shadow transition flex items-center justify-center gap-2 text-sm">
+              <i data-lucide="printer" class="w-4 h-4"></i> Imprimir / Exportar Reporte de Ejecutabilidad (PDF)
+            </button>
+          </div>
         </div>
+      </div>
+    </section>
+
+    <!-- SECCIÓN 4: SIMULADOR DE CASOS PRÁCTICOS -->
+    <section id="sec-simulador" class="hidden space-y-6">
+      <div class="border-b pb-4">
+        <h2 class="text-2xl font-bold text-slate-900">Simulador de Casos Prácticos</h2>
+        <p class="text-slate-600 text-sm">Casos reales resueltos por los juzgados civiles y comerciales de Lima.</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- Caso 1 -->
+        <div class="bg-white p-6 rounded-xl border shadow-sm space-y-4">
+          <span class="bg-amber-100 text-amber-800 text-xs px-2.5 py-1 rounded font-semibold">Caso 1: Omisión de vencimiento</span>
+          <h3 class="font-bold text-slate-900">¿Qué consecuencia tiene un pagaré emitido sin fecha de vencimiento expresa?</h3>
+          <div class="space-y-2 text-sm">
+            <label class="block p-3 border rounded-lg hover:bg-slate-50 cursor-pointer">
+              <input type="radio" name="caso1" value="a" class="mr-2"> Es nulo de pleno derecho por omitir un requisito esencial.
+            </label>
+            <label class="block p-3 border rounded-lg hover:bg-slate-50 cursor-pointer">
+              <input type="radio" name="caso1" value="b" class="mr-2"> Es válido y se considera exigible a la vista (Art. 158 Ley 27287).
+            </label>
+            <label class="block p-3 border rounded-lg hover:bg-slate-50 cursor-pointer">
+              <input type="radio" name="caso1" value="c" class="mr-2"> Solo puede cobrarse si el deudor firma una adenda confirmatoria.
+            </label>
+          </div>
+          <button onclick="resolverCaso1()" class="bg-slate-900 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-slate-800">Verificar Fundamento</button>
+          <div id="resp-caso1" class="hidden p-3 rounded-lg text-xs leading-relaxed"></div>
+        </div>
+
+        <!-- Caso 2 -->
+        <div class="bg-white p-6 rounded-xl border shadow-sm space-y-4">
+          <span class="bg-indigo-100 text-indigo-800 text-xs px-2.5 py-1 rounded font-semibold">Caso 2: Prescripción Cambiaria</span>
+          <h3 class="font-bold text-slate-900">Letra de cambio vencida hace 3 años y 2 meses sin cobro judicial. ¿Qué ocurre?</h3>
+          <div class="space-y-2 text-sm">
+            <label class="block p-3 border rounded-lg hover:bg-slate-50 cursor-pointer">
+              <input type="radio" name="caso2" value="a" class="mr-2"> Se demanda en Proceso Único de Ejecución porque la firma es auténtica.
+            </label>
+            <label class="block p-3 border rounded-lg hover:bg-slate-50 cursor-pointer">
+              <input type="radio" name="caso2" value="b" class="mr-2"> Prescribió la acción cambiaria directa (Art. 18 LTV); debe usarse la acción causal o de enriquecimiento sin causa.
+            </label>
+            <label class="block p-3 border rounded-lg hover:bg-slate-50 cursor-pointer">
+              <input type="radio" name="caso2" value="c" class="mr-2"> El juez otorga 5 días al ejecutante para subsanar la prescripción.
+            </label>
+          </div>
+          <button onclick="resolverCaso2()" class="bg-slate-900 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-slate-800">Verificar Fundamento</button>
+          <div id="resp-caso2" class="hidden p-3 rounded-lg text-xs leading-relaxed"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECCIÓN 5: CALCULADORA JURÍDICA (LIQUIDEZ ART. 689) -->
+    <section id="sec-calculadora" class="hidden space-y-6">
+      <div class="border-b pb-4">
+        <h2 class="text-2xl font-bold text-slate-900">Calculadora de Intereses y Deuda Liquidable</h2>
+        <p class="text-slate-600 text-sm">Asegura el requisito de <strong>Liquidez</strong> (Art. 689 CPC) determinando el monto exacto demandable.</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="bg-white p-6 rounded-xl border shadow-sm space-y-4">
+          <div>
+            <label class="block text-sm font-medium text-slate-700 mb-1">Capital Inicial (S/)</label>
+            <input id="calc_capital" type="number" value="10000" class="w-full border rounded-lg p-2 text-sm bg-slate-50">
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-slate-700 mb-1">Tasa Efectiva Anual Compensatoria / Legal (%)</label>
+            <input id="calc_tasa" type="number" value="8" step="0.1" class="w-full border rounded-lg p-2 text-sm bg-slate-50">
+          </div>
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="block text-sm font-medium text-slate-700 mb-1">Fecha de Inicio de Mora</label>
+              <input id="calc_finicio" type="date" value="2025-01-01" class="w-full border rounded-lg p-2 text-sm bg-slate-50">
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-slate-700 mb-1">Fecha de Liquidación</label>
+              <input id="calc_ffin" type="date" value="2025-07-01" class="w-full border rounded-lg p-2 text-sm bg-slate-50">
+            </div>
+          </div>
+          <button onclick="calcularLiquidacion()" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-semibold py-2.5 rounded-lg text-sm transition">
+            Calcular Intereses Liquidables
+          </button>
+        </div>
+
+        <div class="bg-white p-6 rounded-xl border shadow-sm flex flex-col justify-between">
+          <div class="space-y-3">
+            <h3 class="font-bold text-slate-900 border-b pb-2">Resultado de la Liquidación</h3>
+            <div class="flex justify-between text-sm py-1 border-b">
+              <span class="text-slate-600">Días transcurridos:</span>
+              <span id="res_dias" class="font-bold">181 días</span>
+            </div>
+            <div class="flex justify-between text-sm py-1 border-b">
+              <span class="text-slate-600">Intereses devengados:</span>
+              <span id="res_intereses" class="font-bold text-amber-700">S/ 400.00</span>
+            </div>
+            <div class="flex justify-between text-base py-2 bg-slate-50 px-3 rounded font-bold">
+              <span class="text-slate-800">TOTAL EXIGIBLE:</span>
+              <span id="res_total" class="text-emerald-700">S/ 10,400.00</span>
+            </div>
+          </div>
+          <p class="text-xs text-slate-500 italic mt-4">
+            Nota: Este cuadro satisface la exigencia judicial de presentar liquidación pormenorizada junto a la demanda para que el mandato ejecutivo no sea observado.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECCIÓN 6: PROCESO JUDICIAL DE EJECUCIÓN -->
+    <section id="sec-ejecucion" class="hidden space-y-6">
+      <div class="border-b pb-4">
+        <h2 class="text-2xl font-bold text-slate-900">Etapas del Proceso Único de Ejecución</h2>
+        <p class="text-slate-600 text-sm">Flujo procesal civil simplificado conforme a los Arts. 690-A al 712 del CPC.</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div class="bg-white p-5 rounded-xl border border-slate-200 space-y-2">
+          <div class="w-8 h-8 rounded-full bg-slate-900 text-white font-bold flex items-center justify-center text-sm">1</div>
+          <h3 class="font-bold text-slate-900">Demanda Ejecutiva</h3>
+          <p class="text-xs text-slate-600">Acompaña título ejecutivo original (Art. 688) y liquidación de deuda si devenga intereses.</p>
+        </div>
+
+        <div class="bg-white p-5 rounded-xl border border-slate-200 space-y-2">
+          <div class="w-8 h-8 rounded-full bg-amber-600 text-white font-bold flex items-center justify-center text-sm">2</div>
+          <h3 class="font-bold text-slate-900">Mandato Ejecutivo</h3>
+          <p class="text-xs text-slate-600">El juez califica el título. Si cumple certeza, exigibilidad y liquidez, ordena pagar en 5 días.</p>
+        </div>
+
+        <div class="bg-white p-5 rounded-xl border border-slate-200 space-y-2">
+          <div class="w-8 h-8 rounded-full bg-indigo-600 text-white font-bold flex items-center justify-center text-sm">3</div>
+          <h3 class="font-bold text-slate-900">Contradicción</h3>
+          <p class="text-xs text-slate-600">El ejecutado solo puede formular contradicción por causales taxativas (ej. falsedad, nulidad o pago).</p>
+        </div>
+
+        <div class="bg-white p-5 rounded-xl border border-slate-200 space-y-2">
+          <div class="w-8 h-8 rounded-full bg-emerald-600 text-white font-bold flex items-center justify-center text-sm">4</div>
+          <h3 class="font-bold text-slate-900">Ejecución Forzada</h3>
+          <p class="text-xs text-slate-600">Si no paga ni formula contradicción fundada, se procede al remate judicial de bienes embargados.</p>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- REPORTE OCULTO PARA IMPRESIÓN/PDF -->
+  <div id="printableReport" class="hidden p-8 font-sans">
+    <div class="border-b-2 border-slate-900 pb-4 mb-6 flex justify-between items-center">
+      <div>
+        <h1 class="text-2xl font-bold text-slate-900">DICTAMEN TÉCNICO DE EJECUTABILIDAD</h1>
+        <p class="text-xs text-slate-600">Calificación de Título Valor · Proceso Único de Ejecución (CPC)</p>
+      </div>
+      <div id="print-score" class="text-xl font-black px-4 py-2 bg-slate-100 border rounded"></div>
     </div>
+    <div id="print-body" class="space-y-4 text-sm leading-relaxed"></div>
+  </div>
 
-    <!-- Modal Módulo 1 -->
-    <div id="modalExp" class="modal">
-        <div class="modal-content">
-            <h3 style="font-size:16px; font-weight:700; color:#0f172a;">Módulo 1: Registrar Expediente Cautelar</h3>
-            <form method="POST" enctype="multipart/form-data">
-                <div class="form-row">
-                    <div class="form-item">
-                        <label>Código del Expediente</label>
-                        <input type="text" name="numero_expediente" value="{{ siguiente_exp }}" required>
-                    </div>
-                    <div class="form-item">
-                        <label>Órgano Jurisdiccional</label>
-                        <select id="selectOrgano" name="organo_jurisdiccional" onchange="verificarOrgano(this.value)" required>
-                            <option value="1º Juzgado Civil">1º Juzgado Civil</option>
-                            <option value="2º Juzgado Civil">2º Juzgado Civil</option>
-                            <option value="1º Juzgado Comercial">1º Juzgado Comercial</option>
-                            <option value="2º Juzgado Comercial">2º Juzgado Comercial</option>
-                            <option value="3º Juzgado Comercial">3º Juzgado Comercial</option>
-                            <option value="1º Juzgado Mixto">1º Juzgado Mixto</option>
-                            <option value="Sala Civil Permanente">Sala Civil Permanente</option>
-                            <option value="Sala Comercial">Sala Comercial</option>
-                            <option value="Otro">Otro (Ingresar manualmente)...</option>
-                        </select>
-                    </div>
-                </div>
+  <!-- SCRIPT CON LA LÓGICA DE NEGOCIO Y MOTOR DE REGLAS -->
+  <script>
+    // Navegación entre pestañas
+    function navegar(seccion) {
+      document.querySelectorAll('main > section').forEach(sec => sec.classList.add('hidden'));
+      document.getElementById('sec-' + seccion).classList.remove('hidden');
 
-                <div class="form-item" id="cajaOrganoManual" style="display: none; margin-top: 4px;">
-                    <label>Escriba el Órgano Jurisdiccional:</label>
-                    <input type="text" id="inputOrganoManual" name="organo_manual" placeholder="Ej: Juzgado de Paz Letrado de Lima">
-                </div>
+      document.querySelectorAll('.nav-btn').forEach(btn => {
+        btn.classList.remove('text-amber-400');
+        btn.classList.add('text-slate-300');
+      });
+      const activeNav = document.getElementById('nav-' + seccion);
+      if (activeNav) {
+        activeNav.classList.remove('text-slate-300');
+        activeNav.classList.add('text-amber-400');
+      }
+      lucide.createIcons();
+    }
 
-                <div class="form-row">
-                    <div class="form-item">
-                        <label>Tipo de Medida Cautelar</label>
-                        <select name="tipo_medida">
-                            <option value="Embargo">Embargo</option>
-                            <option value="Secuestro">Secuestro</option>
-                            <option value="Inscripción">Inscripción</option>
-                            <option value="Innovativa">Medida Innovativa</option>
-                            <option value="No Innovar">Prohibición de Innovar</option>
-                        </select>
-                    </div>
-                    <div class="form-item">
-                        <label>Estado de la Medida</label>
-                        <select name="estado">
-                            <option value="Pendiente">Pendiente de ejecución</option>
-                            <option value="En seguimiento">En seguimiento</option>
-                            <option value="Concedida">Concedida</option>
-                            <option value="En revisión">En revisión</option>
-                            <option value="Ejecutada">Ejecutada</option>
-                            <option value="Levantada">Levantada</option>
-                        </select>
-                    </div>
-                </div>
+    // Detalle dinámico en módulo Títulos Valores
+    const titulosInfo = {
+      pagare: {
+        titulo: "¿Qué es el Pagaré?",
+        desc: "Título valor mediante el cual una persona (emitente) promete incondicionalmente pagar una suma determinada a otra (beneficiario).",
+        art: "Art. 158 Ley 27287 y Art. 688 inc. 4 CPC",
+        requisitos: ["Denominación de Pagaré", "Promesa incondicional de pago", "Monto líquido", "Fecha y lugar de emisión", "Firma del emitente"]
+      },
+      letra: {
+        titulo: "¿Qué es la Letra de Cambio?",
+        desc: "Orden incondicional girada por una persona (girador) a otra (girado) para pagar una suma a un tercero (tomador).",
+        art: "Art. 119 Ley 27287 y Art. 688 inc. 4 CPC",
+        requisitos: ["Denominación expresa", "Orden incondicional de pagar", "Nombre del girado", "Fecha de vencimiento", "Firma del girador y aceptante"]
+      },
+      cheque: {
+        titulo: "¿Qué es el Cheque?",
+        desc: "Orden de pago a la vista girada contra un banco donde el emitente tiene fondos disponibles en cuenta corriente.",
+        art: "Art. 172 Ley 27287 y Art. 688 inc. 4 CPC",
+        requisitos: ["Mandato puro de pagar suma de dinero", "Nombre del banco", "Lugar y fecha de emisión", "Firma del girador", "Constancia de no pago (protesto bancario)"]
+      }
+    };
 
-                <div class="form-row">
-                    <div class="form-item">
-                        <label>Fecha de la Resolución</label>
-                        <input type="date" name="fecha_resolucion" required>
-                    </div>
-                    <div class="form-item">
-                        <label>Responsable del Seguimiento</label>
-                        <div class="input-group-responsable">
-                            <select name="titulo_responsable">
-                                <option value="Dr.">Dr.</option>
-                                <option value="Dra.">Dra.</option>
-                                <option value="Abg.">Abg.</option>
-                                <option value="Lic.">Lic.</option>
-                                <option value="Bach.">Bach.</option>
-                                <option value="Ninguno">--</option>
-                            </select>
-                            <input type="text" name="responsable" required placeholder="Apellidos y Nombres">
-                        </div>
-                    </div>
-                </div>
+    function tabTitulo(tipo) {
+      document.querySelectorAll('.tab-title-btn').forEach(b => {
+        b.classList.remove('bg-slate-900', 'text-white');
+        b.classList.add('bg-slate-200', 'text-slate-700');
+      });
+      document.getElementById('tab-' + tipo).classList.remove('bg-slate-200', 'text-slate-700');
+      document.getElementById('tab-' + tipo).classList.add('bg-slate-900', 'text-white');
 
-                <div class="form-item">
-                    <label>Adjuntar Resolución / Documento (Opcional):</label>
-                    <input type="file" name="archivo_documento" accept=".pdf,.doc,.docx,.png,.jpg,.jpeg">
-                </div>
-
-                <div style="display:flex; justify-content:flex-end; gap:8px; margin-top:12px;">
-                    <button type="button" onclick="cerrarModal()" style="padding:8px 14px; border:1px solid #cbd5e1; background:white; border-radius:6px; cursor:pointer;">Cancelar</button>
-                    <button type="submit" style="padding:8px 14px; background:#0f172a; color:white; border:none; border-radius:6px; cursor:pointer; font-weight:600;">Guardar Expediente</button>
-                </div>
-            </form>
+      const data = titulosInfo[tipo];
+      document.getElementById('content-titulo-detalle').innerHTML = `
+        <h3 class="text-xl font-bold text-slate-900 mb-1">${data.titulo}</h3>
+        <p class="text-xs text-amber-700 font-semibold mb-3">Base Legal: ${data.art}</p>
+        <p class="text-sm text-slate-700 mb-4">${data.desc}</p>
+        <h4 class="font-bold text-xs uppercase tracking-wider text-slate-500 mb-2">Requisitos de Formalidad Extrínseca:</h4>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+          ${data.requisitos.map(r => `<div class="p-2 bg-slate-50 border rounded flex items-center gap-2"><span class="text-emerald-600 font-bold">✔</span> ${r}</div>`).join('')}
         </div>
-    </div>
+      `;
+    }
 
-    <!-- Modal Módulo 2 -->
-    <div id="modalEditar" class="modal">
-        <div class="modal-content">
-            <h3 style="font-size:16px; font-weight:700; color:#0f172a;">Módulo 2: Seguimiento y Cambio de Estado</h3>
-            <p id="editExpTitulo" style="font-size:13px; font-weight:600; color:#0284c7; margin-bottom:4px;"></p>
-            <form id="formEditar" method="POST" enctype="multipart/form-data">
-                <div class="form-item">
-                    <label>Nuevo Estado de la Medida</label>
-                    <select id="editEstado" name="estado" required>
-                        <option value="Pendiente">Pendiente de ejecución</option>
-                        <option value="En seguimiento">En seguimiento</option>
-                        <option value="Concedida">Concedida</option>
-                        <option value="En revisión">En revisión</option>
-                        <option value="Ejecutada">Ejecutada</option>
-                        <option value="Levantada">Levantada</option>
-                    </select>
-                </div>
+    // Simular OCR
+    function cargarMockOCR() {
+      document.getElementById('v_tipo').value = 'pagare';
+      document.getElementById('v_monto').value = '25000';
+      document.getElementById('v_moneda').value = 'PEN';
+      document.getElementById('v_femision').value = '2024-02-15';
+      document.getElementById('v_fvencimiento').value = '2024-08-15';
+      document.getElementById('v_acreedor').value = 'Inversiones & Créditos del Sur S.A.C.';
+      document.getElementById('v_deudor').value = 'Constructora Los Olivos E.I.R.L.';
+      document.getElementById('v_protesto').checked = true;
+      document.getElementById('v_firma').checked = true;
+      analizarTitulo();
+    }
 
-                <div class="form-item">
-                    <label>Responsable a Cargo</label>
-                    <div class="input-group-responsable">
-                        <select id="editTituloResponsable" name="titulo_responsable">
-                            <option value="Dr.">Dr.</option>
-                            <option value="Dra.">Dra.</option>
-                            <option value="Abg.">Abg.</option>
-                            <option value="Lic.">Lic.</option>
-                            <option value="Bach.">Bach.</option>
-                            <option value="Ninguno">--</option>
-                        </select>
-                        <input type="text" id="editResponsable" name="responsable" required placeholder="Apellidos y Nombres">
-                    </div>
-                </div>
+    // MOTOR DE REGLAS: EVALUACIÓN LEGAL (FASE 3 Y FASE 4)
+    function analizarTitulo() {
+      const tipo = document.getElementById('v_tipo').value;
+      const monto = parseFloat(document.getElementById('v_monto').value);
+      const femision = document.getElementById('v_femision').value;
+      const fvencimiento = document.getElementById('v_fvencimiento').value;
+      const acreedor = document.getElementById('v_acreedor').value.trim();
+      const deudor = document.getElementById('v_deudor').value.trim();
+      const sinProtesto = document.getElementById('v_protesto').checked;
+      const tieneFirma = document.getElementById('v_firma').checked;
 
-                <div class="form-item">
-                    <label>Adjuntar / Actualizar Documento (Opcional):</label>
-                    <input type="file" name="archivo_documento" accept=".pdf,.doc,.docx,.png,.jpg,.jpeg">
-                </div>
+      if (!monto || !fvencimiento) {
+        alert('Por favor completa al menos el monto y la fecha de vencimiento.');
+        return;
+      }
 
-                <div style="display:flex; justify-content:flex-end; gap:8px; margin-top:12px;">
-                    <button type="button" onclick="cerrarModalEditar()" style="padding:8px 14px; border:1px solid #cbd5e1; background:white; border-radius:6px; cursor:pointer;">Cancelar</button>
-                    <button type="submit" style="padding:8px 14px; background:#0284c7; color:white; border:none; border-radius:6px; cursor:pointer; font-weight:600;">Actualizar Estado</button>
-                </div>
-            </form>
+      const fechaVenc = new Date(fvencimiento);
+      const hoy = new Date();
+      const diffAnios = (hoy - fechaVenc) / (1000 * 60 * 60 * 24 * 365.25);
+
+      let checks = [];
+      let alertas = [];
+      let score = 100;
+
+      // 1. Certeza (Sujetos)
+      if (acreedor && deudor) {
+        checks.push({ texto: "Certeza: Acreedor y Deudor plenamente individualizados", ok: true });
+      } else {
+        checks.push({ texto: "Certeza: Falta identificar partes procesales", ok: false });
+        alertas.push({ nivel: "danger", msg: "Inadmisibilidad: El documento no identifica con claridad al sujeto obligado o al acreedor." });
+        score -= 25;
+      }
+
+      // 2. Liquidez
+      if (monto > 0) {
+        checks.push({ texto: `Liquidez: Obligación dineraria líquida (S/ ${monto.toLocaleString()})`, ok: true });
+      } else {
+        checks.push({ texto: "Liquidez: Monto ilíquido o no determinado", ok: false });
+        alertas.push({ nivel: "danger", msg: "Improcedencia: El título carece de suma dineraria líquida (Art. 689 CPC)." });
+        score -= 30;
+      }
+
+      // 3. Exigibilidad (Vencimiento)
+      if (hoy >= fechaVenc) {
+        checks.push({ texto: "Exigibilidad: Plazo vencido y mora configurada", ok: true });
+      } else {
+        checks.push({ texto: "Exigibilidad: Título aún no vence", ok: false });
+        alertas.push({ nivel: "danger", msg: "Demanda Prematura: El título no es exigible hasta el cumplimiento del plazo." });
+        score -= 35;
+      }
+
+      // 4. Regla de Prescripción Cambiaria (Art. 18 Ley 27287)
+      if (diffAnios > 3) {
+        checks.push({ texto: `Prescripción Cambiaria: Superó los 3 años de plazo (${diffAnios.toFixed(1)} años)`, ok: false });
+        alertas.push({ nivel: "danger", msg: "ALERTA CRÍTICA: Acción cambiaria directa prescrita (Art. 18 LTV). El juez declarará improcedente la demanda ejecutiva. Se debe interponer acción causal o de enriquecimiento sin causa." });
+        score -= 40;
+      } else {
+        checks.push({ texto: `Vigencia Cambiaria: Dentro del plazo de 3 años (${diffAnios.toFixed(1)} años transcurridos)`, ok: true });
+      }
+
+      // 5. Regla de Protesto
+      if (!sinProtesto) {
+        checks.push({ texto: "Requisito de Protesto: Omitido", ok: false });
+        alertas.push({ nivel: "warning", msg: "Falta de Procedibilidad: El documento no contiene cláusula 'Sin Protesto' ni se acreditó acta notarial de protesto (Art. 158 LTV)." });
+        score -= 20;
+      } else {
+        checks.push({ texto: "Cláusula 'Sin Protesto' verificada o dispensada", ok: true });
+      }
+
+      // 6. Firma
+      if (!tieneFirma) {
+        checks.push({ texto: "Firma del obligado principal omitida", ok: false });
+        alertas.push({ nivel: "danger", msg: "Nulidad Formal: Sin la firma del deudor no existe obligación cambiaria exigible." });
+        score -= 50;
+      } else {
+        checks.push({ texto: "Firma de obligado principal registrada", ok: true });
+      }
+
+      score = Math.max(0, score);
+
+      // Renderizar resultados en pantalla
+      document.getElementById('resultado-vacio').classList.add('hidden');
+      document.getElementById('resultado-analisis').classList.remove('hidden');
+      document.getElementById('btn-export-box').classList.remove('hidden');
+
+      const badgeScore = document.getElementById('badge-score');
+      let colorClass = score >= 80 ? 'text-emerald-600' : (score >= 50 ? 'text-amber-600' : 'text-rose-600');
+      badgeScore.innerHTML = `
+        <span class="text-xs font-semibold text-slate-400 block">SCORE EJECUTABILIDAD</span>
+        <span class="text-2xl font-extrabold ${colorClass}">${score}%</span>
+      `;
+
+      // Checks
+      const checkContainer = document.getElementById('checklist-container');
+      checkContainer.innerHTML = checks.map(c => `
+        <div class="flex items-center gap-2 p-2 rounded ${c.ok ? 'bg-emerald-50 text-emerald-800' : 'bg-rose-50 text-rose-800'}">
+          <span>${c.ok ? '✅' : '❌'}</span>
+          <span class="font-medium text-xs">${c.texto}</span>
         </div>
-    </div>
+      `).join('');
 
-    <script>
-        function abrirModal() { document.getElementById('modalExp').style.display = 'flex'; }
-        function cerrarModal() { document.getElementById('modalExp').style.display = 'none'; }
+      // Alertas
+      const alertaContainer = document.getElementById('alertas-reglas');
+      alertaContainer.innerHTML = alertas.length === 0 ? `
+        <div class="p-3 bg-emerald-100 border border-emerald-300 rounded-lg text-xs text-emerald-800 font-semibold">
+          🚀 TÍTULO APTO: Cumple copulativamente con los Arts. 688 y 689 del CPC. Listo para ingresar demanda ejecutiva.
+        </div>
+      ` : alertas.map(a => `
+        <div class="p-3 ${a.nivel === 'danger' ? 'bg-rose-100 border-rose-300 text-rose-900' : 'bg-amber-100 border-amber-300 text-amber-900'} border rounded-lg text-xs font-medium">
+          ⚠️ ${a.msg}
+        </div>
+      `).join('');
 
-        function abrirModalEditar(id, num, estado, responsableCompleto) {
-            document.getElementById('editExpTitulo').innerText = 'Expediente: ' + num;
-            document.getElementById('editEstado').value = estado;
-            document.getElementById('formEditar').action = '/editar/' + id;
+      // Armar Reporte Imprimible
+      document.getElementById('print-score').innerText = `Score: ${score}%`;
+      document.getElementById('print-body').innerHTML = `
+        <p><strong>Tipo de Título:</strong> ${tipo.toUpperCase()}</p>
+        <p><strong>Acreedor:</strong> ${acreedor || 'No especificado'} | <strong>Deudor:</strong> ${deudor || 'No especificado'}</p>
+        <p><strong>Monto Evaluado:</strong> S/ ${monto} | <strong>Vencimiento:</strong> ${fvencimiento}</p>
+        <hr class="my-3"/>
+        <h3 class="font-bold">Checklist Normativo (Arts. 688 y 689 CPC):</h3>
+        <ul class="list-disc pl-5">${checks.map(c => `<li>${c.ok ? 'APROBADO' : 'OBSERVADO'}: ${c.texto}</li>`).join('')}</ul>
+        <hr class="my-3"/>
+        <h3 class="font-bold">Observaciones del Motor de Reglas:</h3>
+        ${alertas.length === 0 ? '<p>Ninguna. El título reúne mérito ejecutivo directo.</p>' : alertas.map(a => `<p>• ${a.msg}</p>`).join('')}
+      `;
+    }
 
-            const prefijos = ['Dr.', 'Dra.', 'Abg.', 'Lic.', 'Bach.'];
-            let partes = responsableCompleto.trim().split(' ');
-            let prefijoEncontrado = 'Ninguno';
-            let nombreLimpio = responsableCompleto;
+    // Simulador respuestas
+    function resolverCaso1() {
+      const resp = document.querySelector('input[name="caso1"]:checked');
+      const box = document.getElementById('resp-caso1');
+      box.classList.remove('hidden');
+      if (resp && resp.value === 'b') {
+        box.className = 'p-3 rounded-lg text-xs bg-emerald-100 text-emerald-900 border border-emerald-300';
+        box.innerHTML = '<strong>¡Correcto!</strong> El Art. 158.2 de la Ley N° 27287 dispone que a falta de mención expresa de fecha de vencimiento, se considera pagadero a la vista, conservando su plena ejecutabilidad.';
+      } else {
+        box.className = 'p-3 rounded-lg text-xs bg-rose-100 text-rose-900 border border-rose-300';
+        box.innerHTML = '<strong>Incorrecto.</strong> El pagaré no es nulo; la ley suple la omisión presumiendo que es pagadero a la vista.';
+      }
+    }
 
-            if (partes.length > 1 && prefijos.includes(partes[0])) {
-                prefijoEncontrado = partes[0];
-                nombreLimpio = partes.slice(1).join(' ');
-            }
+    function resolverCaso2() {
+      const resp = document.querySelector('input[name="caso2"]:checked');
+      const box = document.getElementById('resp-caso2');
+      box.classList.remove('hidden');
+      if (resp && resp.value === 'b') {
+        box.className = 'p-3 rounded-lg text-xs bg-emerald-100 text-emerald-900 border border-emerald-300';
+        box.innerHTML = '<strong>¡Correcto!</strong> Según el Art. 18 de la Ley de Títulos Valores, la acción cambiaria directa prescribe a los tres años desde el vencimiento. En vía ejecutiva será rechazada.';
+      } else {
+        box.className = 'p-3 rounded-lg text-xs bg-rose-100 text-rose-900 border border-rose-300';
+        box.innerHTML = '<strong>Incorrecto.</strong> La prescripción cambiaria opera por el paso del tiempo e impide el proceso de ejecución forzada.';
+      }
+    }
 
-            document.getElementById('editTituloResponsable').value = prefijoEncontrado;
-            document.getElementById('editResponsable').value = nombreLimpio;
+    // Calculadora Jurídica
+    function calcularLiquidacion() {
+      const cap = parseFloat(document.getElementById('calc_capital').value) || 0;
+      const tasa = parseFloat(document.getElementById('calc_tasa').value) || 0;
+      const f1 = new Date(document.getElementById('calc_finicio').value);
+      const f2 = new Date(document.getElementById('calc_ffin').value);
 
-            document.getElementById('modalEditar').style.display = 'flex';
-        }
+      const dias = Math.max(0, Math.round((f2 - f1) / (1000 * 60 * 60 * 24)));
+      const intereses = (cap * (tasa / 100) * (dias / 360));
+      const total = cap + intereses;
 
-        function cerrarModalEditar() { document.getElementById('modalEditar').style.display = 'none'; }
+      document.getElementById('res_dias').innerText = dias + ' días';
+      document.getElementById('res_intereses').innerText = 'S/ ' + intereses.toFixed(2);
+      document.getElementById('res_total').innerText = 'S/ ' + total.toFixed(2);
+    }
 
-        function verificarOrgano(valor) {
-            const cajaManual = document.getElementById('cajaOrganoManual');
-            const inputManual = document.getElementById('inputOrganoManual');
-            if (valor === 'Otro') {
-                cajaManual.style.display = 'block';
-                inputManual.required = true;
-                inputManual.focus();
-            } else {
-                cajaManual.style.display = 'none';
-                inputManual.required = false;
-            }
-        }
-    </script>
+    // Inicialización
+    tabTitulo('pagare');
+    lucide.createIcons();
+  </script>
 </body>
 </html>
