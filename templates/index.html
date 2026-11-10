@@ -10,9 +10,19 @@
   <script src="https://unpkg.com/lucide@latest"></script>
   <style>
     @media print {
-      body * { visibility: hidden; }
-      #printableReport, #printableReport * { visibility: visible; }
-      #printableReport { position: absolute; left: 0; top: 0; width: 100%; }
+      header, main, nav {
+        display: none !important;
+      }
+      #printableReport {
+        display: block !important;
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        background: white;
+        color: #1e293b;
+        padding: 2.5rem;
+      }
     }
   </style>
 </head>
@@ -122,7 +132,7 @@
       </div>
     </section>
 
-    <!-- SECCIÓN 2: TÍTULOS VALORES (MARCO TEÓRICO ART. 688 CPC) -->
+    <!-- SECCIÓN 2: TÍTULOS VALORES -->
     <section id="sec-titulos" class="hidden space-y-6">
       <div class="border-b pb-4">
         <h2 class="text-2xl font-bold text-slate-900">Títulos Valores y Títulos Ejecutivos</h2>
@@ -137,9 +147,7 @@
 
       <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div class="md:col-span-2 bg-white p-6 rounded-xl border shadow-sm space-y-4">
-          <div id="content-titulo-detalle">
-            <!-- Dinámico -->
-          </div>
+          <div id="content-titulo-detalle"></div>
         </div>
 
         <div class="bg-white p-6 rounded-xl border shadow-sm space-y-4">
@@ -173,9 +181,14 @@
           <h2 class="text-2xl font-bold text-slate-900">Verificador Jurídico de Ejecutabilidad</h2>
           <p class="text-slate-600 text-sm">Validación inteligente según Arts. 688, 689 del CPC y Ley N° 27287.</p>
         </div>
-        <button onclick="cargarMockOCR()" class="bg-indigo-50 border border-indigo-200 text-indigo-700 hover:bg-indigo-100 text-xs font-semibold px-3 py-2 rounded-lg flex items-center gap-1.5 transition">
-          <i data-lucide="scan-line" class="w-4 h-4"></i> Simular Lectura OCR de Título Valor
-        </button>
+        <div class="flex items-center gap-2">
+          <button onclick="limpiarVerificador()" class="bg-slate-200 border border-slate-300 text-slate-700 hover:bg-slate-300 text-xs font-semibold px-3 py-2 rounded-lg flex items-center gap-1.5 transition">
+            <i data-lucide="rotate-ccw" class="w-4 h-4"></i> Limpiar Campos
+          </button>
+          <button onclick="cargarMockOCR()" class="bg-indigo-50 border border-indigo-200 text-indigo-700 hover:bg-indigo-100 text-xs font-semibold px-3 py-2 rounded-lg flex items-center gap-1.5 transition">
+            <i data-lucide="scan-line" class="w-4 h-4"></i> Simular Lectura OCR de Título Valor
+          </button>
+        </div>
       </div>
 
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
@@ -242,9 +255,14 @@
               </label>
             </div>
 
-            <button onclick="analizarTitulo()" class="w-full mt-4 bg-slate-900 hover:bg-slate-800 text-white font-semibold py-2.5 rounded-lg shadow transition flex items-center justify-center gap-2">
-              <i data-lucide="play" class="w-4 h-4 text-amber-400"></i> Ejecutar Análisis Jurídico
-            </button>
+            <div class="flex gap-2 pt-2">
+              <button onclick="limpiarVerificador()" class="w-1/3 bg-slate-200 hover:bg-slate-300 text-slate-800 font-semibold py-2.5 rounded-lg transition text-xs flex items-center justify-center gap-1">
+                <i data-lucide="eraser" class="w-4 h-4"></i> Limpiar
+              </button>
+              <button onclick="analizarTitulo()" class="w-2/3 bg-slate-900 hover:bg-slate-800 text-white font-semibold py-2.5 rounded-lg shadow transition flex items-center justify-center gap-2 text-xs">
+                <i data-lucide="play" class="w-4 h-4 text-amber-400"></i> Ejecutar Análisis Jurídico
+              </button>
+            </div>
           </div>
         </div>
 
@@ -269,19 +287,15 @@
 
             <div id="resultado-analisis" class="hidden space-y-4">
               <!-- Checklist de Requisitos -->
-              <div class="space-y-2 text-sm" id="checklist-container">
-                <!-- Se inyecta por JS -->
-              </div>
+              <div class="space-y-2 text-sm" id="checklist-container"></div>
 
               <!-- Alertas del Motor de Reglas -->
-              <div id="alertas-reglas" class="space-y-2 pt-2">
-                <!-- Alertas dinámicas -->
-              </div>
+              <div id="alertas-reglas" class="space-y-2 pt-2"></div>
             </div>
           </div>
 
           <div id="btn-export-box" class="hidden pt-6 border-t mt-4">
-            <button onclick="window.print()" class="w-full bg-emerald-700 hover:bg-emerald-800 text-white font-semibold py-2.5 rounded-lg shadow transition flex items-center justify-center gap-2 text-sm">
+            <button onclick="imprimirReporteDirecto()" class="w-full bg-emerald-700 hover:bg-emerald-800 text-white font-semibold py-2.5 rounded-lg shadow transition flex items-center justify-center gap-2 text-sm">
               <i data-lucide="printer" class="w-4 h-4"></i> Imprimir / Exportar Reporte de Ejecutabilidad (PDF)
             </button>
           </div>
@@ -291,50 +305,17 @@
 
     <!-- SECCIÓN 4: SIMULADOR DE CASOS PRÁCTICOS -->
     <section id="sec-simulador" class="hidden space-y-6">
-      <div class="border-b pb-4">
-        <h2 class="text-2xl font-bold text-slate-900">Simulador de Casos Prácticos</h2>
-        <p class="text-slate-600 text-sm">Casos reales resueltos por los juzgados civiles y comerciales de Lima.</p>
+      <div class="border-b pb-4 flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <h2 class="text-2xl font-bold text-slate-900">Simulador de Casos Prácticos</h2>
+          <p class="text-slate-600 text-sm">Entrenamiento basado en precedentes judiciales civiles y comerciales.</p>
+        </div>
+        <button onclick="generarNuevosCasos()" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold px-4 py-2 rounded-lg flex items-center gap-2 shadow transition">
+          <i data-lucide="refresh-cw" class="w-4 h-4"></i> Cargar Nuevos Casos Aleatorios
+        </button>
       </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <!-- Caso 1 -->
-        <div class="bg-white p-6 rounded-xl border shadow-sm space-y-4">
-          <span class="bg-amber-100 text-amber-800 text-xs px-2.5 py-1 rounded font-semibold">Caso 1: Omisión de vencimiento</span>
-          <h3 class="font-bold text-slate-900">¿Qué consecuencia tiene un pagaré emitido sin fecha de vencimiento expresa?</h3>
-          <div class="space-y-2 text-sm">
-            <label class="block p-3 border rounded-lg hover:bg-slate-50 cursor-pointer">
-              <input type="radio" name="caso1" value="a" class="mr-2"> Es nulo de pleno derecho por omitir un requisito esencial.
-            </label>
-            <label class="block p-3 border rounded-lg hover:bg-slate-50 cursor-pointer">
-              <input type="radio" name="caso1" value="b" class="mr-2"> Es válido y se considera exigible a la vista (Art. 158 Ley 27287).
-            </label>
-            <label class="block p-3 border rounded-lg hover:bg-slate-50 cursor-pointer">
-              <input type="radio" name="caso1" value="c" class="mr-2"> Solo puede cobrarse si el deudor firma una adenda confirmatoria.
-            </label>
-          </div>
-          <button onclick="resolverCaso1()" class="bg-slate-900 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-slate-800">Verificar Fundamento</button>
-          <div id="resp-caso1" class="hidden p-3 rounded-lg text-xs leading-relaxed"></div>
-        </div>
-
-        <!-- Caso 2 -->
-        <div class="bg-white p-6 rounded-xl border shadow-sm space-y-4">
-          <span class="bg-indigo-100 text-indigo-800 text-xs px-2.5 py-1 rounded font-semibold">Caso 2: Prescripción Cambiaria</span>
-          <h3 class="font-bold text-slate-900">Letra de cambio vencida hace 3 años y 2 meses sin cobro judicial. ¿Qué ocurre?</h3>
-          <div class="space-y-2 text-sm">
-            <label class="block p-3 border rounded-lg hover:bg-slate-50 cursor-pointer">
-              <input type="radio" name="caso2" value="a" class="mr-2"> Se demanda en Proceso Único de Ejecución porque la firma es auténtica.
-            </label>
-            <label class="block p-3 border rounded-lg hover:bg-slate-50 cursor-pointer">
-              <input type="radio" name="caso2" value="b" class="mr-2"> Prescribió la acción cambiaria directa (Art. 18 LTV); debe usarse la acción causal o de enriquecimiento sin causa.
-            </label>
-            <label class="block p-3 border rounded-lg hover:bg-slate-50 cursor-pointer">
-              <input type="radio" name="caso2" value="c" class="mr-2"> El juez otorga 5 días al ejecutante para subsanar la prescripción.
-            </label>
-          </div>
-          <button onclick="resolverCaso2()" class="bg-slate-900 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-slate-800">Verificar Fundamento</button>
-          <div id="resp-caso2" class="hidden p-3 rounded-lg text-xs leading-relaxed"></div>
-        </div>
-      </div>
+      <div id="contenedor-casos" class="grid grid-cols-1 md:grid-cols-2 gap-6"></div>
     </section>
 
     <!-- SECCIÓN 5: CALCULADORA JURÍDICA (LIQUIDEZ ART. 689) -->
@@ -428,21 +409,24 @@
 
   </main>
 
-  <!-- REPORTE OCULTO PARA IMPRESIÓN/PDF -->
-  <div id="printableReport" class="hidden p-8 font-sans">
-    <div class="border-b-2 border-slate-900 pb-4 mb-6 flex justify-between items-center">
+  <!-- CONTENEDOR DEL REPORTE IMPRIMIBLE (PDF) -->
+  <div id="printableReport" class="hidden">
+    <div style="border-bottom: 2px solid #0f172a; padding-bottom: 12px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: flex-end;">
       <div>
-        <h1 class="text-2xl font-bold text-slate-900">DICTAMEN TÉCNICO DE EJECUTABILIDAD</h1>
-        <p class="text-xs text-slate-600">Calificación de Título Valor · Proceso Único de Ejecución (CPC)</p>
+        <h1 style="font-size: 20px; font-weight: 800; color: #0f172a; margin: 0;">DICTAMEN TÉCNICO DE EJECUTABILIDAD CAMBIARIA</h1>
+        <p style="font-size: 11px; color: #64748b; margin: 2px 0 0 0;">Plataforma Jurídica Digital · Conforme a los Arts. 688 y 689 del Código Procesal Civil</p>
       </div>
-      <div id="print-score" class="text-xl font-black px-4 py-2 bg-slate-100 border rounded"></div>
+      <div id="print-score" style="font-size: 16px; font-weight: 800; padding: 6px 12px; border: 1px solid #cbd5e1; border-radius: 6px; background-color: #f8fafc;"></div>
     </div>
-    <div id="print-body" class="space-y-4 text-sm leading-relaxed"></div>
+    <div id="print-body" style="font-size: 12px; line-height: 1.6;"></div>
+    <div style="margin-top: 35px; border-top: 1px solid #e2e8f0; padding-top: 8px; font-size: 10px; color: #94a3b8; text-align: center;">
+      Reporte de Calificación Previa emitido de acuerdo a la Ley de Títulos Valores N° 27287 y el Código Procesal Civil peruano.
+    </div>
   </div>
 
-  <!-- SCRIPT CON LA LÓGICA DE NEGOCIO Y MOTOR DE REGLAS -->
+  <!-- SCRIPT -->
   <script>
-    // Navegación entre pestañas
+    // Navegación con reinicio limpio del verificador
     function navegar(seccion) {
       document.querySelectorAll('main > section').forEach(sec => sec.classList.add('hidden'));
       document.getElementById('sec-' + seccion).classList.remove('hidden');
@@ -456,10 +440,99 @@
         activeNav.classList.remove('text-slate-300');
         activeNav.classList.add('text-amber-400');
       }
+
+      // Si entra al verificador, limpiar para permitir nueva simulación o ingreso manual
+      if (seccion === 'verificador') {
+        limpiarVerificador();
+      }
+
       lucide.createIcons();
     }
 
-    // Detalle dinámico en módulo Títulos Valores
+    // Limpiar campos del Verificador y restaurar estado inicial
+    function limpiarVerificador() {
+      document.getElementById('v_tipo').value = 'pagare';
+      document.getElementById('v_monto').value = '';
+      document.getElementById('v_moneda').value = 'PEN';
+      document.getElementById('v_femision').value = '';
+      document.getElementById('v_fvencimiento').value = '';
+      document.getElementById('v_acreedor').value = '';
+      document.getElementById('v_deudor').value = '';
+      document.getElementById('v_protesto').checked = true;
+      document.getElementById('v_firma').checked = true;
+
+      // Ocultar resultados previos
+      document.getElementById('resultado-analisis').classList.add('hidden');
+      document.getElementById('btn-export-box').classList.add('hidden');
+      document.getElementById('resultado-vacio').classList.remove('hidden');
+
+      // Resetear Score
+      const badgeScore = document.getElementById('badge-score');
+      badgeScore.innerHTML = `
+        <span class="text-xs font-semibold text-slate-400 block">SCORE EJECUTABILIDAD</span>
+        <span class="text-2xl font-extrabold text-slate-400">--%</span>
+      `;
+    }
+
+    // Banco de Títulos OCR para alternar demostraciones
+    const demosOCR = [
+      {
+        tipo: 'pagare',
+        monto: '25000',
+        moneda: 'PEN',
+        femision: '2025-02-15',
+        fvencimiento: '2025-08-15',
+        acreedor: 'Inversiones & Créditos del Sur S.A.C.',
+        deudor: 'Constructora Los Olivos E.I.R.L.',
+        protesto: true,
+        firma: true
+      },
+      {
+        tipo: 'letra',
+        monto: '18500',
+        moneda: 'USD',
+        femision: '2021-01-10',
+        fvencimiento: '2021-06-30', // Prescrito (> 3 años)
+        acreedor: 'Importaciones del Pacífico S.A.',
+        deudor: 'Distribuidora Textil Santa Anita',
+        protesto: true,
+        firma: true
+      },
+      {
+        tipo: 'pagare',
+        monto: '12000',
+        moneda: 'PEN',
+        femision: '2025-05-10',
+        fvencimiento: '2025-11-20',
+        acreedor: 'Cooperativa de Ahorro y Crédito San Pedro',
+        deudor: 'Roberto Carlos Valdivia Luna',
+        protesto: false, // Observación de protesto
+        firma: true
+      }
+    ];
+
+    let indiceMockOCR = 0;
+
+    // Simular OCR rotativo
+    function cargarMockOCR() {
+      const demo = demosOCR[indiceMockOCR];
+      document.getElementById('v_tipo').value = demo.tipo;
+      document.getElementById('v_monto').value = demo.monto;
+      document.getElementById('v_moneda').value = demo.moneda;
+      document.getElementById('v_femision').value = demo.femision;
+      document.getElementById('v_fvencimiento').value = demo.fvencimiento;
+      document.getElementById('v_acreedor').value = demo.acreedor;
+      document.getElementById('v_deudor').value = demo.deudor;
+      document.getElementById('v_protesto').checked = demo.protesto;
+      document.getElementById('v_firma').checked = demo.firma;
+
+      analizarTitulo();
+
+      // Rotar al siguiente caso para la próxima pulsación
+      indiceMockOCR = (indiceMockOCR + 1) % demosOCR.length;
+    }
+
+    // Módulo Títulos Valores
     const titulosInfo = {
       pagare: {
         titulo: "¿Qué es el Pagaré?",
@@ -501,21 +574,7 @@
       `;
     }
 
-    // Simular OCR
-    function cargarMockOCR() {
-      document.getElementById('v_tipo').value = 'pagare';
-      document.getElementById('v_monto').value = '25000';
-      document.getElementById('v_moneda').value = 'PEN';
-      document.getElementById('v_femision').value = '2024-02-15';
-      document.getElementById('v_fvencimiento').value = '2024-08-15';
-      document.getElementById('v_acreedor').value = 'Inversiones & Créditos del Sur S.A.C.';
-      document.getElementById('v_deudor').value = 'Constructora Los Olivos E.I.R.L.';
-      document.getElementById('v_protesto').checked = true;
-      document.getElementById('v_firma').checked = true;
-      analizarTitulo();
-    }
-
-    // MOTOR DE REGLAS: EVALUACIÓN LEGAL (FASE 3 Y FASE 4)
+    // MOTOR DE REGLAS: EVALUACIÓN LEGAL
     function analizarTitulo() {
       const tipo = document.getElementById('v_tipo').value;
       const monto = parseFloat(document.getElementById('v_monto').value);
@@ -539,7 +598,7 @@
       let alertas = [];
       let score = 100;
 
-      // 1. Certeza (Sujetos)
+      // 1. Certeza
       if (acreedor && deudor) {
         checks.push({ texto: "Certeza: Acreedor y Deudor plenamente individualizados", ok: true });
       } else {
@@ -557,7 +616,7 @@
         score -= 30;
       }
 
-      // 3. Exigibilidad (Vencimiento)
+      // 3. Exigibilidad
       if (hoy >= fechaVenc) {
         checks.push({ texto: "Exigibilidad: Plazo vencido y mora configurada", ok: true });
       } else {
@@ -566,7 +625,7 @@
         score -= 35;
       }
 
-      // 4. Regla de Prescripción Cambiaria (Art. 18 Ley 27287)
+      // 4. Prescripción (Art. 18 Ley 27287)
       if (diffAnios > 3) {
         checks.push({ texto: `Prescripción Cambiaria: Superó los 3 años de plazo (${diffAnios.toFixed(1)} años)`, ok: false });
         alertas.push({ nivel: "danger", msg: "ALERTA CRÍTICA: Acción cambiaria directa prescrita (Art. 18 LTV). El juez declarará improcedente la demanda ejecutiva. Se debe interponer acción causal o de enriquecimiento sin causa." });
@@ -575,7 +634,7 @@
         checks.push({ texto: `Vigencia Cambiaria: Dentro del plazo de 3 años (${diffAnios.toFixed(1)} años transcurridos)`, ok: true });
       }
 
-      // 5. Regla de Protesto
+      // 5. Protesto
       if (!sinProtesto) {
         checks.push({ texto: "Requisito de Protesto: Omitido", ok: false });
         alertas.push({ nivel: "warning", msg: "Falta de Procedibilidad: El documento no contiene cláusula 'Sin Protesto' ni se acreditó acta notarial de protesto (Art. 158 LTV)." });
@@ -595,7 +654,7 @@
 
       score = Math.max(0, score);
 
-      // Renderizar resultados en pantalla
+      // Renderizar UI
       document.getElementById('resultado-vacio').classList.add('hidden');
       document.getElementById('resultado-analisis').classList.remove('hidden');
       document.getElementById('btn-export-box').classList.remove('hidden');
@@ -607,7 +666,7 @@
         <span class="text-2xl font-extrabold ${colorClass}">${score}%</span>
       `;
 
-      // Checks
+      // Render Checks
       const checkContainer = document.getElementById('checklist-container');
       checkContainer.innerHTML = checks.map(c => `
         <div class="flex items-center gap-2 p-2 rounded ${c.ok ? 'bg-emerald-50 text-emerald-800' : 'bg-rose-50 text-rose-800'}">
@@ -616,7 +675,7 @@
         </div>
       `).join('');
 
-      // Alertas
+      // Render Alertas
       const alertaContainer = document.getElementById('alertas-reglas');
       alertaContainer.innerHTML = alertas.length === 0 ? `
         <div class="p-3 bg-emerald-100 border border-emerald-300 rounded-lg text-xs text-emerald-800 font-semibold">
@@ -628,45 +687,142 @@
         </div>
       `).join('');
 
-      // Armar Reporte Imprimible
-      document.getElementById('print-score').innerText = `Score: ${score}%`;
+      // Construcción del documento de impresión
+      document.getElementById('print-score').innerText = `Calificación: ${score}%`;
       document.getElementById('print-body').innerHTML = `
-        <p><strong>Tipo de Título:</strong> ${tipo.toUpperCase()}</p>
-        <p><strong>Acreedor:</strong> ${acreedor || 'No especificado'} | <strong>Deudor:</strong> ${deudor || 'No especificado'}</p>
-        <p><strong>Monto Evaluado:</strong> S/ ${monto} | <strong>Vencimiento:</strong> ${fvencimiento}</p>
-        <hr class="my-3"/>
-        <h3 class="font-bold">Checklist Normativo (Arts. 688 y 689 CPC):</h3>
-        <ul class="list-disc pl-5">${checks.map(c => `<li>${c.ok ? 'APROBADO' : 'OBSERVADO'}: ${c.texto}</li>`).join('')}</ul>
-        <hr class="my-3"/>
-        <h3 class="font-bold">Observaciones del Motor de Reglas:</h3>
-        ${alertas.length === 0 ? '<p>Ninguna. El título reúne mérito ejecutivo directo.</p>' : alertas.map(a => `<p>• ${a.msg}</p>`).join('')}
+        <table style="width: 100%; border-collapse: collapse; margin-bottom: 16px;">
+          <tr style="background: #f1f5f9;"><td style="padding: 6px; font-weight: bold; width: 30%;">Tipo de Documento:</td><td style="padding: 6px;">${tipo.toUpperCase()}</td></tr>
+          <tr><td style="padding: 6px; font-weight: bold;">Parte Demandante (Acreedor):</td><td style="padding: 6px;">${acreedor || 'No especificado'}</td></tr>
+          <tr style="background: #f1f5f9;"><td style="padding: 6px; font-weight: bold;">Parte Demandada (Deudor):</td><td style="padding: 6px;">${deudor || 'No especificado'}</td></tr>
+          <tr><td style="padding: 6px; font-weight: bold;">Cuantía / Moneda:</td><td style="padding: 6px;">S/ ${monto.toLocaleString()}</td></tr>
+          <tr style="background: #f1f5f9;"><td style="padding: 6px; font-weight: bold;">Fecha de Vencimiento:</td><td style="padding: 6px;">${fvencimiento}</td></tr>
+        </table>
+        
+        <h4 style="font-size: 13px; font-weight: bold; margin: 14px 0 6px 0; border-bottom: 1px solid #cbd5e1; padding-bottom: 4px;">1. Checklist de Formalidad y Requisitos de Fondo (Arts. 688 y 689 CPC)</h4>
+        <div style="margin-left: 8px;">
+          ${checks.map(c => `<div style="margin-bottom: 4px;">${c.ok ? '✅ [CUMPLE]' : '❌ [OBSERVADO]'}: ${c.texto}</div>`).join('')}
+        </div>
+
+        <h4 style="font-size: 13px; font-weight: bold; margin: 18px 0 6px 0; border-bottom: 1px solid #cbd5e1; padding-bottom: 4px;">2. Conclusiones y Advertencias del Motor de Reglas</h4>
+        <div style="margin-left: 8px;">
+          ${alertas.length === 0 ? '<p style="color: #047857; font-weight: bold;">El título reúne plena idoneidad cambiaria. Procedente para despacho de Mandato Ejecutivo inmediato.</p>' : alertas.map(a => `<p style="margin-bottom: 4px;">• ${a.msg}</p>`).join('')}
+        </div>
       `;
     }
 
-    // Simulador respuestas
-    function resolverCaso1() {
-      const resp = document.querySelector('input[name="caso1"]:checked');
-      const box = document.getElementById('resp-caso1');
-      box.classList.remove('hidden');
-      if (resp && resp.value === 'b') {
-        box.className = 'p-3 rounded-lg text-xs bg-emerald-100 text-emerald-900 border border-emerald-300';
-        box.innerHTML = '<strong>¡Correcto!</strong> El Art. 158.2 de la Ley N° 27287 dispone que a falta de mención expresa de fecha de vencimiento, se considera pagadero a la vista, conservando su plena ejecutabilidad.';
-      } else {
-        box.className = 'p-3 rounded-lg text-xs bg-rose-100 text-rose-900 border border-rose-300';
-        box.innerHTML = '<strong>Incorrecto.</strong> El pagaré no es nulo; la ley suple la omisión presumiendo que es pagadero a la vista.';
-      }
+    // Impresión directa
+    function imprimirReporteDirecto() {
+      const reporte = document.getElementById('printableReport');
+      reporte.classList.remove('hidden');
+      window.print();
+      reporte.classList.add('hidden');
     }
 
-    function resolverCaso2() {
-      const resp = document.querySelector('input[name="caso2"]:checked');
-      const box = document.getElementById('resp-caso2');
+    // BANCO DINÁMICO DE CASOS
+    const bancoCasos = [
+      {
+        tag: "Omisión de Vencimiento",
+        tagColor: "bg-amber-100 text-amber-800",
+        pregunta: "¿Qué consecuencia legal tiene un pagaré emitido sin fecha de vencimiento expresa?",
+        opciones: [
+          { texto: "Es nulo de pleno derecho por omitir un requisito esencial de validez.", correcta: false },
+          { texto: "Es válido y se considera legalmente exigible a la vista (Art. 158 Ley N° 27287).", correcta: true },
+          { texto: "Solo puede cobrarse si el deudor suscribe una adenda confirmatoria.", correcta: false }
+        ],
+        fundamento: "El Art. 158.2 de la Ley N° 27287 establece que ante la falta de indicación expresa de vencimiento, el pagaré se considera pagadero a la vista, conservando su ejecutabilidad cambiaria."
+      },
+      {
+        tag: "Prescripción Cambiaria",
+        tagColor: "bg-indigo-100 text-indigo-800",
+        pregunta: "Una letra de cambio tiene 3 años y 2 meses de vencida sin haberse demandado. ¿Qué ocurre judicialmente?",
+        opciones: [
+          { texto: "Puede demandarse en vía ejecutiva ofreciendo peritaje grafotécnico.", correcta: false },
+          { texto: "Prescribió la acción cambiaria directa (Art. 18 LTV); debe reclamarse vía acción causal o enriquecimiento sin causa.", correcta: true },
+          { texto: "El juez confiere 5 días al demandante para subsanar la prescripción.", correcta: false }
+        ],
+        fundamento: "Conforme al Art. 18 de la Ley N° 27287, la acción cambiaria directa prescribe a los 3 años del vencimiento, tornando improcedente la vía ejecutiva."
+      },
+      {
+        tag: "Omisión de Cláusula de Protesto",
+        tagColor: "bg-emerald-100 text-emerald-800",
+        pregunta: "Un pagaré no incluye la cláusula 'Sin Protesto' y el acreedor no realizó el trámite notarial. ¿Qué sanción procesal acarrea?",
+        opciones: [
+          { texto: "Caducidad o pérdida del mérito ejecutivo del título por falta de formalidad sustitutoria.", correcta: true },
+          { texto: "Ninguna; el protesto notarial ya fue derogado totalmente para todo tipo de título.", correcta: false },
+          { texto: "El título se convierte automáticamente en cheque de pago diferido.", correcta: false }
+        ],
+        fundamento: "Si el título no contiene la cláusula 'Sin Protesto' (Art. 52 LTV), el protesto notarial formal es indispensable para conservar la acción ejecutiva."
+      },
+      {
+        tag: "Discrepancia en el Monto",
+        tagColor: "bg-purple-100 text-purple-800",
+        pregunta: "Un título valor consigna en números 'S/ 10,000' pero en letras dice 'Ocho mil soles'. ¿Qué importe prevalece judicialmente?",
+        opciones: [
+          { texto: "Prevalece la suma menor o la expresada en letras ante discrepancia (Art. 5.2 LTV).", correcta: true },
+          { texto: "El título valor es nulo por carecer de certeza y liquidez.", correcta: false },
+          { texto: "El juez promedia ambos montos al momento de expedir el mandato ejecutivo.", correcta: false }
+        ],
+        fundamento: "El Art. 5.2 de la Ley N° 27287 señala que en caso de diferencia entre el importe expresado en letras y números, prima la suma menor o la consignada en letras."
+      },
+      {
+        tag: "Contradicción Judicial",
+        tagColor: "bg-rose-100 text-rose-800",
+        pregunta: "¿Cuál de las siguientes causales es legalmente válida para formular contradicción al mandato ejecutivo (Art. 690-D CPC)?",
+        opciones: [
+          { texto: "Inexigibilidad de la obligación, falsedad del título o extinción de la deuda debidamente probada.", correcta: true },
+          { texto: "La falta de solvencia económica sobreviniente del ejecutado.", correcta: false },
+          { texto: "Discrepancia comercial sobre la calidad de bienes no descrita en el título valor.", correcta: false }
+        ],
+        fundamento: "El Art. 690-D del Código Procesal Civil limita taxativamente la contradicción a inexigibilidad, iliquidez, falsedad/nulidad del título o pago acreditado."
+      }
+    ];
+
+    function generarNuevosCasos() {
+      const barajados = [...bancoCasos].sort(() => 0.5 - Math.random());
+      const seleccionados = barajados.slice(0, 2);
+
+      const contenedor = document.getElementById('contenedor-casos');
+      contenedor.innerHTML = seleccionados.map((caso, idx) => `
+        <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm space-y-4">
+          <span class="${caso.tagColor} text-xs px-2.5 py-1 rounded font-semibold">Caso: ${caso.tag}</span>
+          <h3 class="font-bold text-slate-900 text-sm md:text-base">${caso.pregunta}</h3>
+          
+          <div class="space-y-2 text-sm">
+            ${caso.opciones.map(opc => `
+              <label class="block p-3 border rounded-lg hover:bg-slate-50 cursor-pointer text-xs md:text-sm">
+                <input type="radio" name="caso_dinamico_${idx}" value="${opc.correcta}" class="mr-2"> ${opc.texto}
+              </label>
+            `).join('')}
+          </div>
+
+          <button onclick="evaluarCasoDinamico(${idx}, '${encodeURIComponent(caso.fundamento)}')" class="bg-slate-900 text-white px-4 py-2 rounded-lg text-xs md:text-sm font-semibold hover:bg-slate-800 transition">
+            Verificar Fundamento
+          </button>
+          <div id="resp-caso-${idx}" class="hidden p-3 rounded-lg text-xs leading-relaxed"></div>
+        </div>
+      `).join('');
+
+      lucide.createIcons();
+    }
+
+    function evaluarCasoDinamico(idx, fundamentoEncoded) {
+      const fund = decodeURIComponent(fundamentoEncoded);
+      const radio = document.querySelector(`input[name="caso_dinamico_${idx}"]:checked`);
+      const box = document.getElementById(`resp-caso-${idx}`);
       box.classList.remove('hidden');
-      if (resp && resp.value === 'b') {
+
+      if (!radio) {
+        box.className = 'p-3 rounded-lg text-xs bg-amber-100 text-amber-900 border border-amber-300';
+        box.innerHTML = '<strong>Atención:</strong> Debes seleccionar una alternativa antes de comprobar.';
+        return;
+      }
+
+      if (radio.value === 'true') {
         box.className = 'p-3 rounded-lg text-xs bg-emerald-100 text-emerald-900 border border-emerald-300';
-        box.innerHTML = '<strong>¡Correcto!</strong> Según el Art. 18 de la Ley de Títulos Valores, la acción cambiaria directa prescribe a los tres años desde el vencimiento. En vía ejecutiva será rechazada.';
+        box.innerHTML = `<strong>¡Correcto!</strong> ${fund}`;
       } else {
         box.className = 'p-3 rounded-lg text-xs bg-rose-100 text-rose-900 border border-rose-300';
-        box.innerHTML = '<strong>Incorrecto.</strong> La prescripción cambiaria opera por el paso del tiempo e impide el proceso de ejecución forzada.';
+        box.innerHTML = `<strong>Incorrecto.</strong> Fundamento legal: ${fund}`;
       }
     }
 
@@ -688,6 +844,7 @@
 
     // Inicialización
     tabTitulo('pagare');
+    generarNuevosCasos();
     lucide.createIcons();
   </script>
 </body>
