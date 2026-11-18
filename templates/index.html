@@ -7,10 +7,10 @@
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Lucide Icons CDN -->
-  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://unpkg.com/lucide@latest" defer></script>
   <style>
     @media print {
-      header, main, nav {
+      header, main, nav, #minilazaro-widget, #modalDemanda {
         display: none !important;
       }
       #printableReport {
@@ -23,6 +23,13 @@
         color: #1e293b;
         padding: 2.5rem;
       }
+    }
+    @keyframes floatBot {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-4px); }
+    }
+    .bot-float {
+      animation: floatBot 3.5s ease-in-out infinite;
     }
   </style>
 </head>
@@ -53,7 +60,7 @@
   </header>
 
   <!-- CONTENIDO PRINCIPAL -->
-  <main class="max-w-7xl mx-auto px-4 py-8 flex-1 w-full">
+  <main class="max-w-7xl mx-auto px-4 py-8 flex-1 w-full pb-28">
 
     <!-- SECCIÓN 1: INICIO -->
     <section id="sec-inicio" class="space-y-8">
@@ -64,7 +71,7 @@
           </span>
           <h1 class="text-4xl md:text-5xl font-extrabold tracking-tight">TÍTULOS EN ACCIÓN</h1>
           <p class="text-slate-300 text-base md:text-lg">
-            Plataforma interactiva para el control de títulos valores y calificación de demandas en el <strong>Proceso Único de Ejecución</strong> (Arts. 688 y 689 del CPC).
+            Plataforma interactiva para el control de títulos valores, calificación de demandas y generación de escritos en el <strong>Proceso Único de Ejecución</strong> (Arts. 688, 689 y 690-D del CPC).
           </p>
           <div class="pt-2 flex flex-wrap gap-3">
             <button onclick="navegar('verificador')" class="bg-amber-600 hover:bg-amber-700 text-white font-semibold px-6 py-2.5 rounded-lg shadow transition flex items-center gap-2">
@@ -103,7 +110,7 @@
             <i data-lucide="shield-alert" class="w-6 h-6"></i>
           </div>
           <h3 class="font-bold text-slate-900">Verificador CPC</h3>
-          <p class="text-xs text-slate-500">Simulación OCR, prescripción y reporte de ejecutabilidad.</p>
+          <p class="text-xs text-slate-500">Modo Acreedor/Defensa, OCR, dictamen PDF y demanda.</p>
         </div>
 
         <div onclick="navegar('calculadora')" class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm hover:shadow-md cursor-pointer transition text-center space-y-2">
@@ -111,7 +118,7 @@
             <i data-lucide="calculator" class="w-6 h-6"></i>
           </div>
           <h3 class="font-bold text-slate-900">Calculadora</h3>
-          <p class="text-xs text-slate-500">Intereses legales y compensatorios (Art. 689 CPC).</p>
+          <p class="text-xs text-slate-500">Intereses base 360/365 días (Art. 689 CPC).</p>
         </div>
 
         <div onclick="navegar('ejecucion')" class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm hover:shadow-md cursor-pointer transition text-center space-y-2">
@@ -172,6 +179,47 @@
           </ul>
         </div>
       </div>
+
+      <!-- Cuadro comparativo -->
+      <div class="bg-white p-6 rounded-xl border shadow-sm overflow-x-auto">
+        <h3 class="font-bold text-slate-900 text-sm mb-3">Cuadro Comparativo de Requisitos Formales (Ley N° 27287)</h3>
+        <table class="w-full text-xs text-left border-collapse">
+          <thead>
+            <tr class="bg-slate-900 text-white">
+              <th class="p-2.5 border border-slate-700">Criterio</th>
+              <th class="p-2.5 border border-slate-700">Cheque</th>
+              <th class="p-2.5 border border-slate-700">Pagaré</th>
+              <th class="p-2.5 border border-slate-700">Letra de Cambio</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-200">
+            <tr>
+              <td class="p-2.5 font-semibold bg-slate-50">Naturaleza</td>
+              <td class="p-2.5">Orden de pago</td>
+              <td class="p-2.5">Promesa de pago</td>
+              <td class="p-2.5">Orden de pago</td>
+            </tr>
+            <tr>
+              <td class="p-2.5 font-semibold bg-slate-50">Partes</td>
+              <td class="p-2.5">Librador, librado y beneficiario</td>
+              <td class="p-2.5">Emitente y beneficiario</td>
+              <td class="p-2.5">Girador, girado y beneficiario (más avalista)</td>
+            </tr>
+            <tr>
+              <td class="p-2.5 font-semibold bg-slate-50">DOI exigido</td>
+              <td class="p-2.5">DNI (natural) / RUC (jurídica)</td>
+              <td class="p-2.5">DNI / RUC</td>
+              <td class="p-2.5">DNI del girador / RUC persona jurídica</td>
+            </tr>
+            <tr>
+              <td class="p-2.5 font-semibold bg-slate-50">Aceptación</td>
+              <td class="p-2.5">No requiere</td>
+              <td class="p-2.5">No requiere</td>
+              <td class="p-2.5 font-medium text-amber-700">Requiere aceptación del girado</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </section>
 
     <!-- SECCIÓN 3: VERIFICADOR JURÍDICO (CPC-CHECK & MOTOR DE REGLAS) -->
@@ -179,9 +227,9 @@
       <div class="border-b pb-4 flex flex-wrap items-center justify-between gap-4">
         <div>
           <h2 class="text-2xl font-bold text-slate-900">Verificador Jurídico de Ejecutabilidad</h2>
-          <p class="text-slate-600 text-sm">Validación inteligente según Arts. 688, 689 del CPC y Ley N° 27287.</p>
+          <p class="text-slate-600 text-sm">Validación inteligente según Arts. 688, 689, 690-D del CPC y Ley N° 27287.</p>
         </div>
-        <div class="flex items-center gap-2">
+        <div class="flex flex-wrap items-center gap-2">
           <button onclick="limpiarVerificador()" class="bg-slate-200 border border-slate-300 text-slate-700 hover:bg-slate-300 text-xs font-semibold px-3 py-2 rounded-lg flex items-center gap-1.5 transition">
             <i data-lucide="rotate-ccw" class="w-4 h-4"></i> Limpiar Campos
           </button>
@@ -194,9 +242,16 @@
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
         <!-- FORMULARIO DE INGRESO / OCR -->
         <div class="lg:col-span-5 bg-white p-6 rounded-xl border shadow-sm space-y-4">
-          <h3 class="font-bold text-slate-900 flex items-center gap-2">
-            <i data-lucide="file-input" class="w-5 h-5 text-amber-600"></i> Datos del Título Ejecutivo
-          </h3>
+          <div class="flex items-center justify-between border-b pb-2">
+            <h3 class="font-bold text-slate-900 flex items-center gap-2 text-sm">
+              <i data-lucide="file-input" class="w-5 h-5 text-amber-600"></i> Datos del Título Ejecutivo
+            </h3>
+            <!-- Selector de Rol Procesal -->
+            <select id="v_rol" onchange="reEvaluarSiExiste()" class="text-xs font-semibold border border-slate-300 rounded-md px-2 py-1 bg-slate-100 text-slate-800 outline-none">
+              <option value="demandante">Rol: Demandante (Acreedor)</option>
+              <option value="defensa">Rol: Defensa (Ejecutado)</option>
+            </select>
+          </div>
 
           <div class="space-y-3 text-sm">
             <div>
@@ -204,6 +259,7 @@
               <select id="v_tipo" class="w-full border rounded-lg p-2 bg-slate-50 focus:ring-2 focus:ring-amber-500 outline-none">
                 <option value="pagare">Pagaré</option>
                 <option value="letra">Letra de Cambio</option>
+                <option value="cheque">Cheque</option>
                 <option value="acta">Acta de Conciliación con Acuerdo Total</option>
               </select>
             </div>
@@ -246,7 +302,7 @@
             <div class="pt-2 border-t space-y-2">
               <label class="flex items-center gap-2 cursor-pointer">
                 <input id="v_protesto" type="checkbox" class="w-4 h-4 rounded text-amber-600 focus:ring-amber-500" checked>
-                <span class="text-xs text-slate-700">Contiene cláusula <strong>"Sin Protesto"</strong> o cuenta con protesto notarial</span>
+                <span class="text-xs text-slate-700">Contiene cláusula <strong>"Sin Protesto"</strong> o cuenta con protesto notarial/bancario</span>
               </label>
 
               <label class="flex items-center gap-2 cursor-pointer">
@@ -271,8 +327,8 @@
           <div>
             <div class="flex items-center justify-between border-b pb-3 mb-4">
               <div>
-                <h3 class="font-bold text-slate-900">Dictamen de Calificación Cambiaria</h3>
-                <span class="text-xs text-slate-500">Evaluación de procedibilidad del mandato ejecutivo</span>
+                <h3 class="font-bold text-slate-900" id="titulo-dictamen">Dictamen de Calificación Cambiaria</h3>
+                <span class="text-xs text-slate-500" id="subtitulo-dictamen">Evaluación de procedibilidad del mandato ejecutivo</span>
               </div>
               <div id="badge-score" class="text-right">
                 <span class="text-xs font-semibold text-slate-400 block">SCORE EJECUTABILIDAD</span>
@@ -286,17 +342,18 @@
             </div>
 
             <div id="resultado-analisis" class="hidden space-y-4">
-              <!-- Checklist de Requisitos -->
               <div class="space-y-2 text-sm" id="checklist-container"></div>
-
-              <!-- Alertas del Motor de Reglas -->
               <div id="alertas-reglas" class="space-y-2 pt-2"></div>
             </div>
           </div>
 
-          <div id="btn-export-box" class="hidden pt-6 border-t mt-4">
-            <button onclick="imprimirReporteDirecto()" class="w-full bg-emerald-700 hover:bg-emerald-800 text-white font-semibold py-2.5 rounded-lg shadow transition flex items-center justify-center gap-2 text-sm">
-              <i data-lucide="printer" class="w-4 h-4"></i> Imprimir / Exportar Reporte de Ejecutabilidad (PDF)
+          <!-- Botones de Acción Post-Análisis -->
+          <div id="btn-export-box" class="hidden pt-6 border-t mt-4 flex flex-col sm:flex-row gap-2.5">
+            <button onclick="imprimirReporteDirecto()" class="flex-1 bg-emerald-700 hover:bg-emerald-800 text-white font-semibold py-2.5 px-4 rounded-lg shadow transition flex items-center justify-center gap-2 text-xs">
+              <i data-lucide="printer" class="w-4 h-4"></i> Imprimir / Exportar Dictamen (PDF)
+            </button>
+            <button onclick="abrirModalEscrito()" id="btn-generar-escrito" class="flex-1 bg-indigo-700 hover:bg-indigo-800 text-white font-semibold py-2.5 px-4 rounded-lg shadow transition flex items-center justify-center gap-2 text-xs">
+              <i data-lucide="file-text" class="w-4 h-4"></i> Generar Borrador de Demanda
             </button>
           </div>
         </div>
@@ -331,9 +388,18 @@
             <label class="block text-sm font-medium text-slate-700 mb-1">Capital Inicial (S/)</label>
             <input id="calc_capital" type="number" value="10000" class="w-full border rounded-lg p-2 text-sm bg-slate-50">
           </div>
-          <div>
-            <label class="block text-sm font-medium text-slate-700 mb-1">Tasa Efectiva Anual Compensatoria / Legal (%)</label>
-            <input id="calc_tasa" type="number" value="8" step="0.1" class="w-full border rounded-lg p-2 text-sm bg-slate-50">
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="block text-sm font-medium text-slate-700 mb-1">Tasa Anual (%)</label>
+              <input id="calc_tasa" type="number" value="8" step="0.1" class="w-full border rounded-lg p-2 text-sm bg-slate-50">
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-slate-700 mb-1">Base de Cálculo</label>
+              <select id="calc_base" class="w-full border rounded-lg p-2 text-sm bg-slate-50">
+                <option value="360">Año Comercial (360 días)</option>
+                <option value="365">Año Calendario (365 días)</option>
+              </select>
+            </div>
           </div>
           <div class="grid grid-cols-2 gap-3">
             <div>
@@ -359,11 +425,11 @@
             </div>
             <div class="flex justify-between text-sm py-1 border-b">
               <span class="text-slate-600">Intereses devengados:</span>
-              <span id="res_intereses" class="font-bold text-amber-700">S/ 400.00</span>
+              <span id="res_intereses" class="font-bold text-amber-700">S/ 402.22</span>
             </div>
             <div class="flex justify-between text-base py-2 bg-slate-50 px-3 rounded font-bold">
               <span class="text-slate-800">TOTAL EXIGIBLE:</span>
-              <span id="res_total" class="text-emerald-700">S/ 10,400.00</span>
+              <span id="res_total" class="text-emerald-700">S/ 10,402.22</span>
             </div>
           </div>
           <p class="text-xs text-slate-500 italic mt-4">
@@ -402,12 +468,102 @@
         <div class="bg-white p-5 rounded-xl border border-slate-200 space-y-2">
           <div class="w-8 h-8 rounded-full bg-emerald-600 text-white font-bold flex items-center justify-center text-sm">4</div>
           <h3 class="font-bold text-slate-900">Ejecución Forzada</h3>
-          <p class="text-xs text-slate-600">Si no paga ni formula contradicción fundada, se procede al remate judicial de bienes embargados.</p>
+          <p class="text-xs text-slate-600">Si no paga ni formula contradicción fundada, se procede al remate o adjudicación judicial (Arts. 725 y ss. CPC).</p>
         </div>
       </div>
     </section>
 
   </main>
+
+  <!-- MODAL DE BORRADOR DE ESCRITO JUDICIAL -->
+  <div id="modalDemanda" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-2xl w-full shadow-2xl border border-slate-200 overflow-hidden flex flex-col max-h-[85vh]">
+      <div class="bg-slate-900 text-white px-6 py-4 flex items-center justify-between">
+        <div>
+          <h3 class="font-bold text-base" id="modal-escrito-titulo">Borrador de Demanda Ejecutiva</h3>
+          <span class="text-xs text-slate-400">Modelo referencial generado según los datos validados</span>
+        </div>
+        <button onclick="cerrarModalEscrito()" class="text-slate-400 hover:text-white font-bold text-lg">✕</button>
+      </div>
+      <div class="p-6 overflow-y-auto flex-1 bg-slate-50">
+        <textarea id="texto-escrito-judicial" rows="16" class="w-full border border-slate-300 rounded-lg p-4 font-mono text-xs text-slate-800 bg-white leading-relaxed focus:outline-none"></textarea>
+      </div>
+      <div class="px-6 py-3 bg-white border-t flex justify-end gap-2">
+        <button onclick="cerrarModalEscrito()" class="px-4 py-2 rounded-lg text-xs font-semibold bg-slate-200 hover:bg-slate-300 text-slate-800">Cerrar</button>
+        <button onclick="copiarEscritoJudicial()" class="px-4 py-2 rounded-lg text-xs font-semibold bg-indigo-600 hover:bg-indigo-700 text-white flex items-center gap-1.5">
+          <i data-lucide="copy" class="w-4 h-4"></i> Copiar Escrito para Word
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ASISTENTE VIRTUAL: PROF. MINILÁZARO -->
+  <div id="minilazaro-widget" class="fixed bottom-4 right-4 z-40 flex flex-col items-end gap-2 max-w-xs sm:max-w-sm">
+    <div id="minilazaro-bubble" class="bg-white border-2 border-slate-900 rounded-2xl shadow-2xl p-4 text-xs text-slate-700 space-y-2.5 transition-all">
+      <div class="flex items-center justify-between border-b border-slate-100 pb-1.5">
+        <div class="flex items-center gap-1.5">
+          <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+          <span class="font-extrabold text-slate-900 text-xs tracking-wide">Prof. MiniLázaro</span>
+          <span class="bg-amber-100 text-amber-800 text-[10px] px-1.5 py-0.5 rounded font-semibold">Guía Procesal</span>
+        </div>
+        <button onclick="toggleMiniLazaro()" class="text-slate-400 hover:text-slate-700 font-bold text-sm px-1" title="Minimizar">
+          ✕
+        </button>
+      </div>
+
+      <p id="minilazaro-msg" class="leading-relaxed text-slate-700">
+        ¡Colega, bienvenido! Soy <strong>MiniLázaro</strong>. Estoy aquí para guiarte en la calificación de títulos valores y generar borradores de demandas ejecutivas.
+      </p>
+
+      <div id="minilazaro-actions" class="flex flex-wrap gap-1.5 pt-1">
+        <button onclick="navegar('verificador'); cargarMockOCR();" class="bg-slate-900 hover:bg-slate-800 text-white px-2.5 py-1 rounded-md text-[11px] font-medium transition">
+          🔍 Probar OCR en vivo
+        </button>
+        <button onclick="sugerenciaTipLegal()" class="bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200 px-2.5 py-1 rounded-md text-[11px] font-medium transition">
+          💡 Consejo jurídico
+        </button>
+      </div>
+    </div>
+
+    <!-- Avatar Cuerpo Completo: Camisa blanca, chaleco oscuro, fotocheck y barba canosa -->
+    <div onclick="toggleMiniLazaro()" class="cursor-pointer group flex items-center gap-2 bot-float" title="Haz clic para hablar con MiniLázaro">
+      <span id="minilazaro-badge-closed" class="hidden bg-slate-900 text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-lg border border-amber-500">
+        💬 Consultar a MiniLázaro
+      </span>
+      <div class="w-20 h-24 drop-shadow-lg transition-transform group-hover:scale-105">
+        <svg viewBox="0 0 120 145" xmlns="http://www.w3.org/2000/svg" class="w-full h-full">
+          <ellipse cx="44" cy="136" rx="12" ry="6" fill="#0f172a"/>
+          <ellipse cx="76" cy="136" rx="12" ry="6" fill="#0f172a"/>
+          <path d="M 33 102 L 32 134 L 54 134 L 58 110 L 62 134 L 88 134 L 87 102 Z" fill="#1e293b"/>
+          <path d="M 27 64 Q 14 82 25 97" stroke="#ffffff" stroke-width="13" stroke-linecap="round" fill="none"/>
+          <path d="M 27 64 Q 14 82 25 97" stroke="#cbd5e1" stroke-width="1" fill="none"/>
+          <circle cx="26" cy="99" r="5.5" fill="#fde68a"/>
+          <path d="M 93 64 Q 106 82 95 97" stroke="#ffffff" stroke-width="13" stroke-linecap="round" fill="none"/>
+          <circle cx="94" cy="99" r="5.5" fill="#fde68a"/>
+          <ellipse cx="60" cy="83" rx="35" ry="31" fill="#ffffff" stroke="#cbd5e1" stroke-width="1"/>
+          <path d="M 36 55 C 24 68, 24 98, 35 110 L 85 110 C 96 98, 96 68, 84 55 L 71 54 L 60 80 L 49 54 Z" fill="#1e293b"/>
+          <polygon points="48,54 60,64 53,68" fill="#f8fafc" stroke="#cbd5e1" stroke-width="0.8"/>
+          <polygon points="72,54 60,64 67,68" fill="#f8fafc" stroke="#cbd5e1" stroke-width="0.8"/>
+          <path d="M 51 55 L 60 85 L 69 55" stroke="#be123c" stroke-width="3" fill="none" stroke-dasharray="3,1.5"/>
+          <rect x="53" y="84" width="14" height="19" rx="2" fill="#ffffff" stroke="#94a3b8" stroke-width="1.2"/>
+          <rect x="56" y="87" width="8" height="6" rx="1" fill="#cbd5e1"/>
+          <line x1="56" y1="96" x2="64" y2="96" stroke="#64748b" stroke-width="1.2"/>
+          <line x1="56" y1="99" x2="62" y2="99" stroke="#94a3b8" stroke-width="1"/>
+          <ellipse cx="60" cy="34" rx="23" ry="22" fill="#fde68a" stroke="#f59e0b" stroke-width="1"/>
+          <path d="M 49 17 Q 60 12 71 17" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" fill="none" opacity="0.8"/>
+          <path d="M 36 29 Q 33 36 37 42" stroke="#cbd5e1" stroke-width="4.5" stroke-linecap="round" fill="none"/>
+          <path d="M 84 29 Q 87 36 83 42" stroke="#cbd5e1" stroke-width="4.5" stroke-linecap="round" fill="none"/>
+          <path d="M 46 26 Q 51 24 55 26" stroke="#94a3b8" stroke-width="2" stroke-linecap="round" fill="none"/>
+          <path d="M 65 26 Q 69 24 74 26" stroke="#94a3b8" stroke-width="2" stroke-linecap="round" fill="none"/>
+          <circle cx="51" cy="32" r="2.2" fill="#0f172a"/>
+          <circle cx="69" cy="32" r="2.2" fill="#0f172a"/>
+          <path d="M 45 41 Q 60 54 75 41 Q 72 55 60 56 Q 48 55 45 41 Z" fill="#cbd5e1" opacity="0.85"/>
+          <path d="M 52 42 Q 60 39 68 42" stroke="#94a3b8" stroke-width="2.2" stroke-linecap="round" fill="none"/>
+          <path d="M 54 46 Q 60 50 66 46" stroke="#78350f" stroke-width="1.6" stroke-linecap="round" fill="none"/>
+        </svg>
+      </div>
+    </div>
+  </div>
 
   <!-- CONTENEDOR DEL REPORTE IMPRIMIBLE (PDF) -->
   <div id="printableReport" class="hidden">
@@ -426,7 +582,90 @@
 
   <!-- SCRIPT -->
   <script>
-    // Navegación con reinicio limpio del verificador
+    let miniLazaroAbierto = true;
+    let ultimoAnalisisValido = false;
+
+    function toggleMiniLazaro() {
+      const bubble = document.getElementById('minilazaro-bubble');
+      const closedBadge = document.getElementById('minilazaro-badge-closed');
+      miniLazaroAbierto = !miniLazaroAbierto;
+
+      if (miniLazaroAbierto) {
+        bubble.classList.remove('hidden');
+        closedBadge.classList.add('hidden');
+      } else {
+        bubble.classList.add('hidden');
+        closedBadge.classList.remove('hidden');
+      }
+    }
+
+    const consejosMiniLazaro = [
+      "Recuerda, colega: la acción cambiaria directa prescribe a los <strong>3 años</strong> desde el vencimiento (Art. 18 LTV). ¡Siempre revisa esa fecha!",
+      "Si un pagaré no tiene la cláusula <strong>'Sin Protesto'</strong>, es obligatorio adjuntar el protesto notarial para que proceda la demanda.",
+      "El Art. 689 del CPC exige tres requisitos copulativos: <strong>Certeza, Exigibilidad y Liquidez</strong>. Si falla uno, el juez declara improcedente.",
+      "¿Defiendes al ejecutado? Cambia al <strong>Rol: Defensa</strong> en el Verificador para detectar causales de contradicción del Art. 690-D CPC.",
+      "Si el título ya prescribió en vía ejecutiva, aún puedes cobrar la deuda mediante la <strong>acción causal</strong> en proceso de conocimiento o abreviado."
+    ];
+    let indiceConsejo = 0;
+
+    function sugerenciaTipLegal() {
+      const msgBox = document.getElementById('minilazaro-msg');
+      msgBox.innerHTML = consejosMiniLazaro[indiceConsejo];
+      indiceConsejo = (indiceConsejo + 1) % consejosMiniLazaro.length;
+    }
+
+    function actualizarMiniLazaroPorSeccion(seccion) {
+      const msgBox = document.getElementById('minilazaro-msg');
+      const actionsBox = document.getElementById('minilazaro-actions');
+
+      if (!miniLazaroAbierto && window.innerWidth >= 640) toggleMiniLazaro();
+
+      const guias = {
+        inicio: {
+          texto: "¡Hola! Soy el <strong>Prof. MiniLázaro</strong>. Te sugiero empezar ingresando un título valor en el <strong>Verificador Jurídico</strong> para calificarlo o generar su demanda.",
+          botones: `
+            <button onclick="navegar('verificador'); cargarMockOCR();" class="bg-slate-900 hover:bg-slate-800 text-white px-2.5 py-1 rounded-md text-[11px] font-medium transition">🔍 Simular OCR</button>
+            <button onclick="sugerenciaTipLegal()" class="bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200 px-2.5 py-1 rounded-md text-[11px] font-medium transition">💡 Tip procesal</button>
+          `
+        },
+        titulos: {
+          texto: "Aquí repasamos la base legal del <strong>Art. 688 CPC</strong>. Selecciona entre Pagaré, Letra de Cambio o Cheque y revisa la tabla comparativa.",
+          botones: `
+            <button onclick="navegar('verificador')" class="bg-slate-900 hover:bg-slate-800 text-white px-2.5 py-1 rounded-md text-[11px] font-medium transition">Ir al Verificador →</button>
+          `
+        },
+        verificador: {
+          texto: "Puedes evaluar como <strong>Demandante</strong> o como <strong>Defensa (Art. 690-D CPC)</strong>. Pulsa 'Simular Lectura OCR' para cargar un ejemplo al instante.",
+          botones: `
+            <button onclick="cargarMockOCR()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-2.5 py-1 rounded-md text-[11px] font-medium transition">⚡ Cargar ejemplo OCR</button>
+            <button onclick="limpiarVerificador()" class="bg-slate-200 hover:bg-slate-300 text-slate-800 px-2.5 py-1 rounded-md text-[11px] font-medium transition">Limpiar</button>
+          `
+        },
+        simulador: {
+          texto: "¡Hora de poner a prueba tu criterio jurídico! Resuelve estos casos reales y usa el botón superior para cargar nuevas contingencias.",
+          botones: `
+            <button onclick="generarNuevosCasos()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-2.5 py-1 rounded-md text-[11px] font-medium transition">🔄 Otros casos</button>
+          `
+        },
+        calculadora: {
+          texto: "Para cumplir con el requisito de <strong>Liquidez (Art. 689 CPC)</strong>, elige la base de 360 o 365 días y liquida los intereses exactos.",
+          botones: `
+            <button onclick="calcularLiquidacion()" class="bg-amber-600 hover:bg-amber-700 text-white px-2.5 py-1 rounded-md text-[11px] font-medium transition">Calcular ahora</button>
+          `
+        },
+        ejecucion: {
+          texto: "Recuerda que en el <strong>Proceso Único de Ejecución</strong> el demandado solo tiene 5 días para pagar o contradecir por causales taxativas.",
+          botones: `
+            <button onclick="sugerenciaTipLegal()" class="bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200 px-2.5 py-1 rounded-md text-[11px] font-medium transition">💡 Ver otro consejo</button>
+          `
+        }
+      };
+
+      const info = guias[seccion] || guias.inicio;
+      msgBox.innerHTML = info.texto;
+      actionsBox.innerHTML = info.botones;
+    }
+
     function navegar(seccion) {
       document.querySelectorAll('main > section').forEach(sec => sec.classList.add('hidden'));
       document.getElementById('sec-' + seccion).classList.remove('hidden');
@@ -441,16 +680,16 @@
         activeNav.classList.add('text-amber-400');
       }
 
-      // Si entra al verificador, limpiar para permitir nueva simulación o ingreso manual
       if (seccion === 'verificador') {
         limpiarVerificador();
       }
 
-      lucide.createIcons();
+      actualizarMiniLazaroPorSeccion(seccion);
+      if (window.lucide) lucide.createIcons();
     }
 
-    // Limpiar campos del Verificador y restaurar estado inicial
     function limpiarVerificador() {
+      ultimoAnalisisValido = false;
       document.getElementById('v_tipo').value = 'pagare';
       document.getElementById('v_monto').value = '';
       document.getElementById('v_moneda').value = 'PEN';
@@ -461,12 +700,10 @@
       document.getElementById('v_protesto').checked = true;
       document.getElementById('v_firma').checked = true;
 
-      // Ocultar resultados previos
       document.getElementById('resultado-analisis').classList.add('hidden');
       document.getElementById('btn-export-box').classList.add('hidden');
       document.getElementById('resultado-vacio').classList.remove('hidden');
 
-      // Resetear Score
       const badgeScore = document.getElementById('badge-score');
       badgeScore.innerHTML = `
         <span class="text-xs font-semibold text-slate-400 block">SCORE EJECUTABILIDAD</span>
@@ -474,7 +711,12 @@
       `;
     }
 
-    // Banco de Títulos OCR para alternar demostraciones
+    function reEvaluarSiExiste() {
+      if (ultimoAnalisisValido) {
+        analizarTitulo();
+      }
+    }
+
     const demosOCR = [
       {
         tipo: 'pagare',
@@ -492,7 +734,7 @@
         monto: '18500',
         moneda: 'USD',
         femision: '2021-01-10',
-        fvencimiento: '2021-06-30', // Prescrito (> 3 años)
+        fvencimiento: '2021-06-30',
         acreedor: 'Importaciones del Pacífico S.A.',
         deudor: 'Distribuidora Textil Santa Anita',
         protesto: true,
@@ -506,14 +748,13 @@
         fvencimiento: '2025-11-20',
         acreedor: 'Cooperativa de Ahorro y Crédito San Pedro',
         deudor: 'Roberto Carlos Valdivia Luna',
-        protesto: false, // Observación de protesto
+        protesto: false,
         firma: true
       }
     ];
 
     let indiceMockOCR = 0;
 
-    // Simular OCR rotativo
     function cargarMockOCR() {
       const demo = demosOCR[indiceMockOCR];
       document.getElementById('v_tipo').value = demo.tipo;
@@ -527,30 +768,48 @@
       document.getElementById('v_firma').checked = demo.firma;
 
       analizarTitulo();
-
-      // Rotar al siguiente caso para la próxima pulsación
       indiceMockOCR = (indiceMockOCR + 1) % demosOCR.length;
     }
 
-    // Módulo Títulos Valores
     const titulosInfo = {
       pagare: {
         titulo: "¿Qué es el Pagaré?",
-        desc: "Título valor mediante el cual una persona (emitente) promete incondicionalmente pagar una suma determinada a otra (beneficiario).",
-        art: "Art. 158 Ley 27287 y Art. 688 inc. 4 CPC",
-        requisitos: ["Denominación de Pagaré", "Promesa incondicional de pago", "Monto líquido", "Fecha y lugar de emisión", "Firma del emitente"]
+        desc: "Título valor de crédito mediante el cual una persona (emitente) promete incondicionalmente pagar una suma determinada de dinero a otra (beneficiario).",
+        art: "Art. 158 Ley N° 27287 y Art. 688 inc. 4 CPC",
+        requisitos: [
+          "Denominación expresa de Pagaré",
+          "Promesa incondicional de pago",
+          "Nombre del beneficiario o a su orden",
+          "Monto líquido y forma de vencimiento",
+          "Fecha y lugar de emisión",
+          "Firma del emitente / obligado principal"
+        ]
       },
       letra: {
         titulo: "¿Qué es la Letra de Cambio?",
-        desc: "Orden incondicional girada por una persona (girador) a otra (girado) para pagar una suma a un tercero (tomador).",
-        art: "Art. 119 Ley 27287 y Art. 688 inc. 4 CPC",
-        requisitos: ["Denominación expresa", "Orden incondicional de pagar", "Nombre del girado", "Fecha de vencimiento", "Firma del girador y aceptante"]
+        desc: "Orden incondicional girada por una persona (girador) a otra (girado) para pagar una suma determinada a un tercero (tomador). Admite avalistas.",
+        art: "Art. 119 Ley N° 27287 y Art. 688 inc. 4 CPC",
+        requisitos: [
+          "Denominación de Letra de Cambio",
+          "Orden incondicional de pagar suma de dinero",
+          "Nombre y DOI del girado",
+          "Aceptación expresa del girado",
+          "Indicación del vencimiento y lugar de pago",
+          "Firma del girador"
+        ]
       },
       cheque: {
-        titulo: "¿Qué es el Cheque?",
-        desc: "Orden de pago a la vista girada contra un banco donde el emitente tiene fondos disponibles en cuenta corriente.",
-        art: "Art. 172 Ley 27287 y Art. 688 inc. 4 CPC",
-        requisitos: ["Mandato puro de pagar suma de dinero", "Nombre del banco", "Lugar y fecha de emisión", "Firma del girador", "Constancia de no pago (protesto bancario)"]
+        titulo: "¿Qué es el Cheque y sus modalidades?",
+        desc: "Instrumento de pago girado contra un banco donde el librador cuenta con fondos disponibles. Modalidades principales: Cheque Común y Cheque de Pago Diferido.",
+        art: "Art. 172 Ley N° 27287 y Art. 688 inc. 4 CPC",
+        requisitos: [
+          "Mandato puro y simple de pagar suma determinada",
+          "Nombre y domicilio del banco librado",
+          "Modalidad: Común (a la vista) o Pago Diferido",
+          "Lugar y fecha de emisión",
+          "Firma del librador / girador",
+          "Constancia bancaria de no pago por falta de fondos"
+        ]
       }
     };
 
@@ -574,11 +833,11 @@
       `;
     }
 
-    // MOTOR DE REGLAS: EVALUACIÓN LEGAL
     function analizarTitulo() {
+      const rol = document.getElementById('v_rol').value;
       const tipo = document.getElementById('v_tipo').value;
       const monto = parseFloat(document.getElementById('v_monto').value);
-      const femision = document.getElementById('v_femision').value;
+      const moneda = document.getElementById('v_moneda').value === 'PEN' ? 'S/' : 'US$';
       const fvencimiento = document.getElementById('v_fvencimiento').value;
       const acreedor = document.getElementById('v_acreedor').value.trim();
       const deudor = document.getElementById('v_deudor').value.trim();
@@ -590,63 +849,65 @@
         return;
       }
 
+      ultimoAnalisisValido = true;
       const fechaVenc = new Date(fvencimiento);
       const hoy = new Date();
       const diffAnios = (hoy - fechaVenc) / (1000 * 60 * 60 * 24 * 365.25);
 
       let checks = [];
       let alertas = [];
+      let causalesDefensa = [];
       let score = 100;
 
-      // 1. Certeza
       if (acreedor && deudor) {
         checks.push({ texto: "Certeza: Acreedor y Deudor plenamente individualizados", ok: true });
       } else {
         checks.push({ texto: "Certeza: Falta identificar partes procesales", ok: false });
         alertas.push({ nivel: "danger", msg: "Inadmisibilidad: El documento no identifica con claridad al sujeto obligado o al acreedor." });
+        causalesDefensa.push("Nulidad formal del título por indeterminación de los sujetos cambiarios (Art. 690-D inc. 2 CPC).");
         score -= 25;
       }
 
-      // 2. Liquidez
       if (monto > 0) {
-        checks.push({ texto: `Liquidez: Obligación dineraria líquida (S/ ${monto.toLocaleString()})`, ok: true });
+        checks.push({ texto: `Liquidez: Obligación dineraria líquida (${moneda} ${monto.toLocaleString()})`, ok: true });
       } else {
         checks.push({ texto: "Liquidez: Monto ilíquido o no determinado", ok: false });
         alertas.push({ nivel: "danger", msg: "Improcedencia: El título carece de suma dineraria líquida (Art. 689 CPC)." });
+        causalesDefensa.push("Iliquidez de la obligación contenida en el título (Art. 690-D inc. 1 CPC).");
         score -= 30;
       }
 
-      // 3. Exigibilidad
       if (hoy >= fechaVenc) {
         checks.push({ texto: "Exigibilidad: Plazo vencido y mora configurada", ok: true });
       } else {
         checks.push({ texto: "Exigibilidad: Título aún no vence", ok: false });
         alertas.push({ nivel: "danger", msg: "Demanda Prematura: El título no es exigible hasta el cumplimiento del plazo." });
+        causalesDefensa.push("Inexigibilidad de la obligación por plazo no vencido (Art. 690-D inc. 1 CPC).");
         score -= 35;
       }
 
-      // 4. Prescripción (Art. 18 Ley 27287)
       if (diffAnios > 3) {
         checks.push({ texto: `Prescripción Cambiaria: Superó los 3 años de plazo (${diffAnios.toFixed(1)} años)`, ok: false });
         alertas.push({ nivel: "danger", msg: "ALERTA CRÍTICA: Acción cambiaria directa prescrita (Art. 18 LTV). El juez declarará improcedente la demanda ejecutiva. Se debe interponer acción causal o de enriquecimiento sin causa." });
+        causalesDefensa.push("Extinción de la acción cambiaria por prescripción trienal (Art. 18 LTV y Art. 690-D inc. 3 CPC).");
         score -= 40;
       } else {
         checks.push({ texto: `Vigencia Cambiaria: Dentro del plazo de 3 años (${diffAnios.toFixed(1)} años transcurridos)`, ok: true });
       }
 
-      // 5. Protesto
       if (!sinProtesto) {
         checks.push({ texto: "Requisito de Protesto: Omitido", ok: false });
         alertas.push({ nivel: "warning", msg: "Falta de Procedibilidad: El documento no contiene cláusula 'Sin Protesto' ni se acreditó acta notarial de protesto (Art. 158 LTV)." });
+        causalesDefensa.push("Nulidad formal / perjuicio del título por omisión de protesto obligatorio (Art. 690-D inc. 2 CPC).");
         score -= 20;
       } else {
         checks.push({ texto: "Cláusula 'Sin Protesto' verificada o dispensada", ok: true });
       }
 
-      // 6. Firma
       if (!tieneFirma) {
         checks.push({ texto: "Firma del obligado principal omitida", ok: false });
         alertas.push({ nivel: "danger", msg: "Nulidad Formal: Sin la firma del deudor no existe obligación cambiaria exigible." });
+        causalesDefensa.push("Falsedad o nulidad formal absoluta por ausencia de firma del obligado (Art. 690-D inc. 2 CPC).");
         score -= 50;
       } else {
         checks.push({ texto: "Firma de obligado principal registrada", ok: true });
@@ -654,19 +915,49 @@
 
       score = Math.max(0, score);
 
-      // Renderizar UI
       document.getElementById('resultado-vacio').classList.add('hidden');
       document.getElementById('resultado-analisis').classList.remove('hidden');
       document.getElementById('btn-export-box').classList.remove('hidden');
 
       const badgeScore = document.getElementById('badge-score');
-      let colorClass = score >= 80 ? 'text-emerald-600' : (score >= 50 ? 'text-amber-600' : 'text-rose-600');
-      badgeScore.innerHTML = `
-        <span class="text-xs font-semibold text-slate-400 block">SCORE EJECUTABILIDAD</span>
-        <span class="text-2xl font-extrabold ${colorClass}">${score}%</span>
-      `;
+      const btnEscrito = document.getElementById('btn-generar-escrito');
+      const msgBox = document.getElementById('minilazaro-msg');
 
-      // Render Checks
+      if (rol === 'demandante') {
+        document.getElementById('titulo-dictamen').innerText = "Dictamen de Calificación Cambiaria (Acreedor)";
+        document.getElementById('subtitulo-dictamen').innerText = "Evaluación de procedibilidad del mandato ejecutivo";
+        btnEscrito.innerHTML = `<i data-lucide="file-text" class="w-4 h-4"></i> Generar Borrador de Demanda`;
+
+        let colorClass = score >= 80 ? 'text-emerald-600' : (score >= 50 ? 'text-amber-600' : 'text-rose-600');
+        badgeScore.innerHTML = `
+          <span class="text-xs font-semibold text-slate-400 block">SCORE EJECUTABILIDAD</span>
+          <span class="text-2xl font-extrabold ${colorClass}">${score}%</span>
+        `;
+
+        if (score === 100) {
+          msgBox.innerHTML = "¡Excelente, colega! El título cumple al <strong>100%</strong>. Ya puedes exportar el dictamen en PDF o generar el borrador de demanda.";
+        } else {
+          msgBox.innerHTML = `¡Atención! El título obtuvo <strong>${score}%</strong>. Revisa las alertas antes de demandar o cambia al <strong>Rol: Defensa</strong> para ver cómo lo atacaría la contraparte.`;
+        }
+      } else {
+        document.getElementById('titulo-dictamen').innerText = "Análisis de Defensa y Contradicción (Art. 690-D CPC)";
+        document.getElementById('subtitulo-dictamen').innerText = "Detección de vicios formales para oponerse al mandato ejecutivo";
+        btnEscrito.innerHTML = `<i data-lucide="shield" class="w-4 h-4"></i> Generar Borrador de Contradicción`;
+
+        let viabilidadDefensa = 100 - score;
+        let colorDef = viabilidadDefensa >= 40 ? 'text-emerald-600' : 'text-amber-600';
+        badgeScore.innerHTML = `
+          <span class="text-xs font-semibold text-slate-400 block">VIABILIDAD DE CONTRADICCIÓN</span>
+          <span class="text-2xl font-extrabold ${colorDef}">${viabilidadDefensa}%</span>
+        `;
+
+        if (causalesDefensa.length > 0) {
+          msgBox.innerHTML = `¡Buen ojo, colega! Detecté <strong>${causalesDefensa.length} causal(es)</strong> del Art. 690-D CPC para formular contradicción contra este título.`;
+        } else {
+          msgBox.innerHTML = "El título cumple las formalidades extrínsecas. La defensa solo procedería si acreditas <strong>extinción/pago</strong> con documento idóneo.";
+        }
+      }
+
       const checkContainer = document.getElementById('checklist-container');
       checkContainer.innerHTML = checks.map(c => `
         <div class="flex items-center gap-2 p-2 rounded ${c.ok ? 'bg-emerald-50 text-emerald-800' : 'bg-rose-50 text-rose-800'}">
@@ -675,42 +966,141 @@
         </div>
       `).join('');
 
-      // Render Alertas
       const alertaContainer = document.getElementById('alertas-reglas');
-      alertaContainer.innerHTML = alertas.length === 0 ? `
-        <div class="p-3 bg-emerald-100 border border-emerald-300 rounded-lg text-xs text-emerald-800 font-semibold">
-          🚀 TÍTULO APTO: Cumple copulativamente con los Arts. 688 y 689 del CPC. Listo para ingresar demanda ejecutiva.
-        </div>
-      ` : alertas.map(a => `
-        <div class="p-3 ${a.nivel === 'danger' ? 'bg-rose-100 border-rose-300 text-rose-900' : 'bg-amber-100 border-amber-300 text-amber-900'} border rounded-lg text-xs font-medium">
-          ⚠️ ${a.msg}
-        </div>
-      `).join('');
+      if (rol === 'demandante') {
+        alertaContainer.innerHTML = alertas.length === 0 ? `
+          <div class="p-3 bg-emerald-100 border border-emerald-300 rounded-lg text-xs text-emerald-800 font-semibold">
+            🚀 TÍTULO APTO: Cumple copulativamente con los Arts. 688 y 689 del CPC. Listo para ingresar demanda ejecutiva.
+          </div>
+        ` : alertas.map(a => `
+          <div class="p-3 ${a.nivel === 'danger' ? 'bg-rose-100 border-rose-300 text-rose-900' : 'bg-amber-100 border-amber-300 text-amber-900'} border rounded-lg text-xs font-medium">
+            ⚠️ ${a.msg}
+          </div>
+        `).join('');
+      } else {
+        alertaContainer.innerHTML = causalesDefensa.length === 0 ? `
+          <div class="p-3 bg-amber-100 border border-amber-300 rounded-lg text-xs text-amber-900 font-medium">
+            ℹ️ El título no presenta vicios formales evidentes. Solo cabe contradicción por extinción de la obligación (pago acreditado) dentro de los 5 días hábiles.
+          </div>
+        ` : causalesDefensa.map(c => `
+          <div class="p-3 bg-indigo-50 border border-indigo-300 text-indigo-950 rounded-lg text-xs font-semibold">
+            🛡️ CAUSAL DE CONTRADICCIÓN DETECTADA: ${c}
+          </div>
+        `).join('');
+      }
 
-      // Construcción del documento de impresión
       document.getElementById('print-score').innerText = `Calificación: ${score}%`;
       document.getElementById('print-body').innerHTML = `
         <table style="width: 100%; border-collapse: collapse; margin-bottom: 16px;">
           <tr style="background: #f1f5f9;"><td style="padding: 6px; font-weight: bold; width: 30%;">Tipo de Documento:</td><td style="padding: 6px;">${tipo.toUpperCase()}</td></tr>
           <tr><td style="padding: 6px; font-weight: bold;">Parte Demandante (Acreedor):</td><td style="padding: 6px;">${acreedor || 'No especificado'}</td></tr>
           <tr style="background: #f1f5f9;"><td style="padding: 6px; font-weight: bold;">Parte Demandada (Deudor):</td><td style="padding: 6px;">${deudor || 'No especificado'}</td></tr>
-          <tr><td style="padding: 6px; font-weight: bold;">Cuantía / Moneda:</td><td style="padding: 6px;">S/ ${monto.toLocaleString()}</td></tr>
+          <tr><td style="padding: 6px; font-weight: bold;">Cuantía / Moneda:</td><td style="padding: 6px;">${moneda} ${monto.toLocaleString()}</td></tr>
           <tr style="background: #f1f5f9;"><td style="padding: 6px; font-weight: bold;">Fecha de Vencimiento:</td><td style="padding: 6px;">${fvencimiento}</td></tr>
         </table>
-        
         <h4 style="font-size: 13px; font-weight: bold; margin: 14px 0 6px 0; border-bottom: 1px solid #cbd5e1; padding-bottom: 4px;">1. Checklist de Formalidad y Requisitos de Fondo (Arts. 688 y 689 CPC)</h4>
         <div style="margin-left: 8px;">
           ${checks.map(c => `<div style="margin-bottom: 4px;">${c.ok ? '✅ [CUMPLE]' : '❌ [OBSERVADO]'}: ${c.texto}</div>`).join('')}
         </div>
-
         <h4 style="font-size: 13px; font-weight: bold; margin: 18px 0 6px 0; border-bottom: 1px solid #cbd5e1; padding-bottom: 4px;">2. Conclusiones y Advertencias del Motor de Reglas</h4>
         <div style="margin-left: 8px;">
           ${alertas.length === 0 ? '<p style="color: #047857; font-weight: bold;">El título reúne plena idoneidad cambiaria. Procedente para despacho de Mandato Ejecutivo inmediato.</p>' : alertas.map(a => `<p style="margin-bottom: 4px;">• ${a.msg}</p>`).join('')}
         </div>
       `;
+
+      if (window.lucide) lucide.createIcons();
     }
 
-    // Impresión directa
+    function abrirModalEscrito() {
+      const rol = document.getElementById('v_rol').value;
+      const tipo = document.getElementById('v_tipo').options[document.getElementById('v_tipo').selectedIndex].text.toUpperCase();
+      const monto = parseFloat(document.getElementById('v_monto').value) || 0;
+      const moneda = document.getElementById('v_moneda').value === 'PEN' ? 'S/' : 'US$';
+      const fvenc = document.getElementById('v_fvencimiento').value;
+      const acreedor = document.getElementById('v_acreedor').value.trim() || '[NOMBRE DEL ACREEDOR]';
+      const deudor = document.getElementById('v_deudor').value.trim() || '[NOMBRE DEL DEUDOR]';
+
+      const textarea = document.getElementById('texto-escrito-judicial');
+      const tituloModal = document.getElementById('modal-escrito-titulo');
+
+      if (rol === 'demandante') {
+        tituloModal.innerText = "Borrador de Demanda de Obligación de Dar Suma de Dinero";
+        textarea.value = `SECRETARIO JUDICIAL: ______________________
+EXPEDIENTE: ______________________
+CUADERNO: PRINCIPAL
+ESCRITO N°: 01
+SUMILLA: INTERPONGO DEMANDA DE OBLIGACIÓN DE DAR SUMA DE DINERO EN VÍA DE PROCESO ÚNICO DE EJECUCIÓN.
+
+SEÑOR JUEZ DEL JUZGADO ESPECIALIZADO EN LO CIVIL / PAZ LETRADO:
+
+${acreedor.toUpperCase()}, identificado con RUC/DNI N° [COMPLETAR], con domicilio real y procesal en [COMPLETAR], con casilla electrónica SINOE N° [COMPLETAR]; ante usted atentamente digo:
+
+I. PETITORIO:
+Que, en vía de PROCESO ÚNICO DE EJECUCIÓN, interpongo demanda de OBLIGACIÓN DE DAR SUMA DE DINERO contra ${deudor.toUpperCase()}, domiciliado en [COMPLETAR], a fin de que cumpla con pagarnos la suma líquida de ${moneda} ${monto.toLocaleString()} (monto puesto a cobro), más los intereses compensatorios y moratorios devengados hasta la fecha efectiva de pago, con expresa condena de costas y costos del proceso.
+
+II. FUNDAMENTOS DE HECHO:
+1. Con fecha de vencimiento ${fvenc}, el ejecutado suscribió a nuestra orden un(a) ${tipo} por el importe ascendente a ${moneda} ${monto.toLocaleString()}.
+2. Habiendo vencido en exceso el plazo estipulado para el honramiento de la obligación sin que el deudor haya cumplido con el pago, el título ejecutivo conserva pleno mérito cambiario conforme a la Ley N° 27287.
+3. La obligación contenida en el título cumple copulativamente con los requisitos de certeza, expresividad, exigibilidad y liquidez exigidos por el artículo 689° del Código Procesal Civil.
+
+III. FUNDAMENTACIÓN JURÍDICA:
+- Artículos 688° inciso 4 y 689° del Código Procesal Civil (Mérito ejecutivo y requisitos comunes).
+- Artículos 690-A° y 690-C° del Código Procesal Civil (Demanda y Mandato Ejecutivo).
+- Ley N° 27287 - Ley de Títulos Valores (Artículos pertinentes según la naturaleza del título).
+
+IV. ANEXOS:
+1-A. Copia del DNI / Vigencia de Poder del recurrente.
+1-B. Título Valor original (${tipo}) que sustenta la ejecución.
+1-C. Arancel judicial por ofrecimiento de pruebas y cédulas de notificación.
+
+POR TANTO:
+A usted, Señor Juez, pido admitir la presente demanda y expedir el correspondiente Mandato Ejecutivo ordenando el pago dentro del quinto día bajo apercibimiento de iniciarse la ejecución forzada.
+
+Lima, ${new Date().toLocaleDateString('es-PE')}.`;
+      } else {
+        tituloModal.innerText = "Borrador de Escrito de Contradicción al Mandato Ejecutivo";
+        textarea.value = `SECRETARIO JUDICIAL: ______________________
+EXPEDIENTE: ______________________
+CUADERNO: PRINCIPAL
+ESCRITO N°: 01
+SUMILLA: FORMULO CONTRADICCIÓN AL MANDATO EJECUTIVO (ART. 690-D CPC).
+
+SEÑOR JUEZ DEL JUZGADO ESPECIALIZADO EN LO CIVIL / PAZ LETRADO:
+
+${deudor.toUpperCase()}, en los seguidos por ${acreedor.toUpperCase()} sobre Obligación de Dar Suma de Dinero; ante usted atentamente digo:
+
+I. PETITORIO:
+Que, dentro del plazo legal de cinco (05) días hábiles establecido en el artículo 690-D° del Código Procesal Civil, FORMULO CONTRADICCIÓN contra la Resolución N° 01 (Mandato Ejecutivo) que nos ordena pagar la suma de ${moneda} ${monto.toLocaleString()}, solicitando se declare FUNDADA la presente contradicción y, en consecuencia, IMPROCEDENTE la demanda ejecutiva.
+
+II. CAUSALES DE CONTRADICCIÓN (ART. 690-D° CPC):
+Sustentamos nuestra contradicción en las causales taxativas de INEXIGIBILIDAD DE LA OBLIGACIÓN, NULIDAD FORMAL DEL TÍTULO Y/O EXTINCIÓN DE LA OBLIGACIÓN (Prescripción cambiaria - Art. 18° Ley N° 27287), debido a que el documento (${tipo} con vencimiento ${fvenc}) carece de los requisitos legales imperativos para despachar ejecución.
+
+III. FUNDAMENTACIÓN JURÍDICA:
+- Artículo 690-D° del Código Procesal Civil (Causales taxativas de contradicción).
+- Artículo 689° del Código Procesal Civil (Falta de requisitos comunes de ejecución).
+- Artículo 18° y concordantes de la Ley N° 27287, Ley de Títulos Valores.
+
+POR TANTO:
+A usted, Señor Juez, sírvase tener por formulada la contradicción dentro del plazo de ley, correr traslado al ejecutante y oportunamente declararla fundada.
+
+Lima, ${new Date().toLocaleDateString('es-PE')}.`;
+      }
+
+      document.getElementById('modalDemanda').classList.remove('hidden');
+      if (window.lucide) lucide.createIcons();
+    }
+
+    function cerrarModalEscrito() {
+      document.getElementById('modalDemanda').classList.add('hidden');
+    }
+
+    function copiarEscritoJudicial() {
+      const textarea = document.getElementById('texto-escrito-judicial');
+      textarea.select();
+      navigator.clipboard.writeText(textarea.value);
+      alert('✅ Escrito copiado al portapapeles. Ya puedes pegarlo en Microsoft Word.');
+    }
+
     function imprimirReporteDirecto() {
       const reporte = document.getElementById('printableReport');
       reporte.classList.remove('hidden');
@@ -718,7 +1108,6 @@
       reporte.classList.add('hidden');
     }
 
-    // BANCO DINÁMICO DE CASOS
     const bancoCasos = [
       {
         tag: "Omisión de Vencimiento",
@@ -802,7 +1191,7 @@
         </div>
       `).join('');
 
-      lucide.createIcons();
+      if (window.lucide) lucide.createIcons();
     }
 
     function evaluarCasoDinamico(idx, fundamentoEncoded) {
@@ -826,15 +1215,15 @@
       }
     }
 
-    // Calculadora Jurídica
     function calcularLiquidacion() {
       const cap = parseFloat(document.getElementById('calc_capital').value) || 0;
       const tasa = parseFloat(document.getElementById('calc_tasa').value) || 0;
+      const baseDias = parseInt(document.getElementById('calc_base').value) || 360;
       const f1 = new Date(document.getElementById('calc_finicio').value);
       const f2 = new Date(document.getElementById('calc_ffin').value);
 
       const dias = Math.max(0, Math.round((f2 - f1) / (1000 * 60 * 60 * 24)));
-      const intereses = (cap * (tasa / 100) * (dias / 360));
+      const intereses = (cap * (tasa / 100) * (dias / baseDias));
       const total = cap + intereses;
 
       document.getElementById('res_dias').innerText = dias + ' días';
@@ -842,10 +1231,14 @@
       document.getElementById('res_total').innerText = 'S/ ' + total.toFixed(2);
     }
 
-    // Inicialización
-    tabTitulo('pagare');
-    generarNuevosCasos();
-    lucide.createIcons();
+    document.addEventListener('DOMContentLoaded', () => {
+      tabTitulo('pagare');
+      generarNuevosCasos();
+      if (window.innerWidth < 640) {
+        toggleMiniLazaro();
+      }
+      if (window.lucide) lucide.createIcons();
+    });
   </script>
 </body>
 </html>
