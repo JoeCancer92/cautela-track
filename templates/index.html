@@ -3,14 +3,16 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Títulos en Acción · Verificador CPC-Check</title>
+  <title>Títulos en Acción · Verificador CPC-Check & LegalTech</title>
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Lucide Icons CDN -->
   <script src="https://unpkg.com/lucide@latest" defer></script>
+  <!-- Tesseract.js CDN para OCR Real en Navegador -->
+  <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js" defer></script>
   <style>
     @media print {
-      header, main, nav, #minilazaro-widget, #modalDemanda {
+      header, main, nav, footer, #minilazaro-widget, #modalDemanda {
         display: none !important;
       }
       #printableReport {
@@ -44,7 +46,7 @@
         </div>
         <div>
           <span class="text-xl font-bold tracking-tight block">TÍTULOS EN ACCIÓN</span>
-          <span class="text-xs text-slate-400 block -mt-1">Motor de Reglas & Proceso Único de Ejecución</span>
+          <span class="text-xs text-slate-400 block -mt-1">Motor de Reglas, OCR Real & Proceso Único de Ejecución</span>
         </div>
       </div>
 
@@ -53,8 +55,8 @@
         <button onclick="navegar('titulos')" id="nav-titulos" class="nav-btn px-3 py-1.5 rounded-md hover:bg-slate-800 transition text-slate-300">Títulos Valores</button>
         <button onclick="navegar('verificador')" id="nav-verificador" class="nav-btn px-3 py-1.5 rounded-md hover:bg-slate-800 transition text-slate-300">Verificador Jurídico (OCR)</button>
         <button onclick="navegar('simulador')" id="nav-simulador" class="nav-btn px-3 py-1.5 rounded-md hover:bg-slate-800 transition text-slate-300">Simulador</button>
-        <button onclick="navegar('calculadora')" id="nav-calculadora" class="nav-btn px-3 py-1.5 rounded-md hover:bg-slate-800 transition text-slate-300">Calculadora</button>
-        <button onclick="navegar('ejecucion')" id="nav-ejecucion" class="nav-btn px-3 py-1.5 rounded-md hover:bg-slate-800 transition text-slate-300">Proceso Judicial</button>
+        <button onclick="navegar('calculadora')" id="nav-calculadora" class="nav-btn px-3 py-1.5 rounded-md hover:bg-slate-800 transition text-slate-300">Calculadora & Aranceles</button>
+        <button onclick="navegar('ejecucion')" id="nav-ejecucion" class="nav-btn px-3 py-1.5 rounded-md hover:bg-slate-800 transition text-slate-300">Proceso & Plazos</button>
       </nav>
     </div>
   </header>
@@ -67,15 +69,15 @@
       <div class="bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 rounded-2xl p-8 md:p-12 text-white shadow-xl flex flex-col md:flex-row items-center justify-between gap-8">
         <div class="space-y-4 max-w-2xl">
           <span class="inline-block bg-amber-500/20 text-amber-400 border border-amber-500/30 text-xs px-3 py-1 rounded-full uppercase tracking-wider font-semibold">
-            Innovación Jurídica & LegalTech
+            Innovación Jurídica & LegalTech · Perú
           </span>
           <h1 class="text-4xl md:text-5xl font-extrabold tracking-tight">TÍTULOS EN ACCIÓN</h1>
           <p class="text-slate-300 text-base md:text-lg">
-            Plataforma interactiva para el control de títulos valores, calificación de demandas y generación de escritos en el <strong>Proceso Único de Ejecución</strong> (Arts. 688, 689 y 690-D del CPC).
+            Suite LegalTech para el control de títulos valores, lectura OCR real, calificación de demandas, cálculo de aranceles judiciales y generación de escritos en el <strong>Proceso Único de Ejecución</strong> (Arts. 688, 689 y 690-D del CPC).
           </p>
           <div class="pt-2 flex flex-wrap gap-3">
             <button onclick="navegar('verificador')" class="bg-amber-600 hover:bg-amber-700 text-white font-semibold px-6 py-2.5 rounded-lg shadow transition flex items-center gap-2">
-              <i data-lucide="file-check-2" class="w-5 h-5"></i> Probar Verificador Jurídico
+              <i data-lucide="file-check-2" class="w-5 h-5"></i> Probar Verificador Jurídico (OCR)
             </button>
             <button onclick="navegar('titulos')" class="bg-slate-800 hover:bg-slate-700 text-slate-200 px-6 py-2.5 rounded-lg border border-slate-700 transition">
               Guía de Títulos Valores
@@ -86,11 +88,12 @@
           <div class="flex items-center gap-2 font-bold text-amber-400">
             <i data-lucide="shield-check" class="w-5 h-5"></i> Reglas de Negocio Automatizadas
           </div>
-          <p class="text-slate-300">Valida en segundos los 3 pilares del Art. 689 CPC:</p>
+          <p class="text-slate-300">Valida en segundos los 3 pilares del Art. 689 CPC y la Ley N° 27287:</p>
           <ul class="space-y-1.5 text-xs text-slate-300">
             <li class="flex items-center gap-2"><span class="text-emerald-400 font-bold">✔</span> <strong>Certeza:</strong> Sujetos plenamente identificados.</li>
             <li class="flex items-center gap-2"><span class="text-emerald-400 font-bold">✔</span> <strong>Exigibilidad:</strong> Plazo vencido y sin prescripción (Art. 18 LTV).</li>
-            <li class="flex items-center gap-2"><span class="text-emerald-400 font-bold">✔</span> <strong>Liquidez:</strong> Monto determinado o determinable.</li>
+            <li class="flex items-center gap-2"><span class="text-emerald-400 font-bold">✔</span> <strong>Liquidez:</strong> Monto determinado y aranceles URP.</li>
+            <li class="flex items-center gap-2"><span class="text-emerald-400 font-bold">✔</span> <strong>Títulos Incompletos:</strong> Control de acuerdos de llenado (Art. 10 LTV).</li>
           </ul>
         </div>
       </div>
@@ -102,31 +105,31 @@
             <i data-lucide="book-open" class="w-6 h-6"></i>
           </div>
           <h3 class="font-bold text-slate-900">Títulos Valores</h3>
-          <p class="text-xs text-slate-500">Pagaré, Letra de cambio, Cheque y requisitos formales.</p>
+          <p class="text-xs text-slate-500">Pagaré, Letra de cambio, Cheque y tabla comparativa.</p>
         </div>
 
         <div onclick="navegar('verificador')" class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm hover:shadow-md cursor-pointer transition text-center space-y-2">
           <div class="w-12 h-12 bg-emerald-50 text-emerald-600 mx-auto rounded-lg flex items-center justify-center">
-            <i data-lucide="shield-alert" class="w-6 h-6"></i>
+            <i data-lucide="scan-line" class="w-6 h-6"></i>
           </div>
-          <h3 class="font-bold text-slate-900">Verificador CPC</h3>
-          <p class="text-xs text-slate-500">Modo Acreedor/Defensa, OCR, dictamen PDF y demanda.</p>
+          <h3 class="font-bold text-slate-900">Verificador + OCR</h3>
+          <p class="text-xs text-slate-500">OCR real de imágenes, Art. 10 LTV, Modo Defensa y Demanda.</p>
         </div>
 
         <div onclick="navegar('calculadora')" class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm hover:shadow-md cursor-pointer transition text-center space-y-2">
           <div class="w-12 h-12 bg-amber-50 text-amber-600 mx-auto rounded-lg flex items-center justify-center">
             <i data-lucide="calculator" class="w-6 h-6"></i>
           </div>
-          <h3 class="font-bold text-slate-900">Calculadora</h3>
-          <p class="text-xs text-slate-500">Intereses base 360/365 días (Art. 689 CPC).</p>
+          <h3 class="font-bold text-slate-900">Calculadora & URP</h3>
+          <p class="text-xs text-slate-500">Intereses 360/365, competencia y aranceles judiciales.</p>
         </div>
 
         <div onclick="navegar('ejecucion')" class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm hover:shadow-md cursor-pointer transition text-center space-y-2">
           <div class="w-12 h-12 bg-purple-50 text-purple-600 mx-auto rounded-lg flex items-center justify-center">
             <i data-lucide="gavel" class="w-6 h-6"></i>
           </div>
-          <h3 class="font-bold text-slate-900">Flujo Judicial</h3>
-          <p class="text-xs text-slate-500">Demanda, mandato ejecutivo y contradicción judicial.</p>
+          <h3 class="font-bold text-slate-900">Proceso & Plazos</h3>
+          <p class="text-xs text-slate-500">Etapas del PUE y calculadora de días hábiles (Art. 690-D).</p>
         </div>
 
         <div onclick="navegar('simulador')" class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm hover:shadow-md cursor-pointer transition text-center space-y-2">
@@ -134,7 +137,67 @@
             <i data-lucide="puzzle" class="w-6 h-6"></i>
           </div>
           <h3 class="font-bold text-slate-900">Casos Prácticos</h3>
-          <p class="text-xs text-slate-500">Aprende resolviendo contingencias cambiarias reales.</p>
+          <p class="text-xs text-slate-500">Entrenamiento con precedentes cambiarios reales.</p>
+        </div>
+      </div>
+
+      <!-- EQUIPO DESARROLLADOR / INTEGRANTES -->
+      <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 md:p-8 space-y-5">
+        <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 pb-4">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-slate-900 text-amber-400 flex items-center justify-center">
+              <i data-lucide="users" class="w-5 h-5"></i>
+            </div>
+            <div>
+              <h2 class="text-lg font-bold text-slate-900">Equipo Desarrollador · Integrantes del Proyecto</h2>
+              <p class="text-xs text-slate-500">Derecho Procesal Civil II · Universidad Tecnológica del Perú (UTP - Lima Sur, 2026)</p>
+            </div>
+          </div>
+          <span class="bg-amber-50 border border-amber-200 text-amber-800 text-xs font-semibold px-3 py-1 rounded-full">
+            Docente: Carlos Enrique Lázaro Reyna
+          </span>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
+          <div class="bg-slate-50 border border-slate-200/80 rounded-xl p-3.5 flex items-center gap-3 hover:border-amber-400 transition">
+            <div class="w-9 h-9 rounded-full bg-indigo-900 text-white font-bold text-xs flex items-center justify-center shrink-0">AH</div>
+            <div class="min-w-0">
+              <p class="text-xs font-bold text-slate-900 truncate">Allca Huaman, Carla Fabiana</p>
+              <span class="text-[11px] text-slate-500 block">Integrante</span>
+            </div>
+          </div>
+
+          <div class="bg-slate-50 border border-slate-200/80 rounded-xl p-3.5 flex items-center gap-3 hover:border-amber-400 transition">
+            <div class="w-9 h-9 rounded-full bg-slate-800 text-white font-bold text-xs flex items-center justify-center shrink-0">AO</div>
+            <div class="min-w-0">
+              <p class="text-xs font-bold text-slate-900 truncate">Avila Olortegui, Selene</p>
+              <span class="text-[11px] text-slate-500 block">Integrante</span>
+            </div>
+          </div>
+
+          <div class="bg-slate-50 border border-slate-200/80 rounded-xl p-3.5 flex items-center gap-3 hover:border-amber-400 transition">
+            <div class="w-9 h-9 rounded-full bg-amber-700 text-white font-bold text-xs flex items-center justify-center shrink-0">HG</div>
+            <div class="min-w-0">
+              <p class="text-xs font-bold text-slate-900 truncate">Huarcaya Guillen, Brisa Maricielo</p>
+              <span class="text-[11px] text-slate-500 block">Integrante</span>
+            </div>
+          </div>
+
+          <div class="bg-slate-50 border border-slate-200/80 rounded-xl p-3.5 flex items-center gap-3 hover:border-amber-400 transition">
+            <div class="w-9 h-9 rounded-full bg-emerald-800 text-white font-bold text-xs flex items-center justify-center shrink-0">LP</div>
+            <div class="min-w-0">
+              <p class="text-xs font-bold text-slate-900 truncate">Luicho Puppo, Daniel Alfonso</p>
+              <span class="text-[11px] text-slate-500 block">Integrante</span>
+            </div>
+          </div>
+
+          <div class="bg-slate-50 border border-slate-200/80 rounded-xl p-3.5 flex items-center gap-3 hover:border-amber-400 transition">
+            <div class="w-9 h-9 rounded-full bg-purple-900 text-white font-bold text-xs flex items-center justify-center shrink-0">PR</div>
+            <div class="min-w-0">
+              <p class="text-xs font-bold text-slate-900 truncate">Pacheco Ramos, Sergio</p>
+              <span class="text-[11px] text-slate-500 block">Integrante</span>
+            </div>
+          </div>
         </div>
       </div>
     </section>
@@ -222,21 +285,49 @@
       </div>
     </section>
 
-    <!-- SECCIÓN 3: VERIFICADOR JURÍDICO (CPC-CHECK & MOTOR DE REGLAS) -->
+    <!-- SECCIÓN 3: VERIFICADOR JURÍDICO (OCR REAL + MOTOR DE REGLAS + ART. 10 LTV) -->
     <section id="sec-verificador" class="hidden space-y-6">
       <div class="border-b pb-4 flex flex-wrap items-center justify-between gap-4">
         <div>
           <h2 class="text-2xl font-bold text-slate-900">Verificador Jurídico de Ejecutabilidad</h2>
-          <p class="text-slate-600 text-sm">Validación inteligente según Arts. 688, 689, 690-D del CPC y Ley N° 27287.</p>
+          <p class="text-slate-600 text-sm">Lectura OCR real de imágenes, control de títulos incompletos (Art. 10 LTV) y calificación CPC.</p>
         </div>
         <div class="flex flex-wrap items-center gap-2">
           <button onclick="limpiarVerificador()" class="bg-slate-200 border border-slate-300 text-slate-700 hover:bg-slate-300 text-xs font-semibold px-3 py-2 rounded-lg flex items-center gap-1.5 transition">
             <i data-lucide="rotate-ccw" class="w-4 h-4"></i> Limpiar Campos
           </button>
           <button onclick="cargarMockOCR()" class="bg-indigo-50 border border-indigo-200 text-indigo-700 hover:bg-indigo-100 text-xs font-semibold px-3 py-2 rounded-lg flex items-center gap-1.5 transition">
-            <i data-lucide="scan-line" class="w-4 h-4"></i> Simular Lectura OCR de Título Valor
+            <i data-lucide="sparkles" class="w-4 h-4"></i> Cargar Ejemplo Demo
           </button>
         </div>
+      </div>
+
+      <!-- ZONA DE CARGA OCR REAL -->
+      <div class="bg-white p-4 rounded-xl border-2 border-dashed border-indigo-300 hover:border-indigo-500 transition flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-lg bg-indigo-100 text-indigo-700 flex items-center justify-center shrink-0">
+            <i data-lucide="image-plus" class="w-5 h-5"></i>
+          </div>
+          <div>
+            <h3 class="text-sm font-bold text-slate-900">Captura Óptica Real (OCR en Vivo con Tesseract.js)</h3>
+            <p class="text-xs text-slate-500">Sube una foto o captura de un Pagaré o Letra de Cambio (JPG/PNG) para extraer monto y fechas automáticamente.</p>
+          </div>
+        </div>
+        <div class="flex items-center gap-3 w-full sm:w-auto">
+          <label class="cursor-pointer bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold px-4 py-2.5 rounded-lg shadow transition flex items-center justify-center gap-2 w-full sm:w-auto">
+            <i data-lucide="upload" class="w-4 h-4"></i> Subir Imagen del Título
+            <input type="file" id="ocr-file-input" accept="image/*" onchange="procesarOCRReal(event)" class="hidden">
+          </label>
+        </div>
+      </div>
+
+      <!-- Barra de estado OCR -->
+      <div id="ocr-status-box" class="hidden bg-indigo-950 text-white p-3.5 rounded-xl text-xs flex items-center justify-between gap-3 shadow">
+        <div class="flex items-center gap-2.5">
+          <i data-lucide="loader-2" class="w-4 h-4 animate-spin text-amber-400"></i>
+          <span id="ocr-status-text">Procesando imagen con motor óptico OCR...</span>
+        </div>
+        <span id="ocr-progress-pct" class="font-bold text-amber-400">0%</span>
       </div>
 
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
@@ -246,7 +337,6 @@
             <h3 class="font-bold text-slate-900 flex items-center gap-2 text-sm">
               <i data-lucide="file-input" class="w-5 h-5 text-amber-600"></i> Datos del Título Ejecutivo
             </h3>
-            <!-- Selector de Rol Procesal -->
             <select id="v_rol" onchange="reEvaluarSiExiste()" class="text-xs font-semibold border border-slate-300 rounded-md px-2 py-1 bg-slate-100 text-slate-800 outline-none">
               <option value="demandante">Rol: Demandante (Acreedor)</option>
               <option value="defensa">Rol: Defensa (Ejecutado)</option>
@@ -299,6 +389,7 @@
               <input id="v_deudor" type="text" placeholder="Ej. Carlos Mendoza Sánchez" class="w-full border rounded-lg p-2 bg-slate-50">
             </div>
 
+            <!-- Validaciones formales + Art. 10 LTV -->
             <div class="pt-2 border-t space-y-2">
               <label class="flex items-center gap-2 cursor-pointer">
                 <input id="v_protesto" type="checkbox" class="w-4 h-4 rounded text-amber-600 focus:ring-amber-500" checked>
@@ -309,6 +400,22 @@
                 <input id="v_firma" type="checkbox" class="w-4 h-4 rounded text-amber-600 focus:ring-amber-500" checked>
                 <span class="text-xs text-slate-700">Firma manuscrita / digital válida del obligado principal</span>
               </label>
+
+              <label class="flex items-center gap-2 cursor-pointer pt-1">
+                <input id="v_incompleto" type="checkbox" onchange="toggleOpcionesIncompleto()" class="w-4 h-4 rounded text-indigo-600 focus:ring-indigo-500">
+                <span class="text-xs font-semibold text-indigo-900">¿Fue emitido como Título Valor Incompleto? (Art. 10 Ley N° 27287)</span>
+              </label>
+
+              <div id="box-incompleto" class="hidden bg-indigo-50/80 border border-indigo-200 rounded-lg p-2.5 space-y-1.5 ml-4">
+                <label class="flex items-center gap-2 cursor-pointer">
+                  <input id="v_acuerdo_llenado" type="checkbox" class="w-3.5 h-3.5 rounded text-indigo-600" checked>
+                  <span class="text-[11px] text-slate-700">Se adjunta documento con acuerdos de llenado</span>
+                </label>
+                <label class="flex items-center gap-2 cursor-pointer">
+                  <input id="v_copia_deudor" type="checkbox" class="w-3.5 h-3.5 rounded text-indigo-600" checked>
+                  <span class="text-[11px] text-slate-700">Se entregó copia del título incompleto al emitente</span>
+                </label>
+              </div>
             </div>
 
             <div class="flex gap-2 pt-2">
@@ -322,7 +429,7 @@
           </div>
         </div>
 
-        <!-- REPORTE DE RESULTADOS (FASE 4: ENTREGABLE) -->
+        <!-- REPORTE DE RESULTADOS -->
         <div class="lg:col-span-7 bg-white p-6 rounded-xl border shadow-sm flex flex-col justify-between">
           <div>
             <div class="flex items-center justify-between border-b pb-3 mb-4">
@@ -338,7 +445,7 @@
 
             <div id="resultado-vacio" class="py-12 text-center text-slate-400 space-y-2">
               <i data-lucide="clipboard-check" class="w-12 h-12 mx-auto stroke-1"></i>
-              <p class="text-sm">Ingresa los datos del título valor o pulsa "Simular Lectura OCR" para contrastar contra el motor de reglas.</p>
+              <p class="text-sm">Sube una imagen del título valor, carga un ejemplo demo o ingresa los datos manualmente.</p>
             </div>
 
             <div id="resultado-analisis" class="hidden space-y-4">
@@ -347,7 +454,6 @@
             </div>
           </div>
 
-          <!-- Botones de Acción Post-Análisis -->
           <div id="btn-export-box" class="hidden pt-6 border-t mt-4 flex flex-col sm:flex-row gap-2.5">
             <button onclick="imprimirReporteDirecto()" class="flex-1 bg-emerald-700 hover:bg-emerald-800 text-white font-semibold py-2.5 px-4 rounded-lg shadow transition flex items-center justify-center gap-2 text-xs">
               <i data-lucide="printer" class="w-4 h-4"></i> Imprimir / Exportar Dictamen (PDF)
@@ -375,15 +481,19 @@
       <div id="contenedor-casos" class="grid grid-cols-1 md:grid-cols-2 gap-6"></div>
     </section>
 
-    <!-- SECCIÓN 5: CALCULADORA JURÍDICA (LIQUIDEZ ART. 689) -->
+    <!-- SECCIÓN 5: CALCULADORA JURÍDICA + ARANCELES JUDICIALES (URP) -->
     <section id="sec-calculadora" class="hidden space-y-6">
       <div class="border-b pb-4">
-        <h2 class="text-2xl font-bold text-slate-900">Calculadora de Intereses y Deuda Liquidable</h2>
-        <p class="text-slate-600 text-sm">Asegura el requisito de <strong>Liquidez</strong> (Art. 689 CPC) determinando el monto exacto demandable.</p>
+        <h2 class="text-2xl font-bold text-slate-900">Calculadora de Intereses, Competencia y Aranceles Judiciales</h2>
+        <p class="text-slate-600 text-sm">Determina el monto líquido demandable (Art. 689 CPC), el juzgado competente y los aranceles del Poder Judicial.</p>
       </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <!-- Tarjeta 1: Intereses -->
         <div class="bg-white p-6 rounded-xl border shadow-sm space-y-4">
+          <h3 class="font-bold text-slate-900 border-b pb-2 flex items-center gap-2 text-sm">
+            <i data-lucide="percent" class="w-4 h-4 text-amber-600"></i> 1. Liquidación de Intereses Moratorios / Compensatorios
+          </h3>
           <div>
             <label class="block text-sm font-medium text-slate-700 mb-1">Capital Inicial (S/)</label>
             <input id="calc_capital" type="number" value="10000" class="w-full border rounded-lg p-2 text-sm bg-slate-50">
@@ -412,68 +522,154 @@
             </div>
           </div>
           <button onclick="calcularLiquidacion()" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-semibold py-2.5 rounded-lg text-sm transition">
-            Calcular Intereses Liquidables
+            Calcular Intereses y Aranceles
           </button>
-        </div>
 
-        <div class="bg-white p-6 rounded-xl border shadow-sm flex flex-col justify-between">
-          <div class="space-y-3">
-            <h3 class="font-bold text-slate-900 border-b pb-2">Resultado de la Liquidación</h3>
-            <div class="flex justify-between text-sm py-1 border-b">
+          <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-2 text-sm">
+            <div class="flex justify-between">
               <span class="text-slate-600">Días transcurridos:</span>
               <span id="res_dias" class="font-bold">181 días</span>
             </div>
-            <div class="flex justify-between text-sm py-1 border-b">
+            <div class="flex justify-between">
               <span class="text-slate-600">Intereses devengados:</span>
               <span id="res_intereses" class="font-bold text-amber-700">S/ 402.22</span>
             </div>
-            <div class="flex justify-between text-base py-2 bg-slate-50 px-3 rounded font-bold">
-              <span class="text-slate-800">TOTAL EXIGIBLE:</span>
+            <div class="flex justify-between text-base pt-2 border-t font-bold">
+              <span class="text-slate-900">TOTAL EXIGIBLE:</span>
               <span id="res_total" class="text-emerald-700">S/ 10,402.22</span>
             </div>
           </div>
-          <p class="text-xs text-slate-500 italic mt-4">
-            Nota: Este cuadro satisface la exigencia judicial de presentar liquidación pormenorizada junto a la demanda para que el mandato ejecutivo no sea observado.
+        </div>
+
+        <!-- Tarjeta 2: Competencia por Cuantía y Aranceles Judiciales (URP) -->
+        <div class="bg-white p-6 rounded-xl border shadow-sm space-y-4 flex flex-col justify-between">
+          <div class="space-y-4">
+            <h3 class="font-bold text-slate-900 border-b pb-2 flex items-center gap-2 text-sm">
+              <i data-lucide="landmark" class="w-4 h-4 text-indigo-600"></i> 2. Competencia Jurisdiccional y Aranceles (Banco de la Nación)
+            </h3>
+            <p class="text-xs text-slate-600">
+              Cálculo referencial basado en la Unidad de Referencia Procesal (<strong>URP = S/ 550</strong>) y reglas de competencia del Art. 690-B del CPC:
+            </p>
+
+            <div class="bg-indigo-50 border border-indigo-200 rounded-xl p-4 space-y-1">
+              <span class="text-[11px] font-bold uppercase tracking-wider text-indigo-700">Órgano Jurisdiccional Competente</span>
+              <p id="res_juzgado" class="text-base font-extrabold text-slate-900">Juzgado de Paz Letrado</p>
+              <p id="res_juzgado_desc" class="text-xs text-slate-600">Cuantía hasta 100 URP (S/ 55,000).</p>
+            </div>
+
+            <div class="space-y-2 text-sm">
+              <div class="flex justify-between py-1.5 border-b">
+                <span class="text-slate-600">Cuantía en URP:</span>
+                <span id="res_urp_cant" class="font-bold text-slate-800">18.91 URP</span>
+              </div>
+              <div class="flex justify-between py-1.5 border-b">
+                <span class="text-slate-600">Arancel por Ofrecimiento de Pruebas (10% URP):</span>
+                <span id="res_arancel_pruebas" class="font-bold text-slate-900">S/ 55.00</span>
+              </div>
+              <div class="flex justify-between py-1.5 border-b">
+                <span class="text-slate-600">Cédulas de Notificación (2 partes mín.):</span>
+                <span id="res_cedulas" class="font-bold text-slate-900">S/ 11.00</span>
+              </div>
+              <div class="flex justify-between py-2 bg-emerald-50 px-3 rounded-lg font-bold text-emerald-900">
+                <span>TOTAL TASAS JUDICIALES ESTIMADAS:</span>
+                <span id="res_total_tasas">S/ 66.00</span>
+              </div>
+            </div>
+          </div>
+
+          <p class="text-[11px] text-slate-500 italic">
+            * Evita la inadmisibilidad en mesa de partes adjuntando los comprobantes del Banco de la Nación correspondientes al código de arancel por ofrecimiento de pruebas.
           </p>
         </div>
       </div>
     </section>
 
-    <!-- SECCIÓN 6: PROCESO JUDICIAL DE EJECUCIÓN -->
+    <!-- SECCIÓN 6: PROCESO JUDICIAL DE EJECUCIÓN + CALCULADORA DE PLAZOS HÁBILES -->
     <section id="sec-ejecucion" class="hidden space-y-6">
       <div class="border-b pb-4">
-        <h2 class="text-2xl font-bold text-slate-900">Etapas del Proceso Único de Ejecución</h2>
-        <p class="text-slate-600 text-sm">Flujo procesal civil simplificado conforme a los Arts. 690-A al 712 del CPC.</p>
+        <h2 class="text-2xl font-bold text-slate-900">Etapas y Plazos del Proceso Único de Ejecución</h2>
+        <p class="text-slate-600 text-sm">Flujo procesal simplificado (Arts. 690-A al 712 del CPC) y cómputo de días hábiles.</p>
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
         <div class="bg-white p-5 rounded-xl border border-slate-200 space-y-2">
           <div class="w-8 h-8 rounded-full bg-slate-900 text-white font-bold flex items-center justify-center text-sm">1</div>
           <h3 class="font-bold text-slate-900">Demanda Ejecutiva</h3>
-          <p class="text-xs text-slate-600">Acompaña título ejecutivo original (Art. 688) y liquidación de deuda si devenga intereses.</p>
+          <p class="text-xs text-slate-600">Acompaña título ejecutivo original (Art. 688), aranceles y liquidación de deuda si devenga intereses.</p>
         </div>
 
         <div class="bg-white p-5 rounded-xl border border-slate-200 space-y-2">
           <div class="w-8 h-8 rounded-full bg-amber-600 text-white font-bold flex items-center justify-center text-sm">2</div>
           <h3 class="font-bold text-slate-900">Mandato Ejecutivo</h3>
-          <p class="text-xs text-slate-600">El juez califica el título. Si cumple certeza, exigibilidad y liquidez, ordena pagar en 5 días.</p>
+          <p class="text-xs text-slate-600">El juez califica el título. Si cumple certeza, exigibilidad y liquidez, ordena pagar en 5 días hábiles.</p>
         </div>
 
         <div class="bg-white p-5 rounded-xl border border-slate-200 space-y-2">
           <div class="w-8 h-8 rounded-full bg-indigo-600 text-white font-bold flex items-center justify-center text-sm">3</div>
           <h3 class="font-bold text-slate-900">Contradicción</h3>
-          <p class="text-xs text-slate-600">El ejecutado solo puede formular contradicción por causales taxativas (ej. falsedad, nulidad o pago).</p>
+          <p class="text-xs text-slate-600">El ejecutado tiene 5 días hábiles para contradecir por causales taxativas del Art. 690-D CPC.</p>
         </div>
 
         <div class="bg-white p-5 rounded-xl border border-slate-200 space-y-2">
           <div class="w-8 h-8 rounded-full bg-emerald-600 text-white font-bold flex items-center justify-center text-sm">4</div>
           <h3 class="font-bold text-slate-900">Ejecución Forzada</h3>
-          <p class="text-xs text-slate-600">Si no paga ni formula contradicción fundada, se procede al remate o adjudicación judicial (Arts. 725 y ss. CPC).</p>
+          <p class="text-xs text-slate-600">Si no paga ni contradice fundadamente, se procede al remate o adjudicación judicial (Arts. 725 y ss. CPC).</p>
+        </div>
+      </div>
+
+      <!-- CALCULADORA DE PLAZOS PROCESALES HÁBILES -->
+      <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm space-y-4">
+        <div class="flex items-center gap-2 border-b pb-3">
+          <i data-lucide="calendar-clock" class="w-5 h-5 text-indigo-600"></i>
+          <div>
+            <h3 class="font-bold text-slate-900 text-base">Calculadora de Plazos Procesales Hábiles (Art. 147 y 690-D CPC)</h3>
+            <p class="text-xs text-slate-500">Calcula el último día hábil para pagar, contradecir o apelar excluyendo sábados y domingos.</p>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Fecha de Notificación (SINOE / Cédula)</label>
+            <input type="date" id="plazo_notif" class="w-full border rounded-lg p-2 text-sm bg-slate-50">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Actuación Procesal</label>
+            <select id="plazo_tipo" class="w-full border rounded-lg p-2 text-sm bg-slate-50">
+              <option value="5">Pagar o Formular Contradicción (5 días hábiles)</option>
+              <option value="3">Absolver Traslado de Contradicción (3 días hábiles)</option>
+              <option value="3_apel">Apelar Auto Final sin efecto suspensivo (3 días hábiles)</option>
+            </select>
+          </div>
+          <button onclick="calcularPlazoHabil()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2.5 px-4 rounded-lg text-sm transition shadow">
+            Calcular Vencimiento Hábil
+          </button>
+        </div>
+
+        <div id="res_plazo_box" class="hidden bg-indigo-50 border border-indigo-200 rounded-xl p-4 flex flex-col sm:flex-row items-center justify-between gap-2">
+          <div>
+            <span class="text-xs font-semibold text-indigo-700 block">ÚLTIMO DÍA HÁBIL PARA PRESENTAR ESCRITO:</span>
+            <span id="res_plazo_fecha" class="text-lg font-extrabold text-slate-900">--</span>
+          </div>
+          <span class="text-xs bg-white text-indigo-800 px-3 py-1 rounded-full border border-indigo-200 font-medium">
+            Cómputo desde el día hábil siguiente a la notificación (Art. 147 CPC)
+          </span>
         </div>
       </div>
     </section>
 
   </main>
+
+  <!-- FOOTER INSTITUCIONAL CON INTEGRANTES -->
+  <footer class="bg-slate-900 text-slate-400 text-xs border-t border-slate-800 py-5 px-4">
+    <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-3 text-center md:text-left">
+      <div>
+        <span class="text-white font-bold">TÍTULOS EN ACCIÓN</span> · Derecho Procesal Civil II (UTP - Lima Sur, 2026)
+      </div>
+      <div class="text-slate-400">
+        <strong class="text-slate-300">Autores:</strong> Allca Huaman, Carla Fabiana · Avila Olortegui, Selene · Huarcaya Guillen, Brisa Maricielo · Luicho Puppo, Daniel Alfonso · Pacheco Ramos, Sergio
+      </div>
+    </div>
+  </footer>
 
   <!-- MODAL DE BORRADOR DE ESCRITO JUDICIAL -->
   <div id="modalDemanda" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 flex items-center justify-center p-4">
@@ -497,30 +693,38 @@
     </div>
   </div>
 
-  <!-- ASISTENTE VIRTUAL: PROF. MINILÁZARO -->
+  <!-- ASISTENTE VIRTUAL CON VOZ: PROF. MINILÁZARO -->
   <div id="minilazaro-widget" class="fixed bottom-4 right-4 z-40 flex flex-col items-end gap-2 max-w-xs sm:max-w-sm">
     <div id="minilazaro-bubble" class="bg-white border-2 border-slate-900 rounded-2xl shadow-2xl p-4 text-xs text-slate-700 space-y-2.5 transition-all">
       <div class="flex items-center justify-between border-b border-slate-100 pb-1.5">
         <div class="flex items-center gap-1.5">
           <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
           <span class="font-extrabold text-slate-900 text-xs tracking-wide">Prof. MiniLázaro</span>
-          <span class="bg-amber-100 text-amber-800 text-[10px] px-1.5 py-0.5 rounded font-semibold">Guía Procesal</span>
+          <span class="bg-amber-100 text-amber-800 text-[10px] px-1.5 py-0.5 rounded font-semibold">Voz & Guía</span>
         </div>
-        <button onclick="toggleMiniLazaro()" class="text-slate-400 hover:text-slate-700 font-bold text-sm px-1" title="Minimizar">
-          ✕
-        </button>
+        <div class="flex items-center gap-1">
+          <button onclick="leerMensajeMiniLazaro()" class="text-indigo-700 hover:bg-indigo-50 p-1 rounded transition" title="Escuchar al Prof. MiniLázaro">
+            <i data-lucide="volume-2" class="w-4 h-4"></i>
+          </button>
+          <button onclick="toggleMiniLazaro()" class="text-slate-400 hover:text-slate-700 font-bold text-sm px-1" title="Minimizar">
+            ✕
+          </button>
+        </div>
       </div>
 
       <p id="minilazaro-msg" class="leading-relaxed text-slate-700">
-        ¡Colega, bienvenido! Soy <strong>MiniLázaro</strong>. Estoy aquí para guiarte en la calificación de títulos valores y generar borradores de demandas ejecutivas.
+        ¡Colega, bienvenido! Soy <strong>MiniLázaro</strong>. Ahora cuento con <strong>OCR real de imágenes</strong>, control de <strong>títulos incompletos (Art. 10 LTV)</strong> y lectura por voz.
       </p>
 
       <div id="minilazaro-actions" class="flex flex-wrap gap-1.5 pt-1">
         <button onclick="navegar('verificador'); cargarMockOCR();" class="bg-slate-900 hover:bg-slate-800 text-white px-2.5 py-1 rounded-md text-[11px] font-medium transition">
-          🔍 Probar OCR en vivo
+          🔍 Probar OCR
         </button>
         <button onclick="sugerenciaTipLegal()" class="bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200 px-2.5 py-1 rounded-md text-[11px] font-medium transition">
-          💡 Consejo jurídico
+          💡 Consejo
+        </button>
+        <button onclick="leerMensajeMiniLazaro()" class="bg-indigo-50 hover:bg-indigo-100 text-indigo-800 border border-indigo-200 px-2.5 py-1 rounded-md text-[11px] font-medium transition">
+          🔊 Escuchar
         </button>
       </div>
     </div>
@@ -585,6 +789,20 @@
     let miniLazaroAbierto = true;
     let ultimoAnalisisValido = false;
 
+    // Síntesis de Voz (Text-to-Speech)
+    function leerMensajeMiniLazaro() {
+      if (!('speechSynthesis' in window)) {
+        alert('Tu navegador no soporta lectura de voz.');
+        return;
+      }
+      window.speechSynthesis.cancel();
+      const textoLimpio = document.getElementById('minilazaro-msg').innerText;
+      const utterance = new SpeechSynthesisUtterance(textoLimpio);
+      utterance.lang = 'es-PE';
+      utterance.rate = 1.02;
+      window.speechSynthesis.speak(utterance);
+    }
+
     function toggleMiniLazaro() {
       const bubble = document.getElementById('minilazaro-bubble');
       const closedBadge = document.getElementById('minilazaro-badge-closed');
@@ -596,15 +814,16 @@
       } else {
         bubble.classList.add('hidden');
         closedBadge.classList.remove('hidden');
+        if ('speechSynthesis' in window) window.speechSynthesis.cancel();
       }
     }
 
     const consejosMiniLazaro = [
       "Recuerda, colega: la acción cambiaria directa prescribe a los <strong>3 años</strong> desde el vencimiento (Art. 18 LTV). ¡Siempre revisa esa fecha!",
-      "Si un pagaré no tiene la cláusula <strong>'Sin Protesto'</strong>, es obligatorio adjuntar el protesto notarial para que proceda la demanda.",
+      "Si un título valor fue emitido <strong>incompleto (en blanco)</strong>, el Art. 10 de la Ley N° 27287 exige entregar copia al emitente y respetar los acuerdos de llenado.",
       "El Art. 689 del CPC exige tres requisitos copulativos: <strong>Certeza, Exigibilidad y Liquidez</strong>. Si falla uno, el juez declara improcedente.",
       "¿Defiendes al ejecutado? Cambia al <strong>Rol: Defensa</strong> en el Verificador para detectar causales de contradicción del Art. 690-D CPC.",
-      "Si el título ya prescribió en vía ejecutiva, aún puedes cobrar la deuda mediante la <strong>acción causal</strong> en proceso de conocimiento o abreviado."
+      "Si la cuantía supera las <strong>100 URP (S/ 55,000)</strong>, la demanda debe presentarse ante un Juzgado Especializado en lo Civil y no ante Paz Letrado."
     ];
     let indiceConsejo = 0;
 
@@ -622,10 +841,10 @@
 
       const guias = {
         inicio: {
-          texto: "¡Hola! Soy el <strong>Prof. MiniLázaro</strong>. Te sugiero empezar ingresando un título valor en el <strong>Verificador Jurídico</strong> para calificarlo o generar su demanda.",
+          texto: "¡Hola! Soy el <strong>Prof. MiniLázaro</strong>. Sube una imagen de tu título valor en el <strong>Verificador OCR</strong> o prueba el generador de escritos.",
           botones: `
-            <button onclick="navegar('verificador'); cargarMockOCR();" class="bg-slate-900 hover:bg-slate-800 text-white px-2.5 py-1 rounded-md text-[11px] font-medium transition">🔍 Simular OCR</button>
-            <button onclick="sugerenciaTipLegal()" class="bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200 px-2.5 py-1 rounded-md text-[11px] font-medium transition">💡 Tip procesal</button>
+            <button onclick="navegar('verificador'); cargarMockOCR();" class="bg-slate-900 hover:bg-slate-800 text-white px-2.5 py-1 rounded-md text-[11px] font-medium transition">🔍 Demo OCR</button>
+            <button onclick="leerMensajeMiniLazaro()" class="bg-indigo-50 hover:bg-indigo-100 text-indigo-800 border border-indigo-200 px-2.5 py-1 rounded-md text-[11px] font-medium transition">🔊 Escuchar</button>
           `
         },
         titulos: {
@@ -635,10 +854,10 @@
           `
         },
         verificador: {
-          texto: "Puedes evaluar como <strong>Demandante</strong> o como <strong>Defensa (Art. 690-D CPC)</strong>. Pulsa 'Simular Lectura OCR' para cargar un ejemplo al instante.",
+          texto: "Sube una foto real de un pagaré/letra o usa el ejemplo demo. Si es un <strong>título incompleto</strong>, marca la casilla del Art. 10 LTV.",
           botones: `
-            <button onclick="cargarMockOCR()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-2.5 py-1 rounded-md text-[11px] font-medium transition">⚡ Cargar ejemplo OCR</button>
-            <button onclick="limpiarVerificador()" class="bg-slate-200 hover:bg-slate-300 text-slate-800 px-2.5 py-1 rounded-md text-[11px] font-medium transition">Limpiar</button>
+            <button onclick="cargarMockOCR()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-2.5 py-1 rounded-md text-[11px] font-medium transition">⚡ Cargar demo</button>
+            <button onclick="leerMensajeMiniLazaro()" class="bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200 px-2.5 py-1 rounded-md text-[11px] font-medium transition">🔊 Escuchar</button>
           `
         },
         simulador: {
@@ -648,15 +867,15 @@
           `
         },
         calculadora: {
-          texto: "Para cumplir con el requisito de <strong>Liquidez (Art. 689 CPC)</strong>, elige la base de 360 o 365 días y liquida los intereses exactos.",
+          texto: "Calcula los intereses en base 360 o 365 días y verifica automáticamente el <strong>juzgado competente y los aranceles URP</strong>.",
           botones: `
-            <button onclick="calcularLiquidacion()" class="bg-amber-600 hover:bg-amber-700 text-white px-2.5 py-1 rounded-md text-[11px] font-medium transition">Calcular ahora</button>
+            <button onclick="calcularLiquidacion()" class="bg-amber-600 hover:bg-amber-700 text-white px-2.5 py-1 rounded-md text-[11px] font-medium transition">Calcular todo</button>
           `
         },
         ejecucion: {
-          texto: "Recuerda que en el <strong>Proceso Único de Ejecución</strong> el demandado solo tiene 5 días para pagar o contradecir por causales taxativas.",
+          texto: "Usa la calculadora inferior para saber el <strong>último día hábil exacto</strong> para formular contradicción (5 días) o apelar (3 días).",
           botones: `
-            <button onclick="sugerenciaTipLegal()" class="bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200 px-2.5 py-1 rounded-md text-[11px] font-medium transition">💡 Ver otro consejo</button>
+            <button onclick="leerMensajeMiniLazaro()" class="bg-indigo-50 hover:bg-indigo-100 text-indigo-800 border border-indigo-200 px-2.5 py-1 rounded-md text-[11px] font-medium transition">🔊 Escuchar</button>
           `
         }
       };
@@ -664,6 +883,7 @@
       const info = guias[seccion] || guias.inicio;
       msgBox.innerHTML = info.texto;
       actionsBox.innerHTML = info.botones;
+      if (window.lucide) lucide.createIcons();
     }
 
     function navegar(seccion) {
@@ -688,6 +908,95 @@
       if (window.lucide) lucide.createIcons();
     }
 
+    // OCR Real en el navegador usando Tesseract.js
+    async function procesarOCRReal(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const statusBox = document.getElementById('ocr-status-box');
+      const statusText = document.getElementById('ocr-status-text');
+      const pctText = document.getElementById('ocr-progress-pct');
+
+      statusBox.classList.remove('hidden');
+      statusText.innerText = `Analizando "${file.name}" con motor OCR...`;
+      pctText.innerText = "10%";
+
+      try {
+        if (typeof Tesseract === 'undefined') {
+          throw new Error("Librería OCR aún cargando. Intenta en unos segundos.");
+        }
+
+        const result = await Tesseract.recognize(file, 'spa', {
+          logger: m => {
+            if (m.status === 'recognizing text') {
+              const p = Math.round(m.progress * 100);
+              pctText.innerText = p + '%';
+            }
+          }
+        });
+
+        const texto = result.data.text;
+        const textoLower = texto.toLowerCase();
+
+        // Detectar tipo de título
+        if (textoLower.includes('letra de cambio')) {
+          document.getElementById('v_tipo').value = 'letra';
+        } else if (textoLower.includes('cheque')) {
+          document.getElementById('v_tipo').value = 'cheque';
+        } else {
+          document.getElementById('v_tipo').value = 'pagare';
+        }
+
+        // Detectar moneda
+        if (texto.includes('US$') || textoLower.includes('dólares') || textoLower.includes('dolares')) {
+          document.getElementById('v_moneda').value = 'USD';
+        } else {
+          document.getElementById('v_moneda').value = 'PEN';
+        }
+
+        // Extraer monto numérico probable
+        const matchMonto = texto.match(/(?:S\/|US\$|\$)?\s?(\d{1,3}(?:,\d{3})*(?:\.\d{2})?)/);
+        if (matchMonto && matchMonto[1]) {
+          const limpio = matchMonto[1].replace(/,/g, '');
+          if (parseFloat(limpio) > 0) {
+            document.getElementById('v_monto').value = limpio;
+          }
+        }
+
+        // Extraer fechas en formato DD/MM/AAAA o DD-MM-AAAA
+        const fechasEncontradas = [...texto.matchAll(/(\d{2})[\/\-](\d{2})[\/\-](\d{4})/g)];
+        if (fechasEncontradas.length >= 1) {
+          const f1 = fechasEncontradas[0];
+          document.getElementById('v_femision').value = `${f1[3]}-${f1[2]}-${f1[1]}`;
+        }
+        if (fechasEncontradas.length >= 2) {
+          const f2 = fechasEncontradas[1];
+          document.getElementById('v_fvencimiento').value = `${f2[3]}-${f2[2]}-${f2[1]}`;
+        }
+
+        // Detectar cláusula sin protesto
+        document.getElementById('v_protesto').checked = textoLower.includes('sin protesto') || textoLower.includes('protesto');
+
+        statusBox.classList.add('hidden');
+        document.getElementById('minilazaro-msg').innerHTML = "✅ <strong>Lectura OCR completada.</strong> Verifica los campos extraídos de la imagen, completa los nombres si faltan y pulsa <em>Ejecutar Análisis Jurídico</em>.";
+
+      } catch (err) {
+        statusBox.classList.add('hidden');
+        alert("No se pudo leer la imagen automáticamente (" + err.message + "). Puedes ingresar los datos manualmente o usar el ejemplo demo.");
+      }
+      event.target.value = '';
+    }
+
+    function toggleOpcionesIncompleto() {
+      const checked = document.getElementById('v_incompleto').checked;
+      const box = document.getElementById('box-incompleto');
+      if (checked) {
+        box.classList.remove('hidden');
+      } else {
+        box.classList.add('hidden');
+      }
+    }
+
     function limpiarVerificador() {
       ultimoAnalisisValido = false;
       document.getElementById('v_tipo').value = 'pagare';
@@ -699,6 +1008,10 @@
       document.getElementById('v_deudor').value = '';
       document.getElementById('v_protesto').checked = true;
       document.getElementById('v_firma').checked = true;
+      document.getElementById('v_incompleto').checked = false;
+      document.getElementById('v_acuerdo_llenado').checked = true;
+      document.getElementById('v_copia_deudor').checked = true;
+      document.getElementById('box-incompleto').classList.add('hidden');
 
       document.getElementById('resultado-analisis').classList.add('hidden');
       document.getElementById('btn-export-box').classList.add('hidden');
@@ -727,7 +1040,8 @@
         acreedor: 'Inversiones & Créditos del Sur S.A.C.',
         deudor: 'Constructora Los Olivos E.I.R.L.',
         protesto: true,
-        firma: true
+        firma: true,
+        incompleto: false
       },
       {
         tipo: 'letra',
@@ -738,18 +1052,22 @@
         acreedor: 'Importaciones del Pacífico S.A.',
         deudor: 'Distribuidora Textil Santa Anita',
         protesto: true,
-        firma: true
+        firma: true,
+        incompleto: false
       },
       {
         tipo: 'pagare',
-        monto: '12000',
+        monto: '32000',
         moneda: 'PEN',
-        femision: '2025-05-10',
-        fvencimiento: '2025-11-20',
-        acreedor: 'Cooperativa de Ahorro y Crédito San Pedro',
-        deudor: 'Roberto Carlos Valdivia Luna',
-        protesto: false,
-        firma: true
+        femision: '2025-04-01',
+        fvencimiento: '2025-10-01',
+        acreedor: 'Financiera CrediPerú S.A.',
+        deudor: 'Transportes Rápidos del Sur S.R.L.',
+        protesto: true,
+        firma: true,
+        incompleto: true,
+        acuerdo: false,
+        copia: false
       }
     ];
 
@@ -766,6 +1084,12 @@
       document.getElementById('v_deudor').value = demo.deudor;
       document.getElementById('v_protesto').checked = demo.protesto;
       document.getElementById('v_firma').checked = demo.firma;
+      document.getElementById('v_incompleto').checked = demo.incompleto;
+      toggleOpcionesIncompleto();
+      if (demo.incompleto) {
+        document.getElementById('v_acuerdo_llenado').checked = demo.acuerdo;
+        document.getElementById('v_copia_deudor').checked = demo.copia;
+      }
 
       analizarTitulo();
       indiceMockOCR = (indiceMockOCR + 1) % demosOCR.length;
@@ -843,6 +1167,9 @@
       const deudor = document.getElementById('v_deudor').value.trim();
       const sinProtesto = document.getElementById('v_protesto').checked;
       const tieneFirma = document.getElementById('v_firma').checked;
+      const esIncompleto = document.getElementById('v_incompleto').checked;
+      const tieneAcuerdo = document.getElementById('v_acuerdo_llenado').checked;
+      const tieneCopia = document.getElementById('v_copia_deudor').checked;
 
       if (!monto || !fvencimiento) {
         alert('Por favor completa al menos el monto y la fecha de vencimiento.');
@@ -913,6 +1240,18 @@
         checks.push({ texto: "Firma de obligado principal registrada", ok: true });
       }
 
+      // Regla especial: Título Valor Incompleto (Art. 10 Ley N° 27287)
+      if (esIncompleto) {
+        if (tieneAcuerdo && tieneCopia) {
+          checks.push({ texto: "Título Incompleto (Art. 10 LTV): Acuerdos de llenado y entrega de copia acreditados", ok: true });
+        } else {
+          checks.push({ texto: "Título Incompleto (Art. 10 LTV): Incumplimiento de formalidades de llenado", ok: false });
+          alertas.push({ nivel: "danger", msg: "RIESGO DE CONTRADICCIÓN (Art. 10 LTV): Al emitirse incompleto, es obligatorio acreditar los acuerdos de llenado y la entrega de copia al deudor." });
+          causalesDefensa.push("Título valor completado contrariamente a los acuerdos adoptados o sin entrega de copia al emitente (Art. 10 LTV y Art. 690-D inc. 2 CPC).");
+          score -= 30;
+        }
+      }
+
       score = Math.max(0, score);
 
       document.getElementById('resultado-vacio').classList.add('hidden');
@@ -945,7 +1284,7 @@
         btnEscrito.innerHTML = `<i data-lucide="shield" class="w-4 h-4"></i> Generar Borrador de Contradicción`;
 
         let viabilidadDefensa = 100 - score;
-        let colorDef = viabilidadDefensa >= 40 ? 'text-emerald-600' : 'text-amber-600';
+        let colorDef = viabilidadDefensa >= 30 ? 'text-emerald-600' : 'text-amber-600';
         badgeScore.innerHTML = `
           <span class="text-xs font-semibold text-slate-400 block">VIABILIDAD DE CONTRADICCIÓN</span>
           <span class="text-2xl font-extrabold ${colorDef}">${viabilidadDefensa}%</span>
@@ -1073,12 +1412,12 @@ I. PETITORIO:
 Que, dentro del plazo legal de cinco (05) días hábiles establecido en el artículo 690-D° del Código Procesal Civil, FORMULO CONTRADICCIÓN contra la Resolución N° 01 (Mandato Ejecutivo) que nos ordena pagar la suma de ${moneda} ${monto.toLocaleString()}, solicitando se declare FUNDADA la presente contradicción y, en consecuencia, IMPROCEDENTE la demanda ejecutiva.
 
 II. CAUSALES DE CONTRADICCIÓN (ART. 690-D° CPC):
-Sustentamos nuestra contradicción en las causales taxativas de INEXIGIBILIDAD DE LA OBLIGACIÓN, NULIDAD FORMAL DEL TÍTULO Y/O EXTINCIÓN DE LA OBLIGACIÓN (Prescripción cambiaria - Art. 18° Ley N° 27287), debido a que el documento (${tipo} con vencimiento ${fvenc}) carece de los requisitos legales imperativos para despachar ejecución.
+Sustentamos nuestra contradicción en las causales taxativas de INEXIGIBILIDAD DE LA OBLIGACIÓN, NULIDAD FORMAL DEL TÍTULO Y/O EXTINCIÓN DE LA OBLIGACIÓN (Arts. 10° y 18° Ley N° 27287), debido a que el documento (${tipo} con vencimiento ${fvenc}) carece de los requisitos legales imperativos para despachar ejecución.
 
 III. FUNDAMENTACIÓN JURÍDICA:
 - Artículo 690-D° del Código Procesal Civil (Causales taxativas de contradicción).
 - Artículo 689° del Código Procesal Civil (Falta de requisitos comunes de ejecución).
-- Artículo 18° y concordantes de la Ley N° 27287, Ley de Títulos Valores.
+- Artículos 10°, 18° y concordantes de la Ley N° 27287, Ley de Títulos Valores.
 
 POR TANTO:
 A usted, Señor Juez, sírvase tener por formulada la contradicción dentro del plazo de ley, correr traslado al ejecutante y oportunamente declararla fundada.
@@ -1108,6 +1447,7 @@ Lima, ${new Date().toLocaleDateString('es-PE')}.`;
       reporte.classList.add('hidden');
     }
 
+    // BANCO DINÁMICO DE CASOS
     const bancoCasos = [
       {
         tag: "Omisión de Vencimiento",
@@ -1132,6 +1472,17 @@ Lima, ${new Date().toLocaleDateString('es-PE')}.`;
         fundamento: "Conforme al Art. 18 de la Ley N° 27287, la acción cambiaria directa prescribe a los 3 años del vencimiento, tornando improcedente la vía ejecutiva."
       },
       {
+        tag: "Título Valor Incompleto (Art. 10 LTV)",
+        tagColor: "bg-purple-100 text-purple-800",
+        pregunta: "Un deudor firma un pagaré en blanco sin recibir copia del mismo ni firmar acuerdos de llenado. ¿Qué puede alegar?",
+        opciones: [
+          { texto: "Contradicción por nulidad formal / contravención al Art. 10 de la Ley N° 27287.", correcta: true },
+          { texto: "Nada; el acreedor puede rellenar cualquier monto de forma unilateral sin límite.", correcta: false },
+          { texto: "El pagaré se convierte automáticamente en una factura negociable.", correcta: false }
+        ],
+        fundamento: "El Art. 10 de la Ley N° 27287 exige que quien emite o acepta un título valor incompleto tiene derecho a recibir una copia y a que se complete conforme a los acuerdos adoptados."
+      },
+      {
         tag: "Omisión de Cláusula de Protesto",
         tagColor: "bg-emerald-100 text-emerald-800",
         pregunta: "Un pagaré no incluye la cláusula 'Sin Protesto' y el acreedor no realizó el trámite notarial. ¿Qué sanción procesal acarrea?",
@@ -1141,17 +1492,6 @@ Lima, ${new Date().toLocaleDateString('es-PE')}.`;
           { texto: "El título se convierte automáticamente en cheque de pago diferido.", correcta: false }
         ],
         fundamento: "Si el título no contiene la cláusula 'Sin Protesto' (Art. 52 LTV), el protesto notarial formal es indispensable para conservar la acción ejecutiva."
-      },
-      {
-        tag: "Discrepancia en el Monto",
-        tagColor: "bg-purple-100 text-purple-800",
-        pregunta: "Un título valor consigna en números 'S/ 10,000' pero en letras dice 'Ocho mil soles'. ¿Qué importe prevalece judicialmente?",
-        opciones: [
-          { texto: "Prevalece la suma menor o la expresada en letras ante discrepancia (Art. 5.2 LTV).", correcta: true },
-          { texto: "El título valor es nulo por carecer de certeza y liquidez.", correcta: false },
-          { texto: "El juez promedia ambos montos al momento de expedir el mandato ejecutivo.", correcta: false }
-        ],
-        fundamento: "El Art. 5.2 de la Ley N° 27287 señala que en caso de diferencia entre el importe expresado en letras y números, prima la suma menor o la consignada en letras."
       },
       {
         tag: "Contradicción Judicial",
@@ -1215,6 +1555,7 @@ Lima, ${new Date().toLocaleDateString('es-PE')}.`;
       }
     }
 
+    // Calculadora de Intereses + Competencia y Aranceles Judiciales (URP = S/ 550)
     function calcularLiquidacion() {
       const cap = parseFloat(document.getElementById('calc_capital').value) || 0;
       const tasa = parseFloat(document.getElementById('calc_tasa').value) || 0;
@@ -1229,11 +1570,64 @@ Lima, ${new Date().toLocaleDateString('es-PE')}.`;
       document.getElementById('res_dias').innerText = dias + ' días';
       document.getElementById('res_intereses').innerText = 'S/ ' + intereses.toFixed(2);
       document.getElementById('res_total').innerText = 'S/ ' + total.toFixed(2);
+
+      // Cálculo de competencia y aranceles (URP = S/ 550)
+      const URP = 550;
+      const cantURP = total / URP;
+      document.getElementById('res_urp_cant').innerText = cantURP.toFixed(2) + ' URP';
+
+      let arancelPruebas = 55.00;
+      if (cantURP <= 100) {
+        document.getElementById('res_juzgado').innerText = "Juzgado de Paz Letrado";
+        document.getElementById('res_juzgado_desc').innerText = "Competente para pretensiones ejecutivas hasta 100 URP (S/ 55,000).";
+        arancelPruebas = URP * 0.10;
+      } else {
+        document.getElementById('res_juzgado').innerText = "Juzgado Especializado en lo Civil";
+        document.getElementById('res_juzgado_desc').innerText = "Competente cuando la cuantía supera las 100 URP (S/ 55,000).";
+        arancelPruebas = cantURP <= 250 ? URP * 0.10 : (cantURP <= 500 ? URP * 0.15 : URP * 0.20);
+      }
+
+      const cedulas = 11.00;
+      const totalTasas = arancelPruebas + cedulas;
+
+      document.getElementById('res_arancel_pruebas').innerText = 'S/ ' + arancelPruebas.toFixed(2);
+      document.getElementById('res_cedulas').innerText = 'S/ ' + cedulas.toFixed(2);
+      document.getElementById('res_total_tasas').innerText = 'S/ ' + totalTasas.toFixed(2);
+    }
+
+    // Calculadora de Plazos Procesales Hábiles (excluyendo sábados y domingos)
+    function calcularPlazoHabil() {
+      const fechaStr = document.getElementById('plazo_notif').value;
+      const tipoVal = document.getElementById('plazo_tipo').value;
+      if (!fechaStr) {
+        alert('Selecciona la fecha de notificación primero.');
+        return;
+      }
+
+      const diasHabiles = parseInt(tipoVal.split('_')[0], 10);
+      const partes = fechaStr.split('-');
+      let fecha = new Date(parseInt(partes[0]), parseInt(partes[1]) - 1, parseInt(partes[2]));
+
+      let contados = 0;
+      while (contados < diasHabiles) {
+        fecha.setDate(fecha.getDate() + 1);
+        const diaSemana = fecha.getDay(); // 0 = Domingo, 6 = Sábado
+        if (diaSemana !== 0 && diaSemana !== 6) {
+          contados++;
+        }
+      }
+
+      const opcionesFecha = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+      const textoFecha = fecha.toLocaleDateString('es-PE', opcionesFecha);
+
+      document.getElementById('res_plazo_fecha').innerText = textoFecha.charAt(0).toUpperCase() + textoFecha.slice(1);
+      document.getElementById('res_plazo_box').classList.remove('hidden');
     }
 
     document.addEventListener('DOMContentLoaded', () => {
       tabTitulo('pagare');
       generarNuevosCasos();
+      calcularLiquidacion();
       if (window.innerWidth < 640) {
         toggleMiniLazaro();
       }
