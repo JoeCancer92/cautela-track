@@ -693,7 +693,7 @@
     </div>
   </div>
 
-  <!-- ASISTENTE VIRTUAL CON VOZ: PROF. MINILÁZARO -->
+  <!-- ASISTENTE VIRTUAL CON VOZ MASCULINA: PROF. MINILÁZARO -->
   <div id="minilazaro-widget" class="fixed bottom-4 right-4 z-40 flex flex-col items-end gap-2 max-w-xs sm:max-w-sm">
     <div id="minilazaro-bubble" class="bg-white border-2 border-slate-900 rounded-2xl shadow-2xl p-4 text-xs text-slate-700 space-y-2.5 transition-all">
       <div class="flex items-center justify-between border-b border-slate-100 pb-1.5">
@@ -789,17 +789,44 @@
     let miniLazaroAbierto = true;
     let ultimoAnalisisValido = false;
 
-    // Síntesis de Voz (Text-to-Speech)
+    // Cargar voces disponibles del sistema operativo
+    let vocesDisponibles = [];
+    if ('speechSynthesis' in window) {
+      const cargarVoces = () => {
+        vocesDisponibles = window.speechSynthesis.getVoices();
+      };
+      cargarVoces();
+      window.speechSynthesis.onvoiceschanged = cargarVoces;
+    }
+
+    // Síntesis de Voz Masculina Grave (Prof. MiniLázaro)
     function leerMensajeMiniLazaro() {
       if (!('speechSynthesis' in window)) {
         alert('Tu navegador no soporta lectura de voz.');
         return;
       }
       window.speechSynthesis.cancel();
+
       const textoLimpio = document.getElementById('minilazaro-msg').innerText;
       const utterance = new SpeechSynthesisUtterance(textoLimpio);
       utterance.lang = 'es-PE';
-      utterance.rate = 1.02;
+
+      // Filtrar voces en español y priorizar nombres masculinos
+      const vocesEspanol = vocesDisponibles.filter(v => v.lang.toLowerCase().includes('es'));
+      const vozMasculina = vocesEspanol.find(v =>
+        /jorge|pablo|alonso|raul|raúl|diego|carlos|pedro|antonio|miguel|male|hombre/i.test(v.name)
+      );
+
+      if (vozMasculina) {
+        utterance.voice = vozMasculina;
+      } else if (vocesEspanol.length > 0) {
+        utterance.voice = vocesEspanol[0];
+      }
+
+      // Timbre grave y ritmo pausado de docente
+      utterance.pitch = 0.82;
+      utterance.rate = 0.98;
+
       window.speechSynthesis.speak(utterance);
     }
 
@@ -938,7 +965,6 @@
         const texto = result.data.text;
         const textoLower = texto.toLowerCase();
 
-        // Detectar tipo de título
         if (textoLower.includes('letra de cambio')) {
           document.getElementById('v_tipo').value = 'letra';
         } else if (textoLower.includes('cheque')) {
@@ -947,14 +973,12 @@
           document.getElementById('v_tipo').value = 'pagare';
         }
 
-        // Detectar moneda
         if (texto.includes('US$') || textoLower.includes('dólares') || textoLower.includes('dolares')) {
           document.getElementById('v_moneda').value = 'USD';
         } else {
           document.getElementById('v_moneda').value = 'PEN';
         }
 
-        // Extraer monto numérico probable
         const matchMonto = texto.match(/(?:S\/|US\$|\$)?\s?(\d{1,3}(?:,\d{3})*(?:\.\d{2})?)/);
         if (matchMonto && matchMonto[1]) {
           const limpio = matchMonto[1].replace(/,/g, '');
@@ -963,7 +987,6 @@
           }
         }
 
-        // Extraer fechas en formato DD/MM/AAAA o DD-MM-AAAA
         const fechasEncontradas = [...texto.matchAll(/(\d{2})[\/\-](\d{2})[\/\-](\d{4})/g)];
         if (fechasEncontradas.length >= 1) {
           const f1 = fechasEncontradas[0];
@@ -974,7 +997,6 @@
           document.getElementById('v_fvencimiento').value = `${f2[3]}-${f2[2]}-${f2[1]}`;
         }
 
-        // Detectar cláusula sin protesto
         document.getElementById('v_protesto').checked = textoLower.includes('sin protesto') || textoLower.includes('protesto');
 
         statusBox.classList.add('hidden');
@@ -1240,7 +1262,6 @@
         checks.push({ texto: "Firma de obligado principal registrada", ok: true });
       }
 
-      // Regla especial: Título Valor Incompleto (Art. 10 Ley N° 27287)
       if (esIncompleto) {
         if (tieneAcuerdo && tieneCopia) {
           checks.push({ texto: "Título Incompleto (Art. 10 LTV): Acuerdos de llenado y entrega de copia acreditados", ok: true });
@@ -1571,7 +1592,6 @@ Lima, ${new Date().toLocaleDateString('es-PE')}.`;
       document.getElementById('res_intereses').innerText = 'S/ ' + intereses.toFixed(2);
       document.getElementById('res_total').innerText = 'S/ ' + total.toFixed(2);
 
-      // Cálculo de competencia y aranceles (URP = S/ 550)
       const URP = 550;
       const cantURP = total / URP;
       document.getElementById('res_urp_cant').innerText = cantURP.toFixed(2) + ' URP';
@@ -1595,7 +1615,7 @@ Lima, ${new Date().toLocaleDateString('es-PE')}.`;
       document.getElementById('res_total_tasas').innerText = 'S/ ' + totalTasas.toFixed(2);
     }
 
-    // Calculadora de Plazos Procesales Hábiles (excluyendo sábados y domingos)
+    // Calculadora de Plazos Procesales Hábiles
     function calcularPlazoHabil() {
       const fechaStr = document.getElementById('plazo_notif').value;
       const tipoVal = document.getElementById('plazo_tipo').value;
@@ -1611,7 +1631,7 @@ Lima, ${new Date().toLocaleDateString('es-PE')}.`;
       let contados = 0;
       while (contados < diasHabiles) {
         fecha.setDate(fecha.getDate() + 1);
-        const diaSemana = fecha.getDay(); // 0 = Domingo, 6 = Sábado
+        const diaSemana = fecha.getDay();
         if (diaSemana !== 0 && diaSemana !== 6) {
           contados++;
         }
