@@ -8,8 +8,10 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Lucide Icons CDN -->
   <script src="https://unpkg.com/lucide@latest" defer></script>
-  <!-- Tesseract.js CDN para OCR Real en Navegador -->
+  <!-- Tesseract.js CDN para OCR Real de Imágenes -->
   <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js" defer></script>
+  <!-- PDF.js CDN para lectura directa de archivos PDF -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js" defer></script>
   <style>
     @media print {
       header, main, nav, footer, #minilazaro-widget, #modalDemanda {
@@ -46,7 +48,7 @@
         </div>
         <div>
           <span class="text-xl font-bold tracking-tight block">TÍTULOS EN ACCIÓN</span>
-          <span class="text-xs text-slate-400 block -mt-1">Motor de Reglas, OCR Real & Proceso Único de Ejecución</span>
+          <span class="text-xs text-slate-400 block -mt-1">Motor de Reglas, OCR Real (Imagen/PDF) & Proceso Único de Ejecución</span>
         </div>
       </div>
 
@@ -73,7 +75,7 @@
           </span>
           <h1 class="text-4xl md:text-5xl font-extrabold tracking-tight">TÍTULOS EN ACCIÓN</h1>
           <p class="text-slate-300 text-base md:text-lg">
-            Suite LegalTech para el control de títulos valores, lectura OCR real, calificación de demandas, cálculo de aranceles judiciales y generación de escritos en el <strong>Proceso Único de Ejecución</strong> (Arts. 688, 689 y 690-D del CPC).
+            Suite LegalTech para el control de títulos valores, lectura OCR real (Imágenes y PDF), calificación de demandas, cálculo de aranceles judiciales y generación de escritos en el <strong>Proceso Único de Ejecución</strong> (Arts. 688, 689 y 690-D del CPC).
           </p>
           <div class="pt-2 flex flex-wrap gap-3">
             <button onclick="navegar('verificador')" class="bg-amber-600 hover:bg-amber-700 text-white font-semibold px-6 py-2.5 rounded-lg shadow transition flex items-center gap-2">
@@ -113,7 +115,7 @@
             <i data-lucide="scan-line" class="w-6 h-6"></i>
           </div>
           <h3 class="font-bold text-slate-900">Verificador + OCR</h3>
-          <p class="text-xs text-slate-500">OCR real de imágenes, Art. 10 LTV, Modo Defensa y Demanda.</p>
+          <p class="text-xs text-slate-500">Lee Imágenes y PDFs, Art. 10 LTV, Modo Defensa y Demanda.</p>
         </div>
 
         <div onclick="navegar('calculadora')" class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm hover:shadow-md cursor-pointer transition text-center space-y-2">
@@ -285,12 +287,12 @@
       </div>
     </section>
 
-    <!-- SECCIÓN 3: VERIFICADOR JURÍDICO (OCR REAL + MOTOR DE REGLAS + ART. 10 LTV) -->
+    <!-- SECCIÓN 3: VERIFICADOR JURÍDICO (OCR IMAGEN + PDF + MOTOR DE REGLAS + ART. 10 LTV) -->
     <section id="sec-verificador" class="hidden space-y-6">
       <div class="border-b pb-4 flex flex-wrap items-center justify-between gap-4">
         <div>
           <h2 class="text-2xl font-bold text-slate-900">Verificador Jurídico de Ejecutabilidad</h2>
-          <p class="text-slate-600 text-sm">Lectura OCR real de imágenes, control de títulos incompletos (Art. 10 LTV) y calificación CPC.</p>
+          <p class="text-slate-600 text-sm">Lectura OCR real de imágenes y documentos PDF, control de títulos incompletos (Art. 10 LTV) y calificación CPC.</p>
         </div>
         <div class="flex flex-wrap items-center gap-2">
           <button onclick="limpiarVerificador()" class="bg-slate-200 border border-slate-300 text-slate-700 hover:bg-slate-300 text-xs font-semibold px-3 py-2 rounded-lg flex items-center gap-1.5 transition">
@@ -302,30 +304,30 @@
         </div>
       </div>
 
-      <!-- ZONA DE CARGA OCR REAL -->
+      <!-- ZONA DE CARGA OCR REAL (IMÁGENES Y PDF) -->
       <div class="bg-white p-4 rounded-xl border-2 border-dashed border-indigo-300 hover:border-indigo-500 transition flex flex-col sm:flex-row items-center justify-between gap-4">
         <div class="flex items-center gap-3">
           <div class="w-10 h-10 rounded-lg bg-indigo-100 text-indigo-700 flex items-center justify-center shrink-0">
-            <i data-lucide="image-plus" class="w-5 h-5"></i>
+            <i data-lucide="file-up" class="w-5 h-5"></i>
           </div>
           <div>
-            <h3 class="text-sm font-bold text-slate-900">Captura Óptica Real (OCR en Vivo con Tesseract.js)</h3>
-            <p class="text-xs text-slate-500">Sube una foto o captura de un Pagaré o Letra de Cambio (JPG/PNG) para extraer monto y fechas automáticamente.</p>
+            <h3 class="text-sm font-bold text-slate-900">Captura Óptica y Lectura de Documentos (Imagen JPG/PNG o Archivo PDF)</h3>
+            <p class="text-xs text-slate-500">Sube una foto de un título valor o el <strong>Dictamen PDF</strong> generado por el verificador para autocompletar y comprobar los datos.</p>
           </div>
         </div>
         <div class="flex items-center gap-3 w-full sm:w-auto">
           <label class="cursor-pointer bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold px-4 py-2.5 rounded-lg shadow transition flex items-center justify-center gap-2 w-full sm:w-auto">
-            <i data-lucide="upload" class="w-4 h-4"></i> Subir Imagen del Título
-            <input type="file" id="ocr-file-input" accept="image/*" onchange="procesarOCRReal(event)" class="hidden">
+            <i data-lucide="upload" class="w-4 h-4"></i> Subir Imagen o PDF
+            <input type="file" id="ocr-file-input" accept="image/*,.pdf,application/pdf" onchange="procesarArchivoSubido(event)" class="hidden">
           </label>
         </div>
       </div>
 
-      <!-- Barra de estado OCR -->
+      <!-- Barra de estado OCR / PDF -->
       <div id="ocr-status-box" class="hidden bg-indigo-950 text-white p-3.5 rounded-xl text-xs flex items-center justify-between gap-3 shadow">
         <div class="flex items-center gap-2.5">
           <i data-lucide="loader-2" class="w-4 h-4 animate-spin text-amber-400"></i>
-          <span id="ocr-status-text">Procesando imagen con motor óptico OCR...</span>
+          <span id="ocr-status-text">Procesando archivo...</span>
         </div>
         <span id="ocr-progress-pct" class="font-bold text-amber-400">0%</span>
       </div>
@@ -445,7 +447,7 @@
 
             <div id="resultado-vacio" class="py-12 text-center text-slate-400 space-y-2">
               <i data-lucide="clipboard-check" class="w-12 h-12 mx-auto stroke-1"></i>
-              <p class="text-sm">Sube una imagen del título valor, carga un ejemplo demo o ingresa los datos manualmente.</p>
+              <p class="text-sm">Sube una imagen o PDF del título valor, carga un ejemplo demo o ingresa los datos manualmente.</p>
             </div>
 
             <div id="resultado-analisis" class="hidden space-y-4">
@@ -713,7 +715,7 @@
       </div>
 
       <p id="minilazaro-msg" class="leading-relaxed text-slate-700">
-        ¡Colega, bienvenido! Soy <strong>MiniLázaro</strong>. Ahora cuento con <strong>OCR real de imágenes</strong>, control de <strong>títulos incompletos (Art. 10 LTV)</strong> y lectura por voz.
+        ¡Colega, bienvenido! Soy <strong>MiniLázaro</strong>. Ahora puedes subir tanto <strong>imágenes (JPG/PNG)</strong> como <strong>archivos PDF</strong> en el Verificador Jurídico para leerlos y comprobarlos.
       </p>
 
       <div id="minilazaro-actions" class="flex flex-wrap gap-1.5 pt-1">
@@ -811,7 +813,6 @@
       const utterance = new SpeechSynthesisUtterance(textoLimpio);
       utterance.lang = 'es-PE';
 
-      // Filtrar voces en español y priorizar nombres masculinos
       const vocesEspanol = vocesDisponibles.filter(v => v.lang.toLowerCase().includes('es'));
       const vozMasculina = vocesEspanol.find(v =>
         /jorge|pablo|alonso|raul|raúl|diego|carlos|pedro|antonio|miguel|male|hombre/i.test(v.name)
@@ -823,7 +824,6 @@
         utterance.voice = vocesEspanol[0];
       }
 
-      // Timbre grave y ritmo pausado de docente
       utterance.pitch = 0.82;
       utterance.rate = 0.98;
 
@@ -868,7 +868,7 @@
 
       const guias = {
         inicio: {
-          texto: "¡Hola! Soy el <strong>Prof. MiniLázaro</strong>. Sube una imagen de tu título valor en el <strong>Verificador OCR</strong> o prueba el generador de escritos.",
+          texto: "¡Hola! Soy el <strong>Prof. MiniLázaro</strong>. Sube una imagen o archivo PDF de tu título valor en el <strong>Verificador OCR</strong> o prueba el generador de escritos.",
           botones: `
             <button onclick="navegar('verificador'); cargarMockOCR();" class="bg-slate-900 hover:bg-slate-800 text-white px-2.5 py-1 rounded-md text-[11px] font-medium transition">🔍 Demo OCR</button>
             <button onclick="leerMensajeMiniLazaro()" class="bg-indigo-50 hover:bg-indigo-100 text-indigo-800 border border-indigo-200 px-2.5 py-1 rounded-md text-[11px] font-medium transition">🔊 Escuchar</button>
@@ -881,7 +881,7 @@
           `
         },
         verificador: {
-          texto: "Sube una foto real de un pagaré/letra o usa el ejemplo demo. Si es un <strong>título incompleto</strong>, marca la casilla del Art. 10 LTV.",
+          texto: "Sube una <strong>imagen (JPG/PNG)</strong> o el <strong>PDF generado por el verificador</strong>. Extraeré los datos automáticamente para validarlos.",
           botones: `
             <button onclick="cargarMockOCR()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-2.5 py-1 rounded-md text-[11px] font-medium transition">⚡ Cargar demo</button>
             <button onclick="leerMensajeMiniLazaro()" class="bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200 px-2.5 py-1 rounded-md text-[11px] font-medium transition">🔊 Escuchar</button>
@@ -935,8 +935,8 @@
       if (window.lucide) lucide.createIcons();
     }
 
-    // OCR Real en el navegador usando Tesseract.js
-    async function procesarOCRReal(event) {
+    // Procesar tanto IMÁGENES (Tesseract.js) como ARCHIVOS PDF (PDF.js + OCR fallback)
+    async function procesarArchivoSubido(event) {
       const file = event.target.files[0];
       if (!file) return;
 
@@ -945,48 +945,131 @@
       const pctText = document.getElementById('ocr-progress-pct');
 
       statusBox.classList.remove('hidden');
-      statusText.innerText = `Analizando "${file.name}" con motor OCR...`;
-      pctText.innerText = "10%";
+      statusText.innerText = `Analizando "${file.name}"...`;
+      pctText.innerText = "15%";
 
       try {
-        if (typeof Tesseract === 'undefined') {
-          throw new Error("Librería OCR aún cargando. Intenta en unos segundos.");
-        }
+        let textoExtraido = "";
 
-        const result = await Tesseract.recognize(file, 'spa', {
-          logger: m => {
-            if (m.status === 'recognizing text') {
-              const p = Math.round(m.progress * 100);
-              pctText.innerText = p + '%';
+        if (file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf')) {
+          if (typeof pdfjsLib === 'undefined') {
+            throw new Error("El lector PDF aún está cargando. Intenta de nuevo en 2 segundos.");
+          }
+          pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+          const arrayBuffer = await file.arrayBuffer();
+          const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+          pctText.innerText = "45%";
+
+          for (let i = 1; i <= pdf.numPages; i++) {
+            const page = await pdf.getPage(i);
+            const textContent = await page.getTextContent();
+            const pageText = textContent.items.map(item => item.str).join(' ');
+            textoExtraido += " " + pageText;
+          }
+
+          // Si el PDF es una imagen escaneada sin capa de texto, convertir página 1 a imagen y pasar por OCR
+          if (textoExtraido.trim().length < 15 && typeof Tesseract !== 'undefined') {
+            statusText.innerText = "PDF escaneado detectado. Aplicando OCR óptico...";
+            const page = await pdf.getPage(1);
+            const viewport = page.getViewport({ scale: 2.0 });
+            const canvas = document.createElement('canvas');
+            const context = canvas.getContext('2d');
+            canvas.height = viewport.height;
+            canvas.width = viewport.width;
+            await page.render({ canvasContext: context, viewport: viewport }).promise;
+
+            const ocrRes = await Tesseract.recognize(canvas.toDataURL('image/png'), 'spa', {
+              logger: m => {
+                if (m.status === 'recognizing text') {
+                  pctText.innerText = Math.round(50 + m.progress * 50) + '%';
+                }
+              }
+            });
+            textoExtraido = ocrRes.data.text;
+          }
+          pctText.innerText = "100%";
+
+        } else {
+          // Procesamiento para Imágenes (JPG, PNG, WEBP)
+          if (typeof Tesseract === 'undefined') {
+            throw new Error("Librería OCR aún cargando. Intenta en unos segundos.");
+          }
+          const result = await Tesseract.recognize(file, 'spa', {
+            logger: m => {
+              if (m.status === 'recognizing text') {
+                pctText.innerText = Math.round(m.progress * 100) + '%';
+              }
             }
-          }
-        });
+          });
+          textoExtraido = result.data.text;
+        }
 
-        const texto = result.data.text;
-        const textoLower = texto.toLowerCase();
+        autocompletarDesdeTexto(textoExtraido);
+        statusBox.classList.add('hidden');
 
-        if (textoLower.includes('letra de cambio')) {
-          document.getElementById('v_tipo').value = 'letra';
-        } else if (textoLower.includes('cheque')) {
-          document.getElementById('v_tipo').value = 'cheque';
+        // Ejecutar análisis automáticamente si detectó monto y vencimiento
+        if (document.getElementById('v_monto').value && document.getElementById('v_fvencimiento').value) {
+          analizarTitulo();
+          document.getElementById('minilazaro-msg').innerHTML = `✅ <strong>Documento "${file.name}" leído y verificado.</strong> Revisa el dictamen generado a la derecha.`;
         } else {
-          document.getElementById('v_tipo').value = 'pagare';
+          document.getElementById('minilazaro-msg').innerHTML = `✅ <strong>Lectura completada.</strong> Completa cualquier campo faltante y pulsa <em>Ejecutar Análisis Jurídico</em>.`;
         }
 
-        if (texto.includes('US$') || textoLower.includes('dólares') || textoLower.includes('dolares')) {
-          document.getElementById('v_moneda').value = 'USD';
-        } else {
-          document.getElementById('v_moneda').value = 'PEN';
-        }
+      } catch (err) {
+        statusBox.classList.add('hidden');
+        alert("No se pudo procesar el archivo (" + err.message + "). Puedes ingresar los datos manualmente o usar el ejemplo demo.");
+      }
+      event.target.value = '';
+    }
 
-        const matchMonto = texto.match(/(?:S\/|US\$|\$)?\s?(\d{1,3}(?:,\d{3})*(?:\.\d{2})?)/);
-        if (matchMonto && matchMonto[1]) {
-          const limpio = matchMonto[1].replace(/,/g, '');
-          if (parseFloat(limpio) > 0) {
-            document.getElementById('v_monto').value = limpio;
-          }
-        }
+    // Extraer datos inteligentes (funciona tanto con títulos escaneados como con el Dictamen PDF exportado)
+    function autocompletarDesdeTexto(texto) {
+      const textoLower = texto.toLowerCase();
 
+      // 1. Detectar Tipo de Título
+      if (textoLower.includes('letra de cambio') || textoLower.includes('tipo de documento: letra')) {
+        document.getElementById('v_tipo').value = 'letra';
+      } else if (textoLower.includes('cheque')) {
+        document.getElementById('v_tipo').value = 'cheque';
+      } else if (textoLower.includes('conciliación') || textoLower.includes('conciliacion')) {
+        document.getElementById('v_tipo').value = 'acta';
+      } else {
+        document.getElementById('v_tipo').value = 'pagare';
+      }
+
+      // 2. Detectar Moneda
+      if (texto.includes('US$') || textoLower.includes('dólares') || textoLower.includes('dolares')) {
+        document.getElementById('v_moneda').value = 'USD';
+      } else {
+        document.getElementById('v_moneda').value = 'PEN';
+      }
+
+      // 3. Detectar Monto
+      const matchCuantia = texto.match(/(?:Cuantía\s*\/\s*Moneda:|S\/|US\$|\$)\s*([0-9.,]+)/i);
+      if (matchCuantia && matchCuantia[1]) {
+        const limpio = matchCuantia[1].replace(/,/g, '');
+        if (parseFloat(limpio) > 0) {
+          document.getElementById('v_monto').value = limpio;
+        }
+      }
+
+      // 4. Detectar Acreedor y Deudor si proviene del Dictamen PDF generado por el sistema
+      const matchAcreedor = texto.match(/Parte Demandante \(Acreedor\):\s*(.+?)(?=Parte Demandada|Cuantía|$)/i);
+      if (matchAcreedor && matchAcreedor[1] && !matchAcreedor[1].includes('No especificado')) {
+        document.getElementById('v_acreedor').value = matchAcreedor[1].trim();
+      }
+
+      const matchDeudor = texto.match(/Parte Demandada \(Deudor\):\s*(.+?)(?=Cuantía|Fecha|$)/i);
+      if (matchDeudor && matchDeudor[1] && !matchDeudor[1].includes('No especificado')) {
+        document.getElementById('v_deudor').value = matchDeudor[1].trim();
+      }
+
+      // 5. Detectar Fechas (YYYY-MM-DD del dictamen PDF o DD/MM/YYYY de imágenes)
+      const matchVencISO = texto.match(/Fecha de Vencimiento:\s*(\d{4}-\d{2}-\d{2})/i);
+      if (matchVencISO && matchVencISO[1]) {
+        document.getElementById('v_fvencimiento').value = matchVencISO[1];
+      } else {
         const fechasEncontradas = [...texto.matchAll(/(\d{2})[\/\-](\d{2})[\/\-](\d{4})/g)];
         if (fechasEncontradas.length >= 1) {
           const f1 = fechasEncontradas[0];
@@ -996,17 +1079,14 @@
           const f2 = fechasEncontradas[1];
           document.getElementById('v_fvencimiento').value = `${f2[3]}-${f2[2]}-${f2[1]}`;
         }
-
-        document.getElementById('v_protesto').checked = textoLower.includes('sin protesto') || textoLower.includes('protesto');
-
-        statusBox.classList.add('hidden');
-        document.getElementById('minilazaro-msg').innerHTML = "✅ <strong>Lectura OCR completada.</strong> Verifica los campos extraídos de la imagen, completa los nombres si faltan y pulsa <em>Ejecutar Análisis Jurídico</em>.";
-
-      } catch (err) {
-        statusBox.classList.add('hidden');
-        alert("No se pudo leer la imagen automáticamente (" + err.message + "). Puedes ingresar los datos manualmente o usar el ejemplo demo.");
       }
-      event.target.value = '';
+
+      // 6. Detectar Protesto
+      if (textoLower.includes('requisito de protesto: omitido')) {
+        document.getElementById('v_protesto').checked = false;
+      } else if (textoLower.includes('sin protesto') || textoLower.includes('protesto')) {
+        document.getElementById('v_protesto').checked = true;
+      }
     }
 
     function toggleOpcionesIncompleto() {
